@@ -1,0 +1,105 @@
+{extend name="common/common"} {block name="navbar"} {/block} {block name="nav-list"} {/block} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#"> 商户中心中心</span>
+    </li>
+    <li class="active">
+        经营场地
+    </li>
+    <li class="active">
+       收银账号
+    </li>
+</ul>
+<style>
+	.page-content{
+		margin: 0;
+	}
+</style>
+<!-- #section:basics/content.searchbox -->
+<div class="nav-search nav-positions" id="nav-search">
+    <form class="form-search form-inline">
+        <span class="input-icon">
+            <input type="text" placeholder="关键词" name="keyword" value="{:input('get.keyword')}" class="nav-search-input" autocomplete="off" />
+            <i class="ace-icon fa fa-search nav-search-icon"></i>
+        </span>
+        <input type="submit" class="btn btn-info btn-xs " value="搜索"> 
+        <a href="{:url('add?user_store_id='.input('user_store_id'))}" class="btn btn-info btn-xs "><i class="glyphicon glyphicon-plus"></i>新增</a>
+    </form>
+</div>
+{/block} {block name="head"}
+<script type="text/javascript" src="/static/common/js/jquery.qrcode.min.js"></script>
+<style type="text/css">
+.qrcodecanvas canvas {
+    max-width: 100px;
+    max-height: 100px;
+}
+</style>
+{/block} {block name="page-content"}
+<div class="admin-body">
+<form action="" id="form2" method="POST">
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th width="50">ID</th>
+                <th>备注/名称</th>
+                <th width="200">二维码</th>
+                <th width="151"><i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>新增时间</th>
+                <th width="120">操作</th>
+            </tr>
+        </thead>
+        {volist name="lists" id="vo"}
+        <tr>
+            <td>{$vo.user_id}</td>
+            <td>
+                <strong>{$vo.user_role_name}:</strong>{$vo.user_realname}
+                <div>{$vo.user_mobile}</div>
+            </td>
+            <td align="center">
+                <div class="row">
+                    <div class="col-sm-6 center">
+                        <div><p>收款二维码</p></div>
+                        <img src="/static/common/image/qrcode.png">
+                        <p>
+                        <a title="{$vo.user_realname}的收款二维码" href="javascript:;" data-src='{:request()->domain().url("cmd/oauth/qrcode?uid=".$vo["user_id"])}' onclick="javascript:layer.open({type: 1,title:this.getAttribute('title'),closeBtn: 1,shadeClose: true,content: '<div class=center><img width=200 src={:url("qrcode")}?value='+ this.getAttribute('data-src') +'  /></div> '});">查看</a>
+                        <a target="_blank" href="{:url("qrcode")}?size=30&downloadname={$vo.user_realname}的收款二维码&value={:request()->domain().url("cmd/oauth/qrcode?uid=".$vo["user_id"])}">下载</a>
+                        </p>
+                    </div>
+                    <div class="col-sm-6">
+                        {eq name="vo.user_play_reward" value="1"}
+                        <div><p>打赏二维码</p></div>
+                        <img src="/static/common/image/qrcode.png">
+                        <p>
+                        <a title="{$vo.user_realname}的打赏二维码" href="javascript:;" data-src='{:request()->domain().url("cmd/oauth/qrcode?reward=1&uid=".$vo["user_id"])}' onclick="javascript:layer.open({type: 1,title:this.getAttribute('title'),closeBtn: 1,shadeClose: true,content: '<div class=center><img width=200 src={:url("qrcode")}?value='+ this.getAttribute('data-src') +'  /></div> '});">查看</a>
+                        <a target="_blank" href="{:url("qrcode")}?size=30&downloadname={$vo.user_realname}的打赏二维码&value={:request()->domain().url("cmd/oauth/qrcode?reward=1&uid=".$vo["user_id"])}">下载</a>
+                        </p>
+                        {/eq}
+                    </div>
+                </div>
+            </td>
+            <td>{$vo.user_addtime}</td>
+            <td>
+                
+                
+                <a href="{:url('add?user_id='.$vo['user_id'])}" class="tooltip-success" data-rel="tooltip" title="编辑"><span class="green"><i class="ace-icon fa fa-pencil-square-o bigger-120"></i></span>编辑</a> &nbsp;
+                
+                
+                <a ajax='{"confirm":"删除吗？","url":"{:url("delete?user_store_id=".$vo["user_store_id"]."&user_id=" .$vo["user_id"])} "}' href="javascript:; " class="tooltip-error "><span class="red "><i class="ace-icon fa fa-trash-o bigger-120 "></i></span>删除</a>
+            </td>
+        </tr>
+        {/volist}
+    </table>
+</form>
+<div class="pull-left ">
+    <!-- <a onclick="doloadtable() " class="btn btn-white btn-inverse btn-sm " href="javascript:; ">
+                                        导出表格
+                                    </a> -->
+</div>
+<div class="pull-right ">
+    <p style="text-align:right;">共{$lists->total()}条记录</p>
+    {$lists->render()}
+</div>
+<div class="clearfix ">
+</div>
+</div>
+{/block}

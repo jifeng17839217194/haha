@@ -1,0 +1,100 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">管理员管理</span>
+    </li>
+    <li class="active">
+        后台菜单
+    </li>
+    <li class="active">
+        编辑
+    </li>
+</ul>
+{/block} {block name="page-content"}
+<div class="order-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    <input type="hidden" name="id" value="{:$one?$one->menu_id:''}">
+    <!-- #section:elements.form -->
+    <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right">上级栏目：</label>
+        <div class="col-sm-9">
+            <div class="col-xs-10 col-sm-5 no-padding-left">
+                <select name="menu_fid" id="menu_fid" class="chosen-select ">
+                    <option value="0">顶级栏目</option>
+                    {:$getTreeForMenuSelect}
+                </select>
+                <script type="text/javascript">
+                if ("{:$one?$one->menu_fid:''}" != "") {
+                    $("#menu_fid").val("{:$one?$one->menu_fid:''}");
+                }
+                if ("{:input('fid')}" != "") {
+                    $("#menu_fid").val("{:input('fid')}");
+                }
+                </script>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right"> 栏目名称：</label>
+        <div class="col-sm-9">
+            <input type="text" placeholder="栏目名称" autocomplete="off" name="menu_name" value="{:$one?$one->menu_name:''}" required title="栏目名称" class="col-xs-10 col-sm-5" oninput="if(value.length>10)value=value.slice(0,10)"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right"> 转向URL：</label>
+        <div class="col-sm-9">
+            <input type="text" placeholder="转向URL,必需小写" autocomplete="off" name="menu_url" value="{:$one?$one->menu_url:''}" required title="转向URL" class="col-xs-10 col-sm-5" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right"> 权限节点：</label>
+        <div class="col-sm-9">
+            <div>
+                <textarea name="menu_powerpoint" id="menu_powerpoint" placeholder="权限节点,必需json" class="col-xs-10 col-sm-5">{:$one?$one->menu_powerpoint:''}</textarea>
+            </div>
+        </div>
+        <label class="col-sm-3 control-label no-padding-right"></label>
+        <div class="col-sm-9">
+            <div>
+                <p><a href="javascript:;" onclick="javascript:document.querySelector('#menu_powerpoint').value=this.innerHTML;">{"view":"查看"}</a></p>
+                <p><a href="javascript:;" onclick="javascript:document.querySelector('#menu_powerpoint').value=this.innerHTML;">{"view":"查看","add":"增/改","delete":"删"}</a></p>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right" for="form-field-1-1"> 状态：</label>
+        <div class="col-sm-9">
+            <div class="radio pull-left">
+                <label>
+                    <input name="menu_active" value="1" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;展示</span>
+                </label>
+            </div>
+            <div class="radio pull-left">
+                <label>
+                    <input name="menu_active" value="0" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;隐藏</span>
+                </label>
+            </div>
+            <script type="text/javascript">
+            $("input[name='menu_active'][value='{:$one?$one->menu_active:'1'}']").attr("checked", "checked");
+            </script>
+        </div>
+    </div>
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit">
+                <i class="ace-icon fa fa-check bigger-110"></i> 提交
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+{/block}

@@ -1,0 +1,152 @@
+{extend name="common/common"} {block name="head"}
+<style type="text/css">
+textarea{height: 20em;}
+</style>
+<script type="text/javascript">
+function repeat(s, count) {
+    return new Array(count + 1).join(s);
+}
+
+function formatJson(ObjId) {
+
+    var json = document.querySelector("#"+ObjId).value;
+
+    var i = 0,
+        len = 0,
+        tab = "    ",
+        targetJson = "",
+        indentLevel = 0,
+        inString = false,
+        currentChar = null;
+
+
+    for (i = 0, len = json.length; i < len; i += 1) {
+        currentChar = json.charAt(i);
+
+        switch (currentChar) {
+            case '{':
+            case '[':
+                if (!inString) {
+                    targetJson += currentChar + "\n" + repeat(tab, indentLevel + 1);
+                    indentLevel += 1;
+                } else {
+                    targetJson += currentChar;
+                }
+                break;
+            case '}':
+            case ']':
+                if (!inString) {
+                    indentLevel -= 1;
+                    targetJson += "\n" + repeat(tab, indentLevel) + currentChar;
+                } else {
+                    targetJson += currentChar;
+                }
+                break;
+            case ',':
+                if (!inString) {
+                    targetJson += ",\n" + repeat(tab, indentLevel);
+                } else {
+                    targetJson += currentChar;
+                }
+                break;
+            case ':':
+                if (!inString) {
+                    targetJson += ": ";
+                } else {
+                    targetJson += currentChar;
+                }
+                break;
+            case ' ':
+            case "\n":
+            case "\t":
+                if (inString) {
+                    targetJson += currentChar;
+                }
+                break;
+            case '"':
+                if (i > 0 && json.charAt(i - 1) !== '\\') {
+                    inString = !inString;
+                }
+                targetJson += currentChar;
+                break;
+            default:
+                targetJson += currentChar;
+                break;
+        }
+    }
+    document.querySelector("#"+ObjId).value = targetJson ;
+    return;
+}
+</script>
+{/block} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">API文档</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block} {block name="page-content"}
+<div class="order-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    <input type="hidden" name="api_id" value="{:$one?$one->api_id:''}">
+    {include file="common/input" title="APP栏目名称" fieldName="api_title" defaultValue='<?php echo(isset($one->api_title)?$one->api_title:"");?>' placeholder="" required="required" pattern="*" helpInfo='要精确到子栏目或更细'}
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">请求方式：</label>
+        <div class="col-sm-10">
+            <div class="radio pull-left">
+                <label>
+                    <input name="api_type" value="GET" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;GET</span>
+                </label>
+            </div>
+            <div class="radio pull-left">
+                <label>
+                    <input name="api_type" value="POST" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;POST</span>
+                </label>
+            </div>
+            <div class="radio pull-left">
+                <label>
+                    <input name="api_type" value="GET/POST" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;GET/POST</span>
+                </label>
+            </div>
+            <script type="text/javascript">
+            $("input[name='api_type'][value='{:isset($one->api_type)?$one->api_type:'GET/POST'}']").attr("checked", "checked");
+            </script>
+        </div>
+    </div>
+    {include file="common/input" title="控制器" fieldName="api_model" defaultValue='<?php echo(isset($one->api_model)?$one->api_model:"");?>' placeholder="全部基于API模块下面" required="required" pattern="*" helpInfo='全部基于API模块下面'}
+
+    {include file="common/input" title="方法" fieldName="api_action" defaultValue='<?php echo(isset($one->api_action)?$one->api_action:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+    {include file="common/textarea" title="提交参数" fieldName="api_param" defaultValue='<?php echo(isset($one->api_param)?$one->api_param:"");?>' placeholder="" helpInfo='<a href="javascript:;" onclick=formatJson("api_param")>JSON格式化</a>'}
+
+    {include file="common/textarea" title="相应的JSON" fieldName="api_result" defaultValue='<?php echo(isset($one->api_result)?$one->api_result:"");?>' placeholder="" helpInfo='<a href="javascript:;" onclick=formatJson("api_result")>JSON格式化</a>'}
+
+    
+    {include file="common/input" title="创建者" fieldName="api_creater" defaultValue='<?php echo(isset($one->api_creater)?$one->api_creater:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+    {include file="common/textarea" title="说明备注" fieldName="api_content" defaultValue='<?php echo(isset($one->api_content)?$one->api_content:"");?>' placeholder="" helpInfo=''}
+
+
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit">
+                <i class="ace-icon fa fa-check bigger-110"></i> 提交
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+{/block}

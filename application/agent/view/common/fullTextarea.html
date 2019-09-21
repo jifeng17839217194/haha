@@ -1,0 +1,23 @@
+<div class="form-group">
+    <label class="col-sm-2 control-label no-padding-right">[title]：</label>
+    <div class="col-sm-10">
+        <script id="[fieldName]" name="[fieldName]" type="text/plain">[defaultValue]</script>
+        <!-- 配置文件 -->
+        <script type="text/javascript">
+        window.UEDITOR_CONFIG || document.write("<script src='/static/common/js/ueditor/ueditor.config.js'>" + "<" + "/script>");
+        </script>
+        </script>
+        <!-- 编辑器源码文件 -->
+        <script type="text/javascript">
+        window.baidu || document.write("<script src='/static/common/js/ueditor/ueditor.all.js'>" + "<" + "/script>");
+        </script>
+        <script type="text/javascript" src=""></script>
+        <!-- 实例化编辑器 -->
+        <script type="text/javascript">
+        UE.getEditor('[fieldName]');
+        </script>
+        <span class="help-inline col-xs-12 col-sm-7">
+                <span class="middle">[helpInfo]</span>
+        </span>
+    </div>
+</div>

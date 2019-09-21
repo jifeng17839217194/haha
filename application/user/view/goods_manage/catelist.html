@@ -1,0 +1,83 @@
+{extend name="common/common"}
+{block name="breadcrumbs"}
+<ul class="breadcrumb">
+	<li class="active">
+		<i class="ace-icon fa fa-home home-icon"></i>
+		<span _href="#">商品管理</span>
+	</li>
+	<li class="active">
+		商品分类管理
+	</li>
+
+</ul>
+
+<ul class="breadcrumb">
+	<!-- <li class="active">
+		<i class="ace-icon fa fa-home home-icon"></i>
+		<span _href="#">分类列表</span>
+	</li> -->
+	<div class="shop-body">
+	<div class="col-xs-12">
+		<div class="row">
+			<table id="store_table" class="table table-striped table-bordered table-hover">
+				<!-- <button class="add_cate">新增</button> -->
+				<!-- <a href="/user/goods_manage/addsort.html" class="add_cate" title="新增产品"><img src="../../../static/common/image/add.png">新增</a> -->
+					<a href="/user/goods_manage/addsort.html"  class="btn btn-info btn-xs btn-bottom"><i class="glyphicon glyphicon-plus"></i>新增</a>
+				<div class="store_line"></div>
+				<thead>
+					<tr>
+						<th width="">分类名称</th>
+						<th width="">分类图标</th>
+						<th width="">分类排序</th>
+						<th width="">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="cate_list.data" id="vo"}
+					<tr>
+						<th>{$vo.category_name}</th>
+						<th><img src="{$vo.img}"></th>
+						<th>{$vo.sort}</th>
+						<th>
+							<!-- <a ajax='{"confirm":"删除吗？","url":"{:url("delcate?cate_id=" .$vo[ "category_id"])}"}' href="javascript:; " class="delete_cates">删除</a> -->
+ <a ajax='{"confirm":"删除吗？","url":"{:url("delcate?cate_id=".$vo[ "category_id"])}","success":"alert(date.msg)"}' href="javascript:; " class="tooltip-error"><span class="red "><i class="ace-icon fa fa-trash-o bigger-120 "></i></span>删除</a>
+	  <a href="{:url('editsort?category_id='.$vo[ 'category_id'])}" class="tooltip-success" data-rel="tooltip" title="编辑"><span class="green"><i class="ace-icon fa fa-pencil-square-o bigger-120"></i></span>编辑</a> &nbsp;
+							<!-- <a href="{:url('editsort?category_id='.$vo[ 'category_id'])}" class="revise_cates">修改</a> -->
+						</th>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			{$page}
+		</div>
+	</div>
+	</div>
+</ul>
+
+{/block}
+{block name="head"}
+<script src="/static/common/js/tableExport/jquery.base64.js"></script>
+<script src="/static/common/js/tableExport/tableExport.js"></script>
+<script type="text/javascript" src="/static/common/js/bootstrapPaginator.js"></script>
+<script type="text/javascript">
+	$(function() {
+		check_login();
+		$("#store-name").html(store_name);
+		$("#user-name").html(user_realname);
+		$("#log-off").on('click', function() {
+			clear_cookie();
+			$(location).attr('href', common_url + '/user/index/login');
+		});
+	});
+</script>
+{/block}
+
+
+<script type="text/javascript" src="/static/user/assets/js/jquery.js"></script>
+<script type="text/javascript">
+	$(function() {
+		// var user_id=$.cookie('user_id');
+		alert(1);
+
+	});
+</script>

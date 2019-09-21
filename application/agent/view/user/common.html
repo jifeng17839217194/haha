@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>{:config('site_title')}-代理商</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="../assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="../assets/css/font-awesome.css" />
+    <!-- page specific plugin styles -->
+    <link rel="stylesheet" href="../assets/css/colorbox.css" />
+    <!-- text fonts -->
+    <link rel="stylesheet" href="../assets/css/ace-fonts.css" />
+    <!-- ace styles -->
+    <link rel="stylesheet" href="../assets/css/ace.css" class="ace-main-stylesheet" id="main-ace-style" />
+    <!--[if lte IE 9]>
+            <link rel="stylesheet" href="../assets/css/ace-part2.css" class="ace-main-stylesheet" />
+        <![endif]-->
+    <!--[if lte IE 9]>
+          <link rel="stylesheet" href="../assets/css/ace-ie.css" />
+        <![endif]-->
+    <!-- inline styles related to this page -->
+    <!-- ace settings handler -->
+    <script src="../assets/js/ace-extra.js"></script>
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+    <!--[if lte IE 8]>
+        <script src="../assets/js/html5shiv.js"></script>
+        <script src="../assets/js/respond.js"></script>
+        <![endif]-->
+    <link rel="stylesheet" type="text/css" href="../assets/css/chosen.css">
+    <!--[if !IE]> -->
+    <script type="text/javascript">
+    window.jQuery || document.write("<script src='../assets/js/jquery.js'>" + "<" + "/script>");
+    </script>
+    <!-- <![endif]-->
+    <!--[if IE]>
+        <script type="text/javascript">
+         window.jQuery || document.write("<script src='../assets/js/jquery1x.js'>"+"<"+"/script>");
+        </script>
+        <![endif]-->
+    <!-- for cjh -->
+    <script type="text/javascript" src="/static/common/js/jquery.form.js"></script>
+    <script type="text/javascript" src="/static/common/js/admin.js"></script>
+    <script type="text/javascript" src="/static/common/js/layer/layer.js"></script>
+    <!--// for cjh -->
+    <script src="../assets/js/chosen.jquery.js"></script>
+    {block name="head"}{/block}
+</head>
+
+<body class="no-skin">
+    <!-- #section:basics/navbar.layout -->
+    {block name="navbar"}
+    <div id="navbar" class="navbar navbar-default">
+        <script type="text/javascript">
+        try {
+            ace.settings.check('navbar', 'fixed')
+        } catch (e) {}
+        </script>
+        <div class="navbar-container" id="navbar-container">
+            <!-- #section:basics/sidebar.mobile.toggle -->
+            <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+                <span class="sr-only">Toggle sidebar</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!-- /section:basics/sidebar.mobile.toggle -->
+            <div class="navbar-header pull-left" style="margin-top: 10px;">
+                <!-- #section:basics/navbar.layout.brand -->
+                <a href="{:url('index/index')}" class="navbar-brand">
+                    <small>
+                        <i class="fa fa-leaf"></i>
+                        {:session('agent_company_name')} - 智慧收银代理系统
+                    </small>
+                </a>
+                <!-- /section:basics/navbar.layout.brand -->
+                <!-- #section:basics/navbar.toggle -->
+                <!-- /section:basics/navbar.toggle -->
+            </div>
+            <!-- #section:basics/navbar.dropdown -->
+            <div class="navbar-buttons navbar-header pull-right" role="navigation">
+                <ul class="nav ace-nav">
+                    <!-- #section:basics/navbar.user_menu -->
+                    <li class="light-blue">
+                        <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                            <img class="nav-user-photo" src="../assets/avatars/avatar2.png" alt="{:input('session.agent_name')}" />
+                            <span class="user-info">
+                                    <small>代理商,</small>
+                                    {:session('agent_name')}
+                                </span>
+                            <i class="ace-icon fa fa-caret-down"></i>
+                        </a>
+                        <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                            <li>
+                                <a href="javascript:;" ajax='{"url":"{:url("index/updateMySelfPwd")}","prompt":"text"}' title="修改密码">
+                                    <i class="ace-icon fa fa-cog"></i> 修改密码
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="#" ajax='{"confirm":"确定要退出吗？","url":"{:url("index/logout")}"}'>
+                                    <i class="ace-icon fa fa-power-off"></i> 退出
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- /section:basics/navbar.user_menu -->
+                </ul>
+            </div>
+            <!-- /section:basics/navbar.dropdown -->
+        </div>
+        <!-- /.navbar-container -->
+    </div>
+    {/block}
+    <!-- /section:basics/navbar.layout -->
+    <div class="main-container" id="main-container">
+        <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {}
+        </script>
+        <!-- #section:basics/sidebar -->
+        {block name="nav-list"}
+        <div id="sidebar" class="sidebar responsive">
+            <script type="text/javascript">
+            try {
+                ace.settings.check('sidebar', 'fixed')
+            } catch (e) {}
+            </script>
+            <!-- /.sidebar-shortcuts -->
+            <ul class="nav nav-list" id="leftmenu">
+
+                <li>
+                    <a class="dropdown-toggle" href="#">
+                        <i class="menu-icon fa fa-tachometer"></i>
+                        <span class="menu-text">首页</span>
+                        <b class="arrow fa fa-angle-down"></b>
+                    </a>
+                    <b class="arrow"></b>
+                    <ul class="submenu">
+                        <li>
+                            <a menu_url="{:url('index/index')}" href="{:url('index/index')}">
+                                <i class="menu-icon fa fa-caret-right"></i> 默认首页
+                            </a>
+                            <b class="arrow"></b>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+
+                    <a class="dropdown-toggle" href="#">
+                        <i class="menu-icon fa fa-tachometer"></i>
+                        <span class="menu-text">商户</span>
+                        <b class="arrow fa fa-angle-down"></b>
+                    </a>
+                    <b class="arrow"></b>
+                    <ul class="submenu">
+                        <li>
+                            <a menu_url="{:url('shop/index')}" href="{:url('shop/index')}">
+                                <i class="menu-icon fa fa-caret-right"></i> 商户管理
+                            </a>
+                            <b class="arrow"></b>
+                        </li>
+                        {eq name=" session('agent_open_son_agent')" value="1"}
+                        <li>
+                            <a menu_url="{:url('myagent/index')}" href="{:url('myagent/index')}">
+                                <i class="menu-icon fa fa-caret-right"></i> 下级代理
+                            </a>
+                            <b class="arrow"></b>
+                        </li>
+                        {/eq}
+                    </ul>
+                </li>
+                <li>
+                    <a class="dropdown-toggle" href="#">
+                        <i class="menu-icon fa fa-tachometer"></i>
+                        <span class="menu-text">交易查询</span>
+                        <b class="arrow fa fa-angle-down"></b>
+                    </a>
+                    <b class="arrow"></b>
+                    <ul class="submenu">
+                        <li>
+                            <a menu_url="{:url('order/index')}" href="{:url('order/index')}">
+                                <i class="menu-icon fa fa-caret-right"></i> 交易明细
+                            </a>
+                            <b class="arrow"></b>
+                        </li>
+                        
+                        <li>
+                            <a menu_url="{:url('orderreport/monthindex')}" href="{:url('orderreport/monthindex')}">
+                                <i class="menu-icon fa fa-caret-right"></i> 月报表
+                            </a>
+                            <b class="arrow"></b>
+                        </li>
+                        
+                        <li>
+                            <a menu_url="{:url('commission/index')}" href="{:url('commission/index')}">
+                                <i class="menu-icon fa fa-caret-right"></i> 佣金报表
+                            </a>
+                            <b class="arrow"></b>
+                        </li>
+
+                    </ul>
+                </li>
+            </ul>
+            <!-- /.nav-list -->
+            <!-- #section:basics/sidebar.layout.minimize -->
+            <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+                <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+            </div>
+			<div class="sidebar-toggle"style="color:white">
+				当前版本：<div class="badge badge-info">v{:config('softversion')}</div>
+				
+			</div>
+			<div style="height: 80px;background-color: #394158;
+    border-color: #394158;"></div>
+            <!-- /section:basics/sidebar.layout.minimize -->
+            <script type="text/javascript">
+            try {
+                ace.settings.check('sidebar', 'collapsed')
+            } catch (e) {}
+            </script>
+        </div>
+        {/block}
+        <!-- /section:basics/sidebar -->
+        <div class="main-content">
+            <div class="main-content-inner">
+                <!-- #section:basics/content.breadcrumbs -->
+                {block name="breadcrumbswarp"}
+                <div class="breadcrumbs" id="breadcrumbs">
+                    <script type="text/javascript">
+                    try {
+                        ace.settings.check('breadcrumbs', 'fixed')
+                    } catch (e) {}
+                    </script>
+                    {block name="breadcrumbs"}
+                    <!-- <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">Home</a>
+                        </li>
+                        <li>
+                            <a href="#">Other Pages</a>
+                        </li>
+                        <li class="active">Blank Page</li>
+                    </ul> -->
+                    <!-- /.breadcrumb -->
+                    <!-- #section:basics/content.searchbox -->
+                    <div class="nav-search" id="nav-search">
+                        <form class="form-search">
+                            <span class="input-icon">
+                                    <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                                    <i class="ace-icon fa fa-search nav-search-icon"></i>
+                                </span>
+                        </form>
+                    </div>
+                    {/block}
+                    <!-- /.nav-search -->
+                    <!-- /section:basics/content.searchbox -->
+                </div>
+                {/block}
+                <!-- /section:basics/content.breadcrumbs -->
+                <div class="page-content">
+                    <!-- /section:settings.box -->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <!-- PAGE CONTENT BEGINS -->
+                            {block name="page-content"} {/block}
+                            <!-- PAGE CONTENT ENDS -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- /.page-content -->
+            </div>
+        </div>
+        <!-- /.main-content -->
+        <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+            <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+        </a>
+    </div>
+    <!-- /.main-container -->
+    <!-- basic scripts -->
+    <script type="text/javascript">
+    if ('ontouchstart' in document.documentElement) document.write("<script src='../assets/js/jquery.mobile.custom.js'>" + "<" + "/script>");
+    </script>
+    <script src="../assets/js/bootstrap.js"></script>
+    <!-- page specific plugin scripts -->
+    <!-- ace scripts -->
+    <!--
+        <script src="../assets/js/ace/elements.scroller.js"></script>
+        
+        <script src="../assets/js/ace/elements.fileinput.js"></script>
+        <script src="../assets/js/ace/elements.typeahead.js"></script>
+
+        <script src="../assets/js/ace/elements.wysiwyg.js"></script>
+        <script src="../assets/js/ace/elements.spinner.js"></script>
+        -->
+    <!-- page specific plugin scripts -->
+    <script src="../assets/js/jquery.colorbox.js"></script>
+    <script src="../assets/js/ace/elements.colorpicker.js"></script>
+    <script src="../assets/js/ace/elements.treeview.js"></script>
+    <script src="../assets/js/ace/elements.wizard.js"></script>
+    <script src="../assets/js/ace/elements.aside.js"></script>
+    <script src="../assets/js/ace/ace.js"></script>
+    <!-- <script src="../assets/js/ace/ace.ajax-content.js"></script> -->
+    <script src="../assets/js/ace/ace.touch-drag.js"></script>
+    <script src="../assets/js/ace/ace.sidebar.js"></script>
+    <script src="../assets/js/ace/ace.sidebar-scroll-1.js"></script>
+    <script type="text/javascript" src="/static/common/js/My97DatePicker/WdatePicker.js"></script>
+    <!--
+        <script src="../assets/js/ace/ace.submenu-hover.js"></script>
+
+        <script src="../assets/js/ace/ace.widget-box.js"></script>
+        <script src="../assets/js/ace/ace.settings.js"></script>
+        <script src="../assets/js/ace/ace.settings-rtl.js"></script>
+        <script src="../assets/js/ace/ace.settings-skin.js"></script>
+        <script src="../assets/js/ace/ace.widget-on-reload.js"></script>
+        <script src="../assets/js/ace/ace.searchbox-autocomplete.js"></script> -->
+    <!-- inline scripts related to this page -->
+    <!-- the following scripts are used in demo only for onpage help and you don't need them -->
+    <!-- <link rel="stylesheet" href="../assets/css/ace.onpage-help.css" />
+        <link rel="stylesheet" href="../docs/assets/js/themes/sunburst.css" /> -->
+    <!--
+        <script type="text/javascript"> ace.vars['base'] = '..'; </script>
+        <script src="../assets/js/ace/elements.onpage-help.js"></script>
+        <script src="../assets/js/ace/ace.onpage-help.js"></script>
+        <script src="../docs/assets/js/rainbow.js"></script>
+        <script src="../docs/assets/js/language/generic.js"></script>
+        <script src="../docs/assets/js/language/html.js"></script>
+        <script src="../docs/assets/js/language/css.js"></script>
+        <script src="../docs/assets/js/language/javascript.js"></script>
+        -->
+</body>
+<script type="text/javascript">
+function isIE() { //ie?
+    if (!!window.ActiveXObject || "ActiveXObject" in window)
+        return true;
+    else
+        return false;
+}
+if (isIE() == true) {
+    document.body.style.backgroundColor="#000";
+    document.body.innerHTML = '<h1 style="color:#000;text-align:center;">不支持IE浏览器，请使用360（高速模式）、搜狗（高速模式）、google等高级浏览器</h1>';
+    alert("不支持IE浏览器，请使用360（高速模式）、搜狗（高速模式）、google等高级浏览器");
+}
+
+
+//tab 标签，刷新自动焦点
+if (location.hash)
+{
+    $('a[href=' + location.hash + ']').tab('show');
+}
+
+$(document.body).on("click", "a[data-toggle]", function(event)
+{
+    location.hash = this.getAttribute("href");
+});
+
+
+$(window).on('popstate', function()
+{
+    var anchor = location.hash || $("a[data-toggle=tab]").first().attr("href");
+    //$('a[href=' + anchor + ']').tab('show');
+});
+//__tab 标签，刷新自动焦点
+
+//chosen
+if (!ace.vars['touch']) {
+    $('.chosen-select').chosen({
+        allow_single_deselect: true,
+        search_contains: true
+    });
+    //resize the chosen on window resize
+
+    $(window)
+        .off('resize')
+        .on('resize', function() {
+            $('.chosen-select').each(function() {
+                var $this = $(this);
+                $this.next().css({
+                    'width': $this.parent().width()
+                });
+            })
+        }).trigger('resize');
+    //resize chosen on sidebar collapse/expand
+    $(document).on('settings.ace.chosen', function(e, event_name, event_val) {
+        if (event_name != 'sidebar_collapsed') return;
+        $('.chosen-select').each(function() {
+            var $this = $(this);
+            $this.next().css({
+                'width': $this.parent().width()
+            });
+        })
+    });
+}
+//__chosen
+
+
+//左侧菜单获取焦点
+if ("{:isset($menu_point_id)?$menu_point_id:''}" != "") {
+    $(".nav .menu_id_{:isset($menu_point_id)?$menu_point_id:''}").parentsUntil(".nav nav-list").addClass("active");
+} else {
+
+    var leftmenuurl = '{:request()->controller()}/index';
+    var leftmenuurlArray = leftmenuurl.match(/[A-Z]/g);
+    if (leftmenuurlArray) {
+        for (var i = 0; i < leftmenuurlArray.length; i++) {
+            leftmenuurl = leftmenuurl.replace(leftmenuurlArray[i], "_" + (leftmenuurlArray[i]).toLowerCase());
+        }
+        leftmenuurl = leftmenuurl.replace(/^_?/, "");
+    }
+    //layer.alert(leftmenuurl);
+    $(".nav").find("a[menu_url*='/" + leftmenuurl + "']").parentsUntil(".nav nav-list").addClass("active");
+
+    //双层保障
+    if ("{:request()->action()}" != "index") {
+        var leftmenuurl2 = '{:request()->controller()}/{:request()->action()}';
+        var leftmenuurl2Array = leftmenuurl2.match(/[A-Z]/g);
+        if (leftmenuurl2Array) {
+            for (var i = 0; i < leftmenuurl2Array.length; i++) {
+                leftmenuurl2 = leftmenuurl2.replace(leftmenuurl2Array[i], "_" + (leftmenuurl2Array[i]).toLowerCase());
+            }
+            leftmenuurl2 = leftmenuurl2.replace(/^_?/, "");
+        }
+        //layer.alert(leftmenuurl2);
+        $(".nav").find("a[menu_url*='" + leftmenuurl2 + "']").parentsUntil(".nav nav-list").addClass("active");
+    }
+}
+
+//公共常规事件
+//图片heighLinghtBox
+var $overflow = '';
+var colorbox_params = {
+    rel: 'colorbox',
+    reposition: true,
+    scalePhotos: true,
+    scrolling: false,
+    previous: '<i class="ace-icon fa fa-arrow-left"></i>',
+    next: '<i class="ace-icon fa fa-arrow-right"></i>',
+    close: '&times;',
+    current: '{current} of {total}',
+    maxWidth: '100%',
+    maxHeight: '100%',
+    onOpen: function() {
+        $overflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+    },
+    onClosed: function() {
+        document.body.style.overflow = $overflow;
+    },
+    onComplete: function() {
+        $.colorbox.resize();
+    }
+};
+//$('.ace-thumbnails [data-rel="colorbox"]').colorbox(colorbox_params);
+$('a[data-rel="colorbox"]').colorbox(colorbox_params);
+//__图片heighLinghtBox
+
+    //pop提示
+    $('[data-rel=popover]').popover({container:'body',html:true});
+</script>
+{block name="floot"}
+{/block}
+</html>

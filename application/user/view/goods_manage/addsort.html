@@ -1,0 +1,181 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+
+<ul class="breadcrumb">
+	<li class="active">
+		<i class="ace-icon fa fa-home home-icon"></i>
+		<span _href="#">商品管理</span>
+	</li>
+	<li class="active">
+		新增商品分类
+	</li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block}
+
+{block name="page-content"}
+<div class="add-body">
+
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('addcate')}" id="upload" enctype="multipart/form-data">
+
+	<input type="hidden" name="shop_id" value="">
+	
+	
+	{include file="common/input" title="*分类名称" fieldName="category_name" defaultValue='' placeholder="" required=""
+	pattern="*" helpInfo=''}
+	
+	
+	
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right">*分类图片</label>
+		<div class="col-sm-10">
+			<img id="preview" style="width:38px;height: 38px;float:left" />
+			<input type="text" id="imgfield" class="txt" placeholder="预览" style="display: none">
+			<input type="file" name="file" id="input_file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" onchange="imgPreview(this)">
+			<span style="font-size: 12px;color: #ccc;">（仅限制上传png,jpg,gif格式）</span>
+			<!-- <input type="file" accept="image/*" name="file" id="file" value="" name="goods_picurl"/> -->
+		</div>
+	</div>
+
+	{include file="common/input" title="分类排序" fieldName="category_sort" defaultValue='1' placeholder=""
+	required="required" pattern="*" helpInfo=''}
+	
+	
+
+	<div class="space-4"></div>
+	<div class="clearfix form-actions">
+		<div class="col-md-offset-3 col-md-9">
+			<button class="btn btn-info" type="button" id="submit">
+				<i class="ace-icon fa fa-check bigger-110"></i> 提交
+			</button>
+			&nbsp; &nbsp; &nbsp;
+			<button class="btn" type="button" onclick="history.back();">
+				<i class="ace-icon fa fa-undo bigger-110"></i> 返回
+			</button>
+		</div>
+	</div>
+	<div class="hr hr-24"></div>
+</form>
+</div>
+<script>
+	
+	function imgPreview(fileDom) {
+		//判断是否支持FileReader
+		if (window.FileReader) {
+			var reader = new FileReader();
+		} else {
+			alert("您的设备不支持图片预览功能，如需该功能请升级您的设备！");
+		}
+		//获取文件
+        var file = fileDom.files[0];
+        // alert(file.name);
+        var imageType = /^image\//;
+        var fileFormat = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+        //是否是图片
+        if (!imageType.test(file.type)) {
+            alert("请选择图片！");
+            return;
+        }
+        else if(!fileFormat.match(/.png|.jpg|.jpeg|.gif/)){
+            alert('上传错误,文件格式必须为：png/jpg/jpeg/gif');
+            return;
+        }
+
+		//读取完成
+		reader.onload = function(e) {
+			//获取图片dom
+			var img = document.getElementById("preview");
+			//图片路径设置为读取的图片
+			img.src = e.target.result;
+		};
+		reader.readAsDataURL(file);
+
+		var formData = new FormData();
+		formData.append('img', $('#input_file')[0].files[0]); //添加图片信息的参数
+		$.ajax({
+			url: '/user/goods_manage/uploadimage.html',
+			type: 'POST',
+			cache: false, //上传文件不需要缓存
+			data: formData,
+			processData: false, // 告诉jQuery不要去处理发送的数据
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			success: function(data) {
+				$("#imgfield").val(data.data);
+				
+			},
+			error: function(data) {
+				// tipTopShow("上传失败");
+				console.log(data);
+			}
+		});
+	}
+
+	$("#submit").click(function() {
+		var name = $("#category_name").val();		
+		var picurl = $("#imgfield").val();		
+		var sortid = $("#category_sort").val();
+        if(name==""||name==null){
+            alert("请输入分类名")
+        }
+        else if (picurl==""){
+            alert("请选择分类图片")
+        }
+        // else if(sort==""){
+        //     alert("请输入分类类别")
+        // }
+        else{
+            $.post("/user/goods_manage/addcate.html", {
+                category_name: name,
+                sort: sortid,
+                img: picurl,
+
+
+
+            }, function(res) {
+                if(res.code == 200){
+                    alert(res.msg);
+                    window.location.href = res.url;
+                }
+                else{
+                    alert(res.msg);
+                }
+
+            });
+        }
+
+	});
+	//
+</script>
+{/block}
+
+{block name="head"}
+<script src="/static/common/js/tableExport/jquery.base64.js"></script>
+<script src="/static/common/js/tableExport/tableExport.js"></script>
+<script type="text/javascript" src="/static/common/js/bootstrapPaginator.js"></script>
+<script type="text/javascript">
+    $(function() {
+        check_login();
+        $("#store-name").html(store_name);
+        $("#user-name").html(user_realname);
+        $("#log-off").on('click', function() {
+            clear_cookie();
+            $(location).attr('href', common_url + '/user/index/login');
+        });
+
+    });
+    /**
+     function g(a){
+		// layer.msg
+		layer.confirm('删除？', {
+		  btn: ['确定', '取消'] //可以无限个按钮
+		  ,yes: function(index, layero){
+			//按钮【按钮三】的回调
+		  }
+		,btn2: function(index, layero){
+		  //按钮【按钮一】的回调
+		});
+		console.log(a);
+	}
+	*/
+</script>
+{/block}
+

@@ -1,0 +1,208 @@
+{extend name="common/common"}
+
+{block name="navbar"}
+{/block}
+{block name="nav-list"}
+{/block}
+
+{block name="breadcrumbswarp"}
+
+<!-- #section:basics/content.searchbox -->
+{/block} {block name="page-content"}
+<style>
+    .page-content{
+        margin: 0;
+    }
+</style>
+<div class="order-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    <input type="hidden" name="user_id" value="{:$one?$one->user_id:''}">
+    <input type="hidden" name="user_store_id" value="{:$one?$one->user_store_id:input('user_store_id',0)}">
+    
+
+    
+    
+    {eq name=" input('type','')" value=""}
+    
+    {include file="common/input" title="*备注/名称" fieldName="user_realname" defaultValue='<?php echo(isset($one->user_realname)?$one->user_realname:"");?>' placeholder="" disabled="" required="required" pattern="*" helpInfo=''}
+
+    {include file="common/input" title="*手机号" fieldName="user_mobile" defaultValue='<?php echo(isset($one->user_mobile)?$one->user_mobile:"");?>' placeholder="" disabled="" required="required" pattern='*' helpInfo="登陆使用，用于收款码可不填"}
+
+    {include file="common/input" disabled="" title="*密码" fieldName="user_password" defaultValue='' placeholder="<?php echo(isset($one->user_password)?'不修改保持为空':'登陆密码，用于收款码可不填');?>" required="required" pattern="*" helpInfo='字母或数字,6~20位'}
+
+    
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">退款权限：</label>
+        <div class="col-sm-10" style="padding-top: 8px;">
+            <label>
+                <input name="user_refund_auth" onchange="javascript:$('#box_user_refund_password').toggleClass('hidden');" value="1" <?php echo(isset($one->user_refund_auth)?($one->user_refund_auth==1?'checked':''):'');?> id="user_refund_auth" class="ace ace-switch" type="checkbox" />
+                <span class="lbl"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group <?php echo(isset($one->user_refund_auth)?($one->user_refund_auth==1?'':'hidden'):'hidden');?>" id="box_user_refund_password">
+        <label class="col-sm-2 control-label no-padding-right">退款密码：</label>
+        <div class="col-sm-10">
+            <div class="input-group col-sm-5">
+                <input type="text" placeholder="<?php echo(isset($one->user_refund_password)?'不修改保持为空':'输入退款密码');?>" pattern="*" name="user_refund_password" value="" title="退款密码" id="user_refund_password" class="col-xs-10 col-sm-12" />
+                <span class="input-group-btn">
+                    <button class="btn btn-sm " type="button" onclick="javascript:$('#user_refund_password').val(GetRandomNum(11111111,99999999));">
+                        <i class="ace-icon fa fa-gavel bigger-110"></i>
+                        随机
+                    </button>
+                </span>
+            </div>            
+            <span class="help-inline col-xs-12 col-sm-7">
+                    <span class="middle">字母或数字,8~20位</span>
+            </span>
+        </div>
+    </div>
+
+    {eq name="store_open_reward" value="1"}
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">接受打赏：</label>
+        <div class="col-sm-10" style="padding-top: 8px;">
+            <label>
+                <input name="user_play_reward" value="1" <?php echo(isset($one->user_play_reward)?($one->user_play_reward==1?'checked':''):'');?> id="user_play_reward" class="ace ace-switch" type="checkbox" />
+                <span class="lbl"></span>
+            </label>
+        </div>
+    </div>
+    {/eq}
+
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">角色：</label>
+        <div class="col-sm-10">
+            <div class="radio">
+                <label>
+                    <input name="user_role" value="0" type="radio" class="ace" />
+                    <span class="lbl">老板</span>
+                    <a class="help-button" title="能查看所有经营场地的交易数据，全部的权限">?</a>
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input name="user_role" value="1" type="radio" class="ace" />
+                    <span class="lbl">店长</span>
+                    <a class="help-button" title="能查看当前经营场地的所有交易数据，全部的权限">?</a>
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input name="user_role" value="2" type="radio" class="ace" />
+                    <span class="lbl">收银员</span>
+                    <a class="help-button" title="能查看当前经营场地的自己交易数据">?</a>
+                </label>
+            </div>
+            <script type="text/javascript">
+            $("input[name='user_role'][value='{:isset($one->user_role)?$one->user_role:'2'}']").attr("checked", "checked");
+            </script>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right"> 状态：</label>
+        <div class="col-sm-10">
+            <div class="radio pull-left">
+                <label>
+                    <input name="user_active" value="1" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;正常</span>
+                </label>
+            </div>
+            <div class="radio pull-left">
+                <label>
+                    <input name="user_active" value="0" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;关闭</span>
+                </label>
+            </div>
+            <script type="text/javascript">
+            $("input[name='user_active'][value='{:isset($one->user_active)?$one->user_active:'1'}']").attr("checked", "checked");
+            </script>
+        </div>
+    </div>
+    {else/}
+        {eq name=" input('type','')" value="addchannel"}
+            {include file="common/input" title="通道备注" fieldName="user_realname" defaultValue='<?php echo(isset($one->user_realname)?$one->user_realname:"");?>' placeholder="" disabled="" required="required" pattern="*" helpInfo=''}
+        {/eq}
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label no-padding-right">测试：</label>
+            <div class="col-sm-10">
+                <button type="button" onclick="testLed()">播放测试显示屏</button>
+                &nbsp;&nbsp;
+                <button type="button" onclick="testSound()">播放测试声音</button>
+                &nbsp;&nbsp;
+                <button type="button" onclick="testOpenDoor()">抬杆测试(需要人工放回)</button>
+            </div>
+        </div>
+    {/eq}
+
+    
+
+
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit">
+                <i class="ace-icon fa fa-check bigger-110"></i> 提交
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+{/block}
+{block name="floot"}
+<script type="text/javascript">
+function GetRandomNum(Min,Max)
+{   
+    var Range = Max - Min;   
+    var Rand = Math.random();   
+    return(Min + Math.round(Rand * Range));  
+}
+
+function testLed() {
+    $.ajax({
+        "url":"{:url('yibotest?actionname=LED_display')}",
+        "type":"post",
+        "dataType":"json",
+        "data":{"user_id":{:input('user_id')}},
+        success:function(rs){
+            layer.alert(rs.message);
+        }
+    });
+}
+
+function testSound() {
+    $.ajax({
+        "url":"{:url('yibotest?actionname=LED_sound')}",
+        "type":"post",
+        "dataType":"json",
+        "data":{"user_id":{:input('user_id')}},
+        success:function(rs){
+            layer.alert(rs.message);
+        }
+
+    });
+}
+
+function testOpenDoor() {
+    $.ajax({
+        "url":"{:url('yibotest?actionname=open_door')}",
+        "type":"post",
+        "dataType":"json",
+        "data":{"user_id":{:input('user_id')}},
+        success:function(rs){
+            layer.alert(rs.message);
+        }
+
+    });
+}
+</script>
+{/block}

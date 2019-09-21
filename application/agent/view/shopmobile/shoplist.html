@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta content="telephone=no" name="format-detection" />
+        <meta content="email=no" name="format-detection" />
+        <title>列表-商户资料收集(手机端)</title>
+        <link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
+        <style type="text/css">
+        .basepage {}
+        .basepage .boxwarp {
+            padding-top: 20px;
+        }
+        .page_title,
+        .page_desc {
+            padding-left: 10px;
+        }
+        body {
+        }
+        .weui-footer {
+            margin-top: 20px;
+        }
+        .status-1{display:inline-block; background: red; width: 8px; height: 8px; overflow: hidden; border-radius: 50%; margin-bottom: 2px;}
+        .status1{display:inline-block; background: blue; width: 8px; height: 8px; overflow: hidden; border-radius: 50%; margin-bottom: 2px;}
+        </style>
+    </head>
+    <body>
+        <div class="container js_container">
+            <div class="page">
+                <div class="page__bd">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd"><strong>商户列表</strong></div>
+                        <div class="weui-cell__ft">
+                            <a href="javascript:;" onclick="javascript:window.location.reload();" class="weui-btn weui-btn_mini weui-btn_default">刷新列表</a>
+                            <a href="{:url('addone')}" class="weui-btn weui-btn_mini weui-btn_default">新增</a>
+                        </div>
+                    </div>
+                    <div class="weui-panel weui-panel_access">
+                        <div class="weui-panel__bd">
+                            {volist name="shoplist" id="vo"}
+                            <div class="weui-media-box weui-media-box_text">
+                                <h4 class="weui-media-box__title" onclick="window.location.href='{:url("shopone?shop_id_token=".$vo['shop_id_token'])}';">
+                                <span class="status{$vo.status.shop_data_status}"></span>
+                                {$vo.shop_name|default='<新的商户>'}<!-- <span class="weui-badge">等待完善</span> -->
+                                </h4>
+                                <p class="weui-media-box__desc">{$vo.shop_master_name} <a href="tel:{$vo.shop_tel}">{$vo.shop_tel}</a></p>
+                            </div>
+                            {/volist}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="weui-footer">
+            <p class="weui-footer__text">
+                服务商：{:config('site_title')}
+                <br />电话：<a href="tel:{$sysconfig->telphone}">{$sysconfig->telphone}</a> © {:date("Y")}
+            </p>
+        </div>
+    </body>
+    <script type="text/javascript" src="//res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>
+</html>

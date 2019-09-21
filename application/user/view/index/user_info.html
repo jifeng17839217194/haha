@@ -1,0 +1,147 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+	<li class="active">
+		<i class="ace-icon fa fa-home home-icon"></i>
+		<span _href="#">经营场地信息</span>
+	</li>
+	<li class="active">
+		我的账号
+	</li>
+
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block}
+{block name="head"}
+<script type="text/javascript">
+	$(function(){
+		check_login();
+		/*alert(store_name);*/
+		$("#store-name").html(store_name);
+		$("#user-name").html(user_realname);		
+		$("#log-off").on('click',function(){
+			clear_cookie();
+			$(location).attr('href', common_url+'/user/index/login');
+		});
+	});
+</script>
+{/block}
+{block name="page-content"}
+<div class="userinfo-body">
+	<div class="form-horizontal">
+		<div class="form-group">
+			<label class="col-sm-2 control-label no-padding-right">名称：</label>
+		    <div class="col-sm-10">
+		        <input type="text" placeholder="" pattern="*" disabled name="user_realname" value="" title="店铺名称" id="user_realname" class="col-xs-10 col-sm-5">				       
+		    </div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label no-padding-right">角色：</label>
+		    <div class="col-sm-10">
+		        <input type="text" placeholder="" pattern="*" disabled name="user_role_name" value="" title="店铺名称" id="user_role_name" class="col-xs-10 col-sm-5">				       
+		    </div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label no-padding-right">登录密码：</label>
+			<div class="col-sm-10">
+		        <input type="text" placeholder="原始密码，为空不修改" pattern="*" [disabled]="" name="user_password_old" value="" title="旧密码" id="user_password_old" class="col-xs-10 col-sm-2">&nbsp;&nbsp;&nbsp;&nbsp;
+		        <input type="text" placeholder="新密码，为空不修改" pattern="*" [disabled]="" name="user_password_new" value="" title="新密码" id="user_password_new" class="col-xs-10 col-sm-2" style="margin:0 20px;"><button type="button" class="btn btn-sm btn-primary btn-submit" id="btn-sign-save">
+                    <i class="ace-icon fa fa-key"></i>
+                    <span class="bigger-110">保存</span>
+                </button>
+		    </div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label no-padding-right">退款密码：</label>
+			<div class="col-sm-10">
+		        <input type="text" placeholder="原始密码，为空不修改" pattern="*" [disabled]="" name="user_refund_password_old" value="" title="旧密码" id="user_refund_password_old" class="col-xs-10 col-sm-2">&nbsp;&nbsp;&nbsp;&nbsp;
+		        <input type="text" placeholder="新密码，为空不修改" pattern="*" [disabled]="" name="user_refund_password_new" value="" title="新密码" id="user_refund_password_new" class="col-xs-10 col-sm-2" style="margin:0 20px;"><button type="button" class="btn btn-sm btn-primary btn-submit" id="btn-refund-save">
+                    <i class="ace-icon fa fa-key"></i>
+                    <span class="bigger-110">保存</span>
+                </button>
+		    </div>
+		</div>
+	</div>
+<script type="text/javascript">
+	$(function(){
+		var user_role_cn=$.cookie('user_role_cn');
+		var user_refund_auth=$.cookie("user_refund_auth");
+		var microtime=Date.parse(new Date())/1000;   
+		$("#user_realname").val(user_realname);
+		$("#user_role_name").val(user_role_cn);
+		if(user_refund_auth<=0){
+			$("#user_refund_password_old").parents(".form-group").css("display","none");
+		}
+		$("#btn-sign-save").click(function(){
+			var user_password_old=$("#user_password_old").val();
+			var user_password_new=$("#user_password_new").val();			
+			if(user_password_new==''||user_password_old==''){
+				alert("修改密码不能为空！");return;
+			}
+			if(user_password_old==user_password_new){
+				alert("两次密码不能一致！");return;
+			}
+			var postParam = {
+                user_id: user_id,
+                oldpassword: user_password_old,
+                newpassword: user_password_new,
+                version:1,
+                time:microtime
+            };
+            var sign = getsign(postParam);
+            postParam.sign = sign; //不这么传值下，有错误
+			$.ajax({
+				type:"post",
+				url:"{:url('api/user/updateloginpassword')}",
+				data:postParam,
+				dataType:"json",
+				async:true,
+				success:function(res){
+					if(res.code==1){
+						alert("修改成功！");
+						$("#user_password_old").val('');
+						$("#user_password_new").val('');
+					}else{
+						alert(res.message);
+					}
+				}
+			});
+		});
+		$("#btn-refund-save").click(function(){
+			var user_refund_password_old=$("#user_refund_password_old").val();
+			var user_refund_password_new=$("#user_refund_password_new").val();
+			if(user_refund_password_old==''||user_refund_password_new==''){
+				alert("修改密码不能为空！");return;
+			}
+			if(user_refund_password_old==user_refund_password_new){
+				alert("两次密码不能一致！");return;
+			}
+			var postParam = {
+                user_id: user_id,
+                oldpassword: user_refund_password_old,
+                newpassword: user_refund_password_new,
+                version:1,
+                time:microtime
+            };
+            var sign = getsign(postParam);
+            postParam.sign = sign; //不这么传值下，有错误
+			$.ajax({
+				type:"post",
+				url:"{:url('api/user/updatepaypassword')}",
+				data:postParam,
+				dataType:"json",
+				async:true,
+				success:function(res){
+					if(res.code==1){
+						alert("修改成功！");
+						$("#user_refund_password_old").val('');
+						$("#user_refund_password_new").val('');
+					}else{
+						alert(res.message);
+					}
+				}
+			});
+		});
+	})
+</script>	
+</div>
+{/block}

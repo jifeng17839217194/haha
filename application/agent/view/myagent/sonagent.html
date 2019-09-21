@@ -1,0 +1,55 @@
+{extend name="common/common"}
+
+{block name="navbar"}
+{/block}
+{block name="nav-list"}
+{/block}
+
+{block name="breadcrumbs"}
+<!-- #section:basics/content.searchbox -->
+<div class="nav-search nav-positions" id="nav-search">
+    <form class="form-search form-inline">
+        <span class="input-icon">
+            <input type="text" placeholder="关键词" name="keyword" value="{:input('get.keyword')}" class="nav-search-input" autocomplete="off" />
+            <i class="ace-icon fa fa-search nav-search-icon"></i>
+        </span>
+        <input type="submit" class="btn btn-info btn-xs " value="搜索">
+        
+    </form>
+</div>
+{/block} {block name="page-content"}
+<div class="admin-body">
+<form action="" id="form2" method="POST">
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>公司名称</th>
+                <th>联系人</th>
+                <th>佣金比例</th>
+                <th>直接下级代理商</th>
+                <th>电话</th>
+                <th width="151">新增时间</th>
+            </tr>
+        </thead>
+        {volist name="lists" id="vo"}
+        <tr >
+            <td>{$vo.agent_company_name}</td>
+            <td>{$vo.agent_name}</td>
+            <td>{$vo.agent_proportion}</td>
+            <td>
+                <a title="{$vo.agent_company_name} {$vo.agent_name} 直接下级代理商" href="{:url('sonagent?agent_id='.$vo['agent_id'])}" ajax='{"window":"iframe","width":"500","height":"auto"}'>{$vo.agent_son_count|default=0}个</a>
+            </td>
+            <td>{$vo.agent_mobile}</td>
+            <td>{$vo.agent_addtime}</td>
+        </tr>
+        {/volist}
+    </table>
+</form>
+<div class="pull-right ">
+    <p style="text-align:right;">共{$lists->total()}条记录</p>
+    {$lists->render()}
+</div>
+<div class="clearfix ">
+</div>
+</div>
+{/block}

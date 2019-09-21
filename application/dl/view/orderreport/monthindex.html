@@ -1,0 +1,222 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">交易查询</span>
+    </li>
+    <li class="active">
+        月报表
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block}
+{block name="head"}
+<script src="/static/common/js/tableExport/jquery.base64.js"></script>
+<script src="/static/common/js/tableExport/tableExport.js"></script>
+<script type="text/javascript" src="/static/common/js/bootstrapPaginator.js"></script>
+<!-- 
+<script src="/static/dl/assets/js/dataTables/jquery.dataTables.js"></script>
+<script src="/static/dl/assets/js/dataTables/jquery.dataTables.bootstrap.js"></script>
+<script src="/static/dl/assets/js/dataTables/extensions/TableTools/js/dataTables.tableTools.js"></script>
+<script src="/static/dl/assets/js/dataTables/extensions/ColVis/js/dataTables.colVis.js"></script>
+-->
+{/block}
+{block name="page-content"}
+<!-- 
+<ul class="nav nav-tabs">
+    <li class="active">
+        <a href="#">
+            流水记录
+        </a>
+    </li>
+</ul>
+-->
+<div class="orderreport-body">
+    <form class="form-search form-horizontal" id="searchfrom" action="javascript:thisOrderPage.doGetData(thisOrderPage.showlistpage);">
+        <input type="hidden" id="page" name="page" value="1">
+        <div class="alert alert-block alert-warning ">
+            月报告 = 记录本系统内的交易数据；若在官方平台操作退款、或使用第三方工具交易则不计算在内；
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group col-sm-4">
+                    <label class="col-sm-2 control-label">交易月份</label>
+                    <div class="col-sm-10">
+                            <input onFocus="WdatePicker({isShowClear:true,dateFmt:'yyyy-MM',alwaysUseStartDate:true});" placeholder="开始" title="开始" value="{:date("Y-m")}" name="order_month" id="order_month" class="nav-search-input col-sm-12" type="text" />
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <label class="col-sm-4 control-label">通道</label>
+                    <div class="col-sm-8" style="padding-top: 4px;">
+                        <select class="chosen-select" name="order_channel_id" id="order_channel_id">
+                            <option value="">不限制</option>
+                            <option value="alipay">支付宝支付</option>
+                            <option value="wxpay">微信支付</option>
+                        </select>
+                        <script type="text/javascript">
+                        $("#order_channel_id").val("{:input('order_channel_id')}");
+                        </script>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <!-- <label class="col-sm-3 control-label">交易数据</label>
+                    <div class="col-sm-9" style="padding-top: 6px;">
+                        <div class="control-group">
+                                <label>
+                                    <input name="data_from" value="official" name="form-field-radio" type="radio" class="ace" />
+                                    <span class="lbl"> 官方有效成交</span>
+                                </label>
+                                <label>
+                                    <input name="data_from" value="local" name="form-field-radio" checked type="radio" class="ace" />
+                                    <span class="lbl"> 本系统数据(供参考)</span><span class="help-button" data-rel="popover" data-trigger="hover" data-placement="right" data-content="本系统数据仅供参考，切勿用于财务结算；" title="">?</span>
+                                </label>
+                        </div>                        
+                    </div> -->
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group col-sm-4">
+                    <label class="col-sm-2 control-label">签约商户</label>
+                    <div class="col-sm-10">
+                        <select class="chosen-select" style="width: 100%!important;" data="{:input('get.order_shop_id')}" name="order_shop_id" id="order_shop_id" onchange="thisOrderPage.shopchange(this.value,0)">
+                            <option value="0">--全部商户--</option>
+                            {volist name="shoplist" id="vo"}
+                            <option value="{$vo.shop_id}">{$vo.shop_name}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <!--<label class="col-sm-4 control-label"></label>-->
+                    <div>
+                        <button onclick="javascript:$('#page').val(0);" class="btn btn-inverse btn-sm"><i class="ace-icon fa fa-search nav-search-icon"></i>查看</button>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="hr hr-12"></div>
+    <table class="table table-striped table-bordered table-hover" id="reporttable">
+        <thead>
+            <tr>
+                <th width="150">月份</th>
+                <th>支付通道</th>
+                <th>签约商户</th>
+                <th width="150">¥订单金额</th>
+                <th width="150">¥成交金额</th>
+                <th width="150">¥退款金额</th>
+            </tr>
+        </thead>
+        <tbody id="listpagebody">
+        </tbody>
+        <!-- <tr>
+            <td title="自动递增ID:{vo.order_id}">{vo.order_num}<br />{vo.order_trade_no}</td>
+            <td>{vo.order_subject}</td>
+            <td align="right">{vo.order_total_amount}</td>
+            <td>{vo.order_channel_id_info}</td>
+            <td>{vo.order_addtime}</td>
+            <td>{vo.order_pay_time}</td>
+            <td>{vo.order_status_info}</td>
+        </tr> -->
+    </table>
+    <div class="pull-right">
+        <a href="javascript:;" onclick="javascript:thisOrderPage.downloadtable();">
+            <i class="ace-icon fa fa-download"></i>下载表格
+        </a>
+    </div>
+    </form>
+    <div class="pull-right ">
+        <ul id="pagination" class="pagination"></ul>
+    </div>
+    <div class="clearfix ">
+    </div>
+</div>
+{/block} {block name="floot"}
+<script type="text/javascript">
+var thisOrderPage = {
+    //获取数据
+    doGetData: function(callBack)
+    {
+        thisOrderPage.showlistpageInit();
+        var index = layer.load(1,
+        {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        $.ajax(
+        {
+            url: "{:url('getsearchdata')}",
+            data: $("#searchfrom").serialize(),
+            dataType: "json",
+            success: function(rs)
+            {
+                layer.close(index);
+                callBack && callBack(rs);
+                if(rs.code==0)
+                {
+                    layer.alert(rs.message);
+                }
+            },
+            error: function()
+            {
+                layer.close(index);
+            }
+        })
+    },
+    //列表页初始化
+    showlistpageInit: function()
+    {
+        $("#listpagebody").html("");
+    },
+    downloadtable:function(){
+        $("#reporttable").tableExport({type:'excel',fileName:$('#order_month').val()+"_月交易报表",escape:'false'});
+    },
+    //列表页展示
+    showlistpage: function(rs)
+    {
+        if (rs.data.list&&rs.data.list.length>0)
+        {
+            var innertHTML = "";
+            rs.data.list.forEach(function(one)
+            {
+                innertHTML += "<tr>";
+                innertHTML += '<td>' + (document.querySelector("#order_month").value) + '</td>';
+                innertHTML += '<td>' + (document.querySelector("#order_channel_id").value==""?"全部":document.querySelector("#order_channel_id").value) + '</td>';
+                innertHTML += '<td>' + one.shop_name + '</td>';
+                innertHTML += '<td align="right">' + one.order_pay_realprice + '</td>';
+                innertHTML += '<td align="right">' + one.order_total_amount + '</td>';
+                innertHTML += '<td align="right">' + one.order_refund_amount + '</td>';
+                innertHTML += "</tr>";
+            });
+            $("#listpagebody").html(innertHTML);
+            //$('#pagination').prepend("总" + rs.total + "条记录<br />");
+        }
+        else
+        {
+            $("#listpagebody").html("<tr><td colspan='6'>没有数据</td> </tr>");
+            layer.msg("没有数据");
+        }
+        // var table=$('#reporttable').dataTable();
+        // if(table){table.fnDestroy();}
+        // $('#reporttable').dataTable(
+        // {
+        //     bAutoWidth: false,
+        //     searching : false,//是否显示搜索框
+        //     bInfo : false,//是否显示页数信息
+        //     "aoColumns": [
+        //       { "bSortable": false },
+        //       { "bSortable": false },
+        //       null,null,null,null
+        //     ],
+        //     "aaSorting": [],
+        //     "bPaginate": false,
+        // });
+    }
+};
+//thisOrderPage.selectinit();
+$(document).ready(function(){
+    $("#searchfrom").submit();
+})
+</script>
+{/block}

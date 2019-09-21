@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>mobile</title>
+	<style type="text/css">
+	iframe{ width: 200px; height: 100px; border: 1px solid #ccc; margin-right: 10px; margin-bottom: 10px;}
+	</style>
+</head>
+<script type="text/javascript" src="../assets/js/jquery.js"></script>
+<body>
+<div id="msg">0</div>
+<script type="text/javascript">
+for (var i = 1; i <= 100; i++) {
+	document.write('('+ i +')<iframe src="{:url('mobileinnert')}" frameborder="0"></iframe>');
+}
+var thisApp={
+	"run":function(){
+		$.ajax({
+			"url":"{:url('getpostmobile')}",
+			"type":"get",
+			success:function(rs){
+				$("#msg").html(rs);
+			}
+		});
+	}
+};
+setInterval(function(){thisApp.run()},1000);
+</script>
+</body>
+</html>

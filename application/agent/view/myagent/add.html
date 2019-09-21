@@ -1,0 +1,135 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">代理商</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block} {block name="page-content"}
+<div class="order-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    <input type="hidden" name="agent_id" value="{:$one?$one->agent_id:''}">
+
+    
+    {include file="common/input" title="*代理商公司名称" fieldName="agent_company_name" defaultValue='<?php echo(isset($one->agent_company_name)?$one->agent_company_name:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+    {include file="common/input" title="*代理商姓名" fieldName="agent_name" defaultValue='<?php echo(isset($one->agent_name)?$one->agent_name:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+    {include file="common/input" title="*联系电话" fieldName="agent_mobile" defaultValue='<?php echo(isset($one->agent_mobile)?$one->agent_mobile:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+    <!--{include file="common/input" title="佣金比例" fieldName="agent_proportion" defaultValue='<?php echo(isset($one->agent_proportion)?$one->agent_proportion:"");?>' placeholder="" required="" pattern="*" helpInfo='如：0~1之间,相对纯佣金的比例'}-->
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">佣金比例：</label>
+        <div class="col-sm-10">
+            <input type="text" placeholder="" pattern="*"  onkeyup="javascript:CheckInputIntFloat(this);" name="agent_proportion" value="<?php echo(isset($one->agent_proportion)?$one->agent_proportion:"");?>" title="佣金比例" id="agent_proportion" class="col-xs-10 col-sm-5" />
+            <span class="help-inline col-xs-12 col-sm-7">
+                <span class="middle">如：0~1之间,相对纯佣金的比例</span>
+        </span>
+        </div>
+    </div>
+
+    {include file="common/input" title="*登入账号" fieldName="agent_username" defaultValue='<?php echo(isset($one->agent_username)?$one->agent_username:"");?>' placeholder="建议使用手机号" required="required" pattern="*" helpInfo=''}
+
+
+
+    {include file="common/input" disabled="" title="*登入密码" fieldName="agent_password" defaultValue='' placeholder="<?php echo(isset($one->agent_password)?'不修改保持为空':'登陆密码');?>" required="required" pattern="*" helpInfo='字母或数字,6~20位'}
+    
+
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">开设子代理商：</label>
+        <div class="col-sm-10">
+            <div class="radio pull-left">
+                <label>
+                    <input name="agent_open_son_agent" value="1" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;可以</span>
+                </label>
+            </div>
+            <div class="radio pull-left">
+                <label>
+                    <input name="agent_open_son_agent" value="0" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;不可以</span>
+                </label>
+            </div>
+            <script type="text/javascript">
+            $("input[name='agent_open_son_agent'][value='{:isset($one->agent_open_son_agent)?$one->agent_open_son_agent:'1'}']").attr("checked", "checked");
+            </script>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right"> 状态：</label>
+        <div class="col-sm-10">
+            <div class="radio pull-left">
+                <label>
+                    <input name="agent_active" value="1" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;正常</span>
+                </label>
+            </div>
+            <div class="radio pull-left">
+                <label>
+                    <input name="agent_active" value="0" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;禁用</span>
+                </label>
+            </div>
+            <script type="text/javascript">
+            $("input[name='agent_active'][value='{:isset($one->agent_active)?$one->agent_active:'1'}']").attr("checked", "checked");
+            </script>
+        </div>
+    </div>
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit" id="submit_button">
+                <i class="ace-icon fa fa-check bigger-110"></i> 提交
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+<script>
+    function CheckInputIntFloat(oInput) {
+    if('' != oInput.value.replace(/\d{1,}\.{0,1}\d{0,}/,'')) {
+        oInput.value = oInput.value.match(/\d{1,}\.{0,1}\d{0,}/) == null ? '' :oInput.value.match(/\d{1,}\.{0,1}\d{0,}/);
+    }
+        $("#submit_button").on('click', function() {
+            alert(1);
+            var agent_company_name = $("input[name='agent_company_name']").val();
+            var agent_name = $("input[name='agent_name']").val();
+            var agent_mobile = $("input[name='agent_mobile']").val();
+            var agent_username = $("input[name='agent_username']").val();
+            var agent_password = $("input[name='agent_password']").val();
+
+            if (agent_company_name == '' || agent_company_name==null) {
+                alert('请输入代理商名称');
+                return false;
+            }
+            if(agent_name==''){
+                alert('请输入营业执照号码');
+                return false;
+            }
+            if(agent_mobile==''){
+                alert('请填写负责人');
+                return false;
+            }
+            if(agent_username==''){
+                alert('请填写支付宝账号');
+                return false;
+            }
+            if(agent_password==''){
+                alert('请填写支付宝账号');
+                return false;
+            }
+        });
+}</script>
+{/block}

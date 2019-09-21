@@ -1,0 +1,25 @@
+*{padding:0;padding:0;color:inherit;background:#FFFFFF;word-break:break-all;-webkit-box-sizing:border-box}
+img{display:block;max-width:100%}
+pre{margin:0;white-space:initial!important}
+a{display:block;-webkit-touch-callout:none;color:inherit}
+div{-webkit-user-select:none}
+ul,li,ol,dl,dt,dd{margin:0;list-style:none}
+u{text-decoration:none}
+em,i{ font-style: normal}
+b,strong{font-weight:initial}
+p{margin:0;padding:0}
+button{border:initial}
+a:active{color:inherit}
+
+.mui-bar,.mui-bar .mui-title{box-shadow:none;background:#2C95FF;color:#FFFFFF;}
+.mui-bar{height:50px;background:url(../image/img-top.png) no-repeat;background-position:center;background-size:cover;}
+.mui-content{margin-top:50px;padding:0;}
+.mui-content>div{background-position:center!important;background-size:cover!important;}
+.mui-content,.mui-slider ul{background:#FFFFFF!important;}
+.mui-content .mui-table-view{padding:0 0.49%}
+.mui-content .mui-table-view-cell{width:33%;}
+.mui-table-view-cell>span:not(.mui-btn){position:relative;display:block;overflow:hidden;margin:0;padding:25px 0;}
+.mui-slider-indicator .mui-indicator,.mui-slider-indicator .mui-indicator.mui-active{box-shadow:none;background:none;}
+.mui-content .btn-item{display:block;padding:10px 20px 10px 20px;text-align:center;font-size:2rem;}
+.mui-content .btn-item .btn{box-shadow:0 1px 5px rgba(0,0,0,0.2);border-radius:4px;height:100%;width:100%;text-shadow:1px 1px 5px rgba(0,0,0,0.2);}
+@keyframes toast{from{top:60%;background:rgba(0,0,0,0.2);}to{top:50%;background:rgba(0,0,0,0.6);}};@-webkit-keyframes toast{from{top:60%;background:rgba(0,0,0,0.2)}to{top:50%;background:rgba(0,0,0,0.6);}}

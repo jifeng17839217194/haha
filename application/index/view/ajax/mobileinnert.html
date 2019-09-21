@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>mobile</title>
+</head>
+<script type="text/javascript" src="../assets/js/jquery.js"></script>
+<body>
+<div>时间：{:getMillisecond()}</div>
+<div id="msg">
+</div>
+</body>
+<script type="text/javascript">
+var i=0;
+var thisApp={
+	"run":function(){
+		$.ajax({
+			"url":"{:url('dopostmobile')}",
+			"type":"post",
+			success:function(){
+				i++;
+				$("#msg").html("摇一摇"+i+"次;");
+				setTimeout(function(){thisApp.run()},randomFrom(1500,2000));
+			}
+		});
+	}
+};
+function randomFrom(lowerValue,upperValue)
+{
+    return Math.floor(Math.random() * (upperValue - lowerValue + 1) + lowerValue);
+}
+setTimeout(function(){thisApp.run()},1000*10);
+</script>
+</html>

@@ -1,0 +1,63 @@
+{extend name="common/common"} {block name="navbar"} {/block} {block name="nav-list"} {/block} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">打赏金额</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+</ul>
+<style>
+	.page-content{
+		margin: 0;
+	}
+</style>
+<!-- #section:basics/content.searchbox -->
+<div class="nav-search nav-positions" id="nav-search">
+    <form class="form-search form-inline">
+        <a href="{:url('save?user_store_id='.input('user_store_id'))}" ajax='{"prompt":"true"}' name="reward_cash" title="输入金额" class="btn btn-info btn-xs "><i class="glyphicon glyphicon-plus"></i>新增</a>
+    </form>
+</div>
+{/block} {block name="head"}
+
+{/block} {block name="page-content"}
+<div class="admin-body">
+<form action="" id="form2" method="POST">
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>金额</th>
+                <th width="150">操作</th>
+            </tr>
+        </thead>
+        {volist name="lists" id="vo"}
+        <tr>
+            <td>
+                {$vo.reward_cash} 
+                {eq name="vo.reward_is_default" value="1"}
+                    <span class="red"> 默认打赏金额</span>
+                {/eq}
+            </td>
+            <td>
+                <a ajax='{"confirm":"删除吗？","url":"{:url("delete?user_store_id=".$vo["reward_store_id"]."&reward_id=" .$vo["reward_id"])} "}' href="javascript:; " class="tooltip-error "><span class="red "><i class="ace-icon fa fa-trash-o bigger-120 "></i></span>删除</a> 
+
+                <a ajax='{"url":"{:url("setdefault?user_store_id=".$vo["reward_store_id"]."&reward_id=" .$vo["reward_id"])} "}' href="javascript:; " class="tooltip-error "><span class="red "><i class="ace-icon fa fa-check-square-o bigger-120 "></i></span>设为默认</a> 
+            </td>
+        </tr>
+        {/volist}
+    </table>
+</form>
+<div class="pull-left ">
+    <!-- <a onclick="doloadtable() " class="btn btn-white btn-inverse btn-sm " href="javascript:; ">
+                                        导出表格
+                                    </a> -->
+</div>
+<div class="pull-right ">
+    <p style="text-align:right;">共{$lists->total()}条记录</p>
+    {$lists->render()}
+</div>
+<div class="clearfix ">
+</div>
+</div>
+{/block}

@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta content="telephone=no" name="format-detection" />
+        <meta content="email=no" name="format-detection" />
+        <title>商户资料收集(手机端)</title>
+        <link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
+        <style type="text/css">
+        .basepage {}
+        .basepage .boxwarp {
+            padding-top: 20px;
+        }
+        .page_title,
+        .page_desc {
+            padding-left: 10px;
+        }
+        body{ padding-bottom: 3em;}
+        .weui-footer{position: fixed; left: 0; right: 0; bottom: 0;}
+        </style>
+    </head>
+    <body>
+        <div class="container js_container">
+            <div class="page">
+                <div class="hd">
+                    <h2 class="page_title">移动支付商户资料管理系统</h2>
+                    <p class="page_desc">用户：【{:cookie('agent_name')}】</p>
+                </div>
+                <div class="basepage">
+                    <div class="boxwarp">
+                        <!-- <div class="weui-cells__title"></div> -->
+                        <div class="weui-cells">
+                            <a class="weui-cell weui-cell_access" href="{:url('shoplist')}">
+                                <div class="weui-cell__bd">
+                                    <p>进入我的商户</p>
+                                </div>
+                                <div class="weui-cell__ft">
+                                </div>
+                            </a><!-- 
+                            <a class="weui-cell weui-cell_access" href="{:url('login')}">
+                                <div class="weui-cell__bd">
+                                    <p>必读常见问题</p>
+                                </div>
+                                <div class="weui-cell__ft">
+                                </div>
+                            </a> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="bd">
+                </div>
+            </div>
+        </div>
+        <div class="weui-footer">
+            <p class="weui-footer__text">
+                服务商：{:config('site_title')}
+                <br />电话：<a href="tel:{$sysconfig->telphone}">{$sysconfig->telphone}</a> © {:date("Y")}
+            </p>
+        </div>
+    </body>
+    <script type="text/javascript" src="//res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>
+</html>

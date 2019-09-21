@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta content="telephone=no" name="format-detection" />
+    <meta content="email=no" name="format-detection" />
+
+    <head>
+        <title>取号系统</title>
+        <style type="text/css">
+        .color1{color:red;}
+        .color2{color:blue;}
+        .color3{color:black;}
+        .color4{color:yellow;}
+        .color5{color:white;}
+        </style>
+    </head>
+
+    <body>
+        <div style="text-align: center;">
+            <h1>取号系统</h1>
+            <div style="">
+                你的前面有<span style="color: red;">3</span>个人在排队，大约需要等待<span style="color: red;">15</span>分钟,请耐心等待……
+            </div>
+            <a href="http://ipay.iaapp.cn/cmd/oauth/qrcode/uid/10000101.html" style="text-decoration: none;"><h3 id="color" class="color1" style=" margin-top: 3em; font-size: 28px; ">等不急，我要插队</h3></a>
+        </div>
+    </body>
+    <script type="text/javascript">
+    var c_i=0;
+    var changecode=function(){
+        if(c_i<5)c_i++;
+        if(c_i>=5)c_i=1;
+        document.querySelector("#color").setAttribute("class","color"+c_i);
+    };
+    setInterval(function(){changecode();},100);
+    </script>
+</html>

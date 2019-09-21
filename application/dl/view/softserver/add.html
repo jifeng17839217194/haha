@@ -1,0 +1,63 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">软件服务中心</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block} {block name="page-content"}
+<div class="order-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    <input type="hidden" name="softserver_id" value="{:$one?$one->softserver_id:''}">
+
+    {include file="common/input" title="标题" fieldName="softserver_title" defaultValue='<?php echo(isset($one->softserver_title)?$one->softserver_title:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+	{include file="common/uploadImg" title="图片" fieldName="softserver_image" defaultValue='<?php echo(isset($one->softserver_image)?$one->softserver_image:"");?>' imgWidth="200" imgHeight="200" usehelp="" helpInfo="软件信息logo"}
+    
+    {include file="common/fullTextarea" title="详情" fieldName="softserver_content" defaultValue='<?php echo(isset($one->softserver_content)?$one->softserver_content:"");?>' helpInfo=''}
+
+
+    {include file="common/date" title="添加时间" fieldName="softserver_addtime" defaultValue='<?php echo(isset($one->softserver_addtime)?$one->softserver_addtime:"");?>' placeholder="" required="required" startDate="" dateFmt="yyyy-MM-dd HH:mm:ss" pattern="*" helpInfo=''}
+
+    {include file="common/input" title="排序" fieldName="softserver_sortnum" defaultValue='<?php echo(isset($one->softserver_sortnum)?$one->softserver_sortnum:"0");?>' placeholder="" required="required" pattern="[\d]*" helpInfo='（按1~N排序。但0特殊无穷大）'}
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right"> 状态：</label>
+        <div class="col-sm-10">
+            <div class="radio pull-left">
+                <label>
+                    <input name="softserver_active" value="1" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;正常</span>
+                </label>
+            </div>
+            <div class="radio pull-left">
+                <label>
+                    <input name="softserver_active" value="0" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;隐藏</span>
+                </label>
+            </div>
+            <script type="text/javascript">
+            $("input[name='softserver_active'][value='{:isset($one->softserver_active)?$one->softserver_active:'1'}']").attr("checked", "checked");
+            </script>
+        </div>
+    </div>
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit">
+                <i class="ace-icon fa fa-check bigger-110"></i> 提交
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+{/block}

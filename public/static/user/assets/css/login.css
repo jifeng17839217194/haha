@@ -1,0 +1,98 @@
+body{
+	background-color: white;
+}
+.login-body .logo img{
+	height: 50px;
+}
+.logo{
+	width:1200px;
+	margin: 10px auto;
+}
+.logo-title{
+	font-size: 26px;
+	letter-spacing: 4px;
+	padding: 2px;
+	font-weight: 600;
+	position: relative;
+	top: 4px;
+}
+.login-body{
+	padding-top: 120px;
+}
+.edition{
+	background-color: #1982da;
+	padding: 1px 10px;
+	border-radius: 10px;
+	color: white;
+	font-size: 12px;
+}
+.login-box{
+	position: relative;
+}
+.login-denglu{
+	width: 1200px;
+	margin:0 auto;
+	position: absolute;
+	text-align: right;
+	top: 0;
+	right: 50%;
+    margin-right: -600px;
+}
+.login-denglu img{
+	width: 500px;
+}
+.denglu{
+	position:absolute;
+	top: 130px;
+	    right: 150px;
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    width: 220px;
+}
+.mlogin-body{
+	display:none
+}
+.mlogin-bg{
+	display: none;
+}
+@media only screen and (max-width: 500px) {
+    
+	
+	.mlogin-denglu{
+		overflow:hidden;
+	}
+	
+	.mdenglu{
+		position: absolute;
+    top: 50%;
+    margin-top: -90px;
+    right: 50%;
+    margin-right: -110px;
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    width: 220px;
+	}
+	.login-bg{
+		display: none;
+	}
+	.login-border{
+		display: none;
+	}
+	.denglu{
+		position: absolute;
+		top: 50%;
+		margin-top: -90px;
+		right: 50%;
+		margin-right: -110px;
+		color: white;
+		font-size: 20px;
+		text-align: center;
+		width: 220px;
+	}
+}
+
+
+
+

@@ -1,0 +1,212 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">交易查询</span>
+    </li>
+    <li class="active">
+        佣金报表
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block}
+{block name="head"}
+<script src="/static/common/js/tableExport/jquery.base64.js"></script>
+<script src="/static/common/js/tableExport/tableExport.js"></script>
+<script type="text/javascript" src="/static/common/js/bootstrapPaginator.js"></script>{/block} {block name="page-content"}
+<!-- <ul class="nav nav-tabs">
+    <li class="active">
+        <a href="#">
+                    流水记录
+                </a>
+    </li>
+</ul> -->
+<div class="order-body">
+    <form class="form-search form-horizontal" id="searchfrom" action="javascript:thisOrderPage.doGetData(thisOrderPage.showlistpage);">
+        <input type="hidden" id="page" name="page" value="1">
+        <div class="alert alert-block alert-warning ">
+            佣金金额 = 有效成交额<span class="help-button" data-rel="popover" data-trigger="hover" data-placement="right" data-content="支付宝、微信官方统计的有效交易才有返佣；剔除恶意套现等不符合风控系统的交易" title="">?</span> × 佣金比例(代理商设定的佣金比例)<br />
+            佣金计算的交易数据来自支付宝、微信官方数据库；支付宝、微信于每月25日后统计上一月的佣金；请耐心等待统计结果；
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group col-sm-4">
+                    <label class="col-sm-2 control-label">交易月份</label>
+                    <div class="col-sm-10">
+                            <input onFocus="WdatePicker({isShowClear:true,dateFmt:'yyyy-MM',alwaysUseStartDate:true});" placeholder="开始" title="开始" value="{:date("Y-m", strtotime("last month"))}" name="order_month" id="order_month" class="nav-search-input col-sm-12" type="text" />
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <label class="col-sm-4 control-label">通道</label>
+                    <div class="col-sm-8" style="padding-top: 4px;">
+                        <select class="chosen-select" name="order_channel_id" id="order_channel_id">
+                            <option value="">不限制</option>
+                            <option value="alipay">支付宝支付</option>
+                            <option value="wxpay">微信支付</option>
+                        </select>
+                        <script type="text/javascript">
+                        $("#order_channel_id").val("{:input('order_channel_id')}");
+                        </script>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <label class="col-sm-3 control-label">交易数据</label>
+                    <div class="col-sm-9" style="padding-top: 6px;">
+                        <div class="control-group">
+                                <label>
+                                    <input name="data_from" value="official" checked name="form-field-radio" type="radio" class="ace" />
+                                    <span class="lbl"> 官方有效成交记录</span>
+                                </label>
+
+                                <!-- <label>
+                                    <input name="data_from" value="local" name="form-field-radio" checked type="radio" class="ace" />
+                                    <span class="lbl"> 本系统数据(供参考)</span><span class="help-button" data-rel="popover" data-trigger="hover" data-placement="right" data-content="本系统数据仅供参考，切勿用于财务结算；" title="">?</span>
+                                </label> -->
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group col-sm-4">
+                    <label class="col-sm-2 control-label">代理商</label>
+                    <div class="col-sm-10">
+                        <select class="chosen-select" name="agent_id" id="agent_id">
+                            <option value="">全部代理商</option>
+                            {volist name="agentlist" id="vo"}
+                            <option value="{$vo.agent_id}">{$vo.agent_name}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-sm-4">
+                    <label class="col-sm-4 control-label"></label>
+                    <div>
+                        <button onclick="javascript:$('#page').val(0);" class="btn btn-inverse btn-sm"><i class="ace-icon fa fa-search nav-search-icon"></i>查看</button>
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-4">
+                    
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="hr hr-12"></div>
+    <table class="table table-striped table-bordered table-hover" id="reporttable">
+        <thead>
+            <tr>
+                <th width="150">月份</th>
+                <th>支付通道</th>
+                <th>代理商</th>
+                <th>待分成佣金</th>
+                <th>代理佣金分成比例</th>
+                <th>代理分成金额</th>
+            </tr>
+        </thead>
+        <tbody id="listpagebody">
+        </tbody>
+        <!-- <tr>
+            <td title="自动递增ID:{vo.order_id}">{vo.order_num}<br />{vo.order_trade_no}</td>
+            <td>{vo.order_subject}</td>
+            <td align="right">{vo.order_total_amount}</td>
+            <td>{vo.order_channel_id_info}</td>
+            <td>{vo.order_addtime}</td>
+            <td>{vo.order_pay_time}</td>
+            <td>{vo.order_status_info}</td>
+        </tr> -->
+    </table>
+    <div class="pull-right">
+        <a href="javascript:;" onclick="javascript:thisOrderPage.downloadtable();">
+            <i class="ace-icon fa fa-download"></i>下载表格
+        </a>
+    </div>
+    </form>
+    <div class="pull-right ">
+        <ul id="pagination" class="pagination"></ul>
+    </div>
+    <div class="clearfix ">
+    </div>
+</div>
+</div>
+{/block} {block name="floot"}
+<script type="text/javascript">
+var thisOrderPage = {
+    //获取数据
+    doGetData: function(callBack)
+    {
+        thisOrderPage.showlistpageInit();
+        var index = layer.load(1,
+        {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        $.ajax(
+        {
+            url: "{:url('getsearchdatafromofficial')}",
+            data: $("#searchfrom").serialize(),
+            dataType: "json",
+            success: function(rs)
+            {
+                layer.close(index);
+                callBack && callBack(rs);
+                if(rs.code==0)
+                {
+                    layer.alert(rs.message);
+                }
+            },
+            error: function()
+            {
+                layer.close(index);
+            }
+        })
+    },
+    //列表页初始化
+    showlistpageInit: function()
+    {
+        $("#listpagebody").html("");
+    },
+    downloadtable:function(){
+        $("#reporttable").tableExport({type:'excel',fileName:$('#order_month').val()+"_代理商佣金",escape:'false'});
+    },
+    //列表页展示
+    showlistpage: function(rs)
+    {
+        if (rs.data.list&&rs.data.list.length>0)
+        {
+            var innertHTML = "";
+            rs.data.list.forEach(function(one)
+            {
+
+                innertHTML += "<tr>";
+
+                innertHTML += '<td>' + (document.querySelector("#order_month").value) + '佣金</td>';
+                innertHTML += '<td>' + (document.querySelector("#order_channel_id").value==""?"全部":document.querySelector("#order_channel_id").value) + '</td>';
+                innertHTML += '<td>' + one.agent_company_name + one.agent_name + '</td>';
+                innertHTML += '<td align="right">' + one.commission_settle_amount + '</td>';
+                innertHTML += '<td align="right">' + one.agent_proportion + '</td>';
+                innertHTML += '<td align="right">¥' + one.commission + ($("input[name='data_from']:checked").val()=="local"?"(仅供参考)":"") + '</td>';
+                
+                innertHTML += "</tr>";
+            });
+
+
+
+            $("#listpagebody").html(innertHTML);
+
+            
+
+            //$('#pagination').prepend("总" + rs.total + "条记录<br />");
+        }
+        else
+        {
+            $("#listpagebody").html("<tr><td colspan='6'>没有数据</td></tr>");
+            layer.msg("没有数据");
+        }
+    }
+};
+//thisOrderPage.selectinit();
+
+$(document).ready(function(){
+    $("#searchfrom").submit();
+})
+</script>
+{/block}

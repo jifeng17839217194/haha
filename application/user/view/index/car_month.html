@@ -1,0 +1,98 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">包月列表</span>
+    </li>
+</ul>
+{/block} {block name="page-content"}
+<script type="text/javascript">
+    $(function(){
+        check_login();
+        /*alert(store_name);*/
+        $("#store-name").html(store_name);
+        $("#user-name").html(user_realname);
+        $("#log-off").on('click',function(){
+            clear_cookie();
+            $(location).attr('href', common_url+'/user/index/login');
+        });
+    });
+</script>
+<!-- PAGE CONTENT BEGINS -->
+<!--bof list-->
+<div class="carmonth-body">
+<div class="col-xs-12">
+    <div class="row">
+        <table id="store_table" class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th width="">记录ID</th>
+                    <th width="">停车场名称</th>
+                    <th width="">车牌号</th>                    
+                    <th>包月费用</th>
+                    <th width="">开始时间</th>
+                    <th>结束时间</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>            
+        </table>
+    </div>
+</div>
+</div>
+<!--eof list-->
+<div class="space-10"></div>
+<script type="text/javascript">
+    $(function() {              
+        var microtime=Date.parse(new Date())/1000;
+        get_store_list();
+        //bof 获取订单列表数据方法
+        function get_store_list()
+        {
+            var postParam = {
+                user_id: user_id,
+                version: 1,
+                time: microtime
+            };
+            var sign= getsign(postParam);
+            postParam.sign = sign; //不这么传值下，有错误
+            $.ajax(
+                {
+                    type: "post",
+                    url: common_url+ "/api/member/car_month_list",
+                    data: postParam,
+                    dataType: 'json',
+                    success: function(res)
+                    {
+                        if(res.code == 1)
+                        {
+                            $('#store_table>tbody').html('');
+                            if(res.data)
+                            {
+                                res.data.data.forEach(function(item)
+                                    {
+                                        var html = '<tr id="' + item.record_store_id + '">' +                                          
+                                            '<td>' + item.record_store_id + '</td>' +
+                                            '<td>' + item.store_name + '</td>' +
+                                            '<td>' + item.record_car_number_plate + '</td>';       
+                                            html += '<td>' + item.record_parking_monthly_price + '</td>';
+                                            html += '<td>' + item.record_start_time + '</td>';
+                                            html += '<td>' + item.record_end_time + '</td>';
+                                            html += '</tr>';
+                                        $('#store_table>tbody').append(html);
+                                        //var html=thisFrontApp.getordertemplate(item,'order');
+                                        //$('.order-nearly').append(html);
+                                    });
+                            }
+                        } else
+                        {
+                            alert(res.message);
+                        }
+                    }
+
+                });
+        }   
+    });
+</script>
+<!-- PAGE CONTENT ENDS -->
+{/block}

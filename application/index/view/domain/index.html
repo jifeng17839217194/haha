@@ -1,0 +1,13 @@
+<?php
+echo "<div>当前网址(request()->url(true)获取)：<br />".request()->url(true)."<hr/></div>";
+
+echo "当前网址(JS获取)：";
+?>
+<div>
+<script type="text/javascript">
+document.write(document.location.href);
+</script>
+</div>
+<?php
+echo "<img src='/api/index/qrcode?value=http://ipay.iaapp.cn/index/domain'> ";
+?>

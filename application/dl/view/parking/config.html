@@ -1,0 +1,43 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">停车ISV系统配置接口</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block} {block name="page-content"}
+<div class="order-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    <input type="hidden" name="news_id" value="{:$one?$one->news_id:''}">
+
+
+
+    {include file="common/input" title="商户简称，由开发者提供" fieldName="merchant_name" defaultValue='<?php echo(isset($one->merchant_name)?$one->merchant_name:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+    {include file="common/input" title="商户客服电话" fieldName="merchant_service_phone" defaultValue='<?php echo(isset($one->merchant_service_phone)?$one->merchant_service_phone:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+    {include file="common/input" title="签约支付宝账号" fieldName="account_no" defaultValue='<?php echo(isset($one->account_no)?$one->account_no:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+    {include file="common/input" title="停车平台首页露出的LOGO 27px*27px" fieldName="merchant_logo" defaultValue='<?php echo(isset($one->merchant_logo)?$one->merchant_logo:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+    
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit">
+                <i class="ace-icon fa fa-check bigger-110"></i> 提交
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+{/block}

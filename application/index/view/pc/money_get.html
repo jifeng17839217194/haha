@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <title>收款-支付系统</title>
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_513044_ahc156s6ixczyqfr.css" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/css.css" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/skin-blue.css" />
+        <style type="text/css">
+
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="space-15"></div>
+            <div class="col-xs-8">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <input type="text" class="form-control text-right" id="pay_price" pay-scan="" value="" placeholder="收款金额" />
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control text-right" id="pay_code" pay-scan-code="" value="" placeholder="付 款 码" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="number-keyboard">
+                        <div class="numbers">
+                            <div class="item"><span>9</span></div>
+                            <div class="item"><span>8</span></div>
+                            <div class="item"><span>7</span></div>
+                            <div class="item"><span>6</span></div>
+                            <div class="item"><span>5</span></div>
+                            <div class="item"><span>4</span></div>
+                            <div class="item"><span>3</span></div>
+                            <div class="item"><span>2</span></div>
+                            <div class="item"><span>1</span></div>
+                            <div class="item"><span>0</span></div>
+                            <div class="item"><span>00</span></div>
+                            <div class="item"><span>.</span></div>
+                        </div>
+                        <div class="tools">
+                            <div class="item tool"><span>退格</span></div>
+                            <div class="item tool"><span>清空</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="space-10"></div>
+                    <button id="btn_pay_sumit" class="btn btn-lg btn-block btn-success">收款</button>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="suport-payment">
+                    <i class="iconfont icon-alipay"></i>
+                    <i class="iconfont icon-wechatpay"></i>
+                </div>
+                <div class="payment-primary">应收金额：<small>等待输入</small></div>
+                <div class="payment-animation text-center">
+                    <img src="/static/index/assets/images/bar.png">
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="row">
+                    <div class="space-15"></div>
+                    <div class="space-15"></div>
+                    <div class="panel">
+                        <div class="panel-heading line"><span class="panel-title">今日订单</span></div>
+                        <div class="panel-body order-nearly">
+                            <!--<div class="col-xs-3">
+								<div class="panel panel-blue">
+									<div class="panel-heading"><span class="panel-title"><i class="m-icon iconfont icon-alipay"></i>支付宝</span></div>
+									<div class="panel-body">
+										<h3>&yen;100</h3>
+									</div>
+									<div class="panel-footer text-right">2012-12-12 12:12</div>
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="panel panel-green">
+									<div class="panel-heading"><span class="panel-title"><i class="m-icon iconfont icon-wechatpay"></i>微信</span></div>
+									<div class="panel-body">
+										<h3>&yen;100</h3>
+									</div>
+									<div class="panel-footer text-right">2012-12-12</div>
+								</div>
+							</div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/static/index/assets/jquery/3.2.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/jquery/jquery.cookie.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/layer/layer.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/js/soundmanager2-jsmin.js?{:time()}" type="text/javascript"></script>
+        <script src="/static/index/assets/js/pc.js?{:time()}" type="text/javascript" defer="defer" charset="utf-8"></script>
+        <script type="text/javascript">
+
+        /*var audio = document.createElement("audio");
+        audio.autoplay=1;
+        audio.src = "http://www.w3school.com.cn/i/horse.mp3";
+        audio.onended = function(){layer.alert('end')};
+        audio.onerror = function(e){layer.alert(JSON.stringify(e))};
+        //audio.onloadeddata =function(){alert("加载完成")};
+
+        var board = document.querySelector("body");
+        var object = board.appendChild(audio);*/
+
+        var start = (new Date()).valueOf();
+        var focus_input = '';
+        var pay_price = '';
+        //js要使用到的基本配置
+        window.pageconfig = {
+            domain: "{:request()->domain()}",
+            scriptdir: "{:SCRIPT_DIR}",
+            module: "{:request()->module()}",
+            controller: "{:strtolower(request()->controller())}",
+            action: "{:request()->action()}",
+            goEasy:
+            {
+                subscribe_key: "{:config('goEasy_Subscribe_key')}",
+            }
+        };
+
+        $(document).ready(function()
+        {
+            //bof ready
+            thisFrontApp.init();
+
+            var uid = thisFrontApp.getuid();
+            $("#pay_price").focus();
+            //自动获取扫描枪的数据
+            $("#pay_price").on("keypress", function(e)
+            {
+                var now = (new Date()).valueOf();
+                var key = String.fromCharCode(e.keyCode);
+                var difftime = now - start;
+                console.log("输入" + key + "间隔：" + difftime);
+                if (difftime > 20)
+                {
+                    $("#pay_code").attr("pay_code", key);
+                    if (e.keyCode == 13) // 不能加入 !isNaN($(this).val()) && 
+                    {
+                        $("#pay_code").focus();
+                    }
+                }
+                else
+                {
+
+                    if (e.keyCode == 13) //扫描枪的回车动作
+                    {
+                        console.log("=======回车了=======");
+                        var quickcode = $("#pay_code").attr("pay_code");
+                        $("#pay_code").val(quickcode);
+                        $(this).val($(this).val().replace(quickcode, ""));
+                        createOrder();
+                    }
+                    else
+                    {
+                        $("#pay_code").attr("pay_code", ($("#pay_code").attr("pay_code") || "") + "" + key);
+                    }
+                }
+                start = now;
+
+            });
+
+            /*$('#pay_form').on('submit',function () {
+            	var price=$('#pay_price').val();
+            	var code=$('#pay_code').val();
+
+
+            	if(!isNaN(price))
+            	{
+            		layer.msg("金额不正确");
+            		return;
+            	}
+            	if(!code)
+            	{
+            		layer.msg("付款码不能空");
+            		return;
+            	}
+
+            	createOrder(price,code);
+            	$('#pay_price').val('');
+            	$('#pay_code').val('');
+            	$('#pay_code').attr('pay-scan-code','');
+            	return false;
+            });*/
+
+            $('#btn_pay_sumit').on('click', function()
+            {
+                createOrder();
+            });
+
+            function createOrder()
+            {
+
+                var cash = $("#pay_price").val();
+                var auth_code = $("#pay_code").val();
+
+                if (isNaN(cash))
+                {
+                    layer.msg("金额不正确");
+                    return;
+                }
+
+                if (auth_code.length < 10)
+                {
+                    layer.msg("付款码不正确");
+                    return;
+                }
+
+                thisFrontApp.checkandlogin();
+
+                layer.alert('支付中……',
+                {
+                    title: "稍等",
+                    closeBtn: 0,
+                    btn: []
+                });
+
+                var postParam = {
+                    user_id: uid,
+                    total_amount: cash,
+                    auth_code: auth_code,
+                    create_where: "pc",
+                    version: 1,
+                    time: thisFrontApp.gettime()
+                };
+                var sign = thisFrontApp.getsign(postParam);
+                postParam.sign = sign; //不这么传值下，有错误
+                //console.log(JSON.stringify(postParam));
+                $.ajax(
+                {
+                    "url": "/api/pay/barpay.html",
+                    "data": postParam,
+                    "type": "post",
+                    "dataType": "json",
+                    "success": function(rs)
+                    {
+                        //console.log(rs);
+                        //根据支付返回的状态，不同处理
+                        if (rs.code)
+                        {
+                            thisFrontApp.orderchange(rs);
+                        }
+                        else
+                        {
+                            layer.closeAll();
+                            layer.alert(rs.message);
+                        }
+
+                    }
+                })
+            }
+
+
+            //获取订单列表
+            get_nearly_order();
+
+            function get_nearly_order()
+            {
+                var uid = $.cookie('user_id');
+                var postParam = {
+                    order_status: 100,
+                    page: 1,
+                    per_page: 16,
+                    user_id: uid,
+                    create_where: "pc",
+                    version: 1,
+                    time: thisFrontApp.gettime()
+                };
+                var sign = thisFrontApp.getsign(postParam);
+                postParam.sign = sign; //不这么传值下，有错误
+
+                $.ajax(
+                {
+                    type: "post",
+                    url: pageconfig.domain + "/api/order/list",
+                    data: postParam,
+                    dataType: 'json',
+                    async: true,
+                    success: function(res)
+                    {
+                        if (res.code == 1)
+                        {
+                            if (res.data)
+                            {
+                                res.data.data.forEach(function(item)
+                                {
+                                    var html = thisFrontApp.getordertemplate(item, 'order');
+                                    $('.order-nearly').append(html);
+                                });
+                            }
+                        }
+                        else
+                        {
+                            layer.alert('最新订单获取失败！');
+                        }
+                    }
+                });
+            }
+
+
+            //bof number-keyboard
+            $('.number-keyboard>.numbers').on('click', '.item', function()
+            {
+                if ($(this).hasClass('disabled'))
+                {
+                    return;
+                }
+                focus_input = focus_input.length <= 0 ? '#pay_price' : focus_input;
+                var str = $(focus_input).val();
+                var val = $(this).text();
+                str += '' + val;
+                $('#pay_price').val(str);
+                target_price(str);
+            });
+            $('.number-keyboard>.tools').on('click', '.tool:eq(0)', function()
+            {
+                focus_input = focus_input.length <= 0 ? '#pay_price' : focus_input;
+                var str = $(focus_input).val();
+                if (str.length > 0)
+                {
+                    str = str.substring(0, str.length - 1);
+                    $(focus_input).val(str).focus();
+                    target_price(str);
+                }
+            });
+            $('.number-keyboard>.tools').on('click', '.tool:eq(1)', function()
+            {
+                focus_input = focus_input.length <= 0 ? '#pay_price' : focus_input;
+                $(focus_input).val('').focus();
+                target_price('');
+            });
+
+            $('#pay_price').on('keyup', function()
+            {
+                var price = $(this).val();
+                target_price(price);
+            });
+
+            $('#pay_price').on('focus', function()
+            {
+                focus_input = '#pay_price';
+                $('.number-keyboard>.numbers>.item:last').removeClass('disabled');
+            });
+            $('#pay_code').on('focus', function()
+            {
+                focus_input = '#pay_code';
+                $('.number-keyboard>.numbers>.item:last').addClass('disabled');
+            });
+            //eof number-keyboard
+
+            //正常扫码
+            $('#pay_code').on('keypress', function(e)
+            {
+                e.stopPropagation();
+                if (e.keyCode == 13)
+                {
+                    createOrder();
+                    ////$('#pay_form').trigger('submit');
+                }
+            });
+            //eof ready
+        });
+
+        (function($)
+        {
+            var time_start = 0;
+            var time_dif_prev = 0;
+
+            $('#pay_price').on('keypress', function(e)
+            {
+                var price = $(this).val();
+                target_price(price);
+
+                var time_now = (new Date()).getTime();
+                var time_dif = time_now - time_start;
+                time_start = time_now;
+                var val = String.fromCharCode(e.keyCode);
+                var pay_scan = $(this).val();
+
+                if (time_dif > 20)
+                {
+
+                }
+                else
+                {
+                    var pay_scan_code = $('#pay_code').attr('pay-scan-code');
+                    if (e.keyCode == 13)
+                    {
+                        var real_price = price.replace(pay_scan_code, '');
+                        $('#pay_code').val(pay_scan_code);
+                        $(this).val();
+                        //$('#pay_form').trigger('submit');
+                    }
+                    else
+                    {
+                        if (time_dif_prev > 20)
+                        {
+                            pay_scan_code = pay_scan.substr(pay_scan.length - 1, 1);
+                        }
+                        pay_scan_code += '' + val;
+                        console.log('pay_scan_code==' + pay_scan_code);
+                        $('#pay_code').attr('pay-scan-code', pay_scan_code);
+
+                    }
+                }
+                time_dif_prev = time_dif;
+            });
+        })(jQuery)
+
+        function target_price(str)
+        {
+            //$('#pay_ready').val(str);
+            var html = '';
+            if ($.trim(str).length <= 0)
+            {
+                html = '应收金额：<small>等待输入</small>';
+            }
+            else
+            {
+                html = '应收金额：<em><i class="iconfont icon-yen"></i><span>' + str + '</span></em>';
+            }
+            $('.payment-primary').html(html);
+        }
+        </script>
+    </body>
+
+</html>

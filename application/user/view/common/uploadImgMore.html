@@ -1,0 +1,83 @@
+<div class="form-group">
+    <label class="col-sm-2 control-label no-padding-right">[title]：</label>
+    <div class="col-sm-10">
+        <div class="row">
+            <div class="col-sm-10">
+                <ul class="ace-thumbnails clearfix" id="[fieldName]Thumbnails">
+                    <!-- <li>
+                            <a href="/chiguanshi/public\uploads\20170115\60289807.png" data-rel="colorbox">
+                                <img width="150" height="150" alt="150x150" src="/chiguanshi/public\uploads\20170115\60289807.png" />
+                            </a>
+                            <div class="tools tools-top in">
+                                <a href="javascript:;">
+                                    <i class="ace-icon fa fa-times red"></i>
+                                </a>
+                                <a href="javascript:;">
+                                    <i class="ace-icon fa fa-pencil"></i>
+                                </a>
+                            </div>
+                        </li> -->
+                </ul>
+            </div>
+        </div>
+        <div class="space-4"></div>
+        <div class="row">
+            <div class="col-xs-10 col-sm-8">
+                <div class="input-group">
+                    <input class="form-control" type="hidden" value="[defaultValue]" name="[fieldName]" id="[fieldName]" />
+                    <script type="text/javascript" src="/static/common/js/uploadify/jquery.uploadifive.min.js"></script>
+                    <link rel="stylesheet" type="text/css" href="/static/common/js/uploadify/uploadifive.css">
+                    <input type="file" style="display: none;" name="[fieldName]File" id="[fieldName]File">
+                    <script type="text/javascript">
+                    $(function() {
+
+                        var insertImg[fieldName] = function(src) {
+                            var insertImg = '';
+                            insertImg += '<li>';
+                            insertImg += '    <a href="' + src + '" data-rel="colorbox">';
+                            insertImg += '        <img width="150" height="150" style="background-image:url(' + src + '); background-repeat: no-repeat;background-size: cover; background-position: center center;" alt="150x150" src="/static/common/image/empty.gif" />';
+                            insertImg += '    </a>';
+                            insertImg += '    <div class="tools tools-top in">';
+                            insertImg += '        <a href="javascript:;" onclick="javascript:$(\'#[fieldName]Thumbnails\').html(\'\');$(\'#[fieldName]\').val(\'\');">';
+                            insertImg += '            <i class="ace-icon fa fa-times red"></i>';
+                            insertImg += '        </a>';
+                            insertImg += '    </div>';
+                            insertImg += '</li>';
+                            return insertImg;
+                        }
+
+                        $('#[fieldName]File').uploadifive({
+                            'buttonText': '上传(多选)',
+                            'uploadScript': '{:url("base/uploadfile")}',
+                            'fileType': '*.gif; *.jpg; *.png',
+                            'fileSizeLimit': '5MB',
+                            'multi': true,
+                            'onUploadComplete': function(file, data) {
+                                var rs = JSON.parse(data);
+                                if (rs.code == 0) {
+                                    layer.alert(rs.msg);
+                                    setTimeout(function() {
+                                        $(".uploadifive-queue").hide();
+                                    }, 2000);
+                                } else {
+                                    //图片预览
+                                    var aceThumbnails = $("#[fieldName]Thumbnails");
+                                    aceThumbnails.append(insertImg[fieldName](rs.data));
+                                    $('#[fieldName]').val(rs.data);
+                                    $(".uploadifive-queue").hide();
+                                }
+                            }
+                        });
+                        if ("[defaultValue]" != "") {
+                            insertImg[fieldName]("[defaultValue]");
+                        }
+                    });
+                    </script>
+                </div>
+            </div>
+            <span class="help-inline col-xs-12 col-sm-7">
+                <span class="middle">[helpInfo]</span>
+            </span>
+        </div>
+    </div>
+</div>

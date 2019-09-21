@@ -1,0 +1,264 @@
+{extend name="common/common"}
+{block name="navbar"}
+{/block}
+{block name="nav-list"}
+{/block}
+
+{block name="breadcrumbswarp"}
+
+<!-- #section:basics/content.searchbox -->
+{/block}
+{block name="head"}
+<script src="/static/common/js/tableExport/jquery.base64.js"></script>
+<script src="/static/common/js/tableExport/tableExport.js"></script>
+<script type="text/javascript" src="/static/common/js/bootstrapPaginator.js"></script>{/block} {block name="page-content"}
+<script type="text/javascript" src="/static/common/js/echarts/echarts.common.min.js"></script>
+<div class="order-body">
+    <form class="form-search form-horizontal">
+        <input type="hidden" id="page" name="page" value="1">
+        <div class="alert alert-block alert-warning ">
+            佣金金额 = 有效成交额<span class="help-button" data-rel="popover" data-trigger="hover" data-placement="right" data-content="支付宝、微信官方统计的有效交易才有返佣；剔除恶意套现等不符合风控系统的交易" title="">?</span> × 佣金比例(代理商设定的佣金比例)<br />
+            佣金计算的交易数据来自支付宝、微信官方数据库；支付宝、微信于每月25日后统计上一月的佣金；请耐心等待统计结果；
+        </div>
+        <div class="hr hr-12"></div>
+        <div class="alert no-margin clearfix" id="box_tj">
+            <div class="grid3">
+                ¥<span id="text_total" class="bigger-175 blue">0</span><br>总佣金
+            </div>
+            <div class="grid3">
+                ¥<span id="text_zfb_total" class="bigger-175 blue">0</span><br>支付宝佣金,占比<span id="text_zfb_zb">0</span>%
+            </div>
+            <div class="grid3">
+                ¥<span id="text_wx_total" class="bigger-175 blue">0</span><br>微信佣金,占比<span id="text_wx_zb">0</span>%
+            </div>
+        </div>
+    </form>
+    <div class="hr hr-12"></div>
+    <table class="table table-striped table-bordered table-hover" id="reporttable">
+        <thead>
+            <tr>
+                <th width="150">月份</th>
+                <th>商户</th>
+                <th>支付通道</th>
+                <th>有效成交金额</th>
+                <th>有效成交笔数</th>
+                <th>结算费率</th>
+                <th>应结算总金额</th>
+                <th>返佣费率</th>
+                <th>返佣总金额</th>
+            </tr>
+        </thead>
+        <tbody id="listpagebody">
+        </tbody>
+        <!-- <tr>
+            <td title="自动递增ID:{vo.order_id}">{vo.order_num}<br />{vo.order_trade_no}</td>
+            <td>{vo.order_subject}</td>
+            <td align="right">{vo.order_total_amount}</td>
+            <td>{vo.order_channel_id_info}</td>
+            <td>{vo.order_addtime}</td>
+            <td>{vo.order_pay_time}</td>
+            <td>{vo.order_status_info}</td>
+        </tr> -->
+    </table>
+    <div class="pull-right">
+        <a href="javascript:;" onclick="javascript:thisOrderPage.downloadtable();">
+            <i class="ace-icon fa fa-download"></i>下载表格
+        </a>
+    </div>
+    </form>
+    <div class="pull-right ">
+        <ul id="pagination" class="pagination"></ul>
+    </div>
+    <div class="clearfix ">
+    </div>
+</div>
+{/block}
+{block name="floot"}
+<script type="text/javascript">
+var thisOrderPage = {
+    //获取数据
+    doGetData: function(callBack)
+    {
+        thisOrderPage.showlistpageInit();
+        var index = layer.load(1,
+        {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        $.ajax(
+        {
+            url: "{:url('commissionreportlistdata')}",
+            data: {
+                "agent_id":{:input("agent_id")},
+                "order_month":"{:input("order_month")}",
+                "order_channel_id":"{:input("order_channel_id")}"
+            },
+            dataType: "json",
+            success: function(rs)
+            {
+                layer.close(index);
+                callBack && callBack(rs);
+                if(rs.code==0)
+                {
+                    layer.alert(rs.message);
+                }
+            },
+            error: function()
+            {
+                layer.close(index);
+            }
+        })
+    },
+    //列表页初始化
+    showlistpageInit: function()
+    {
+        $("#listpagebody").html("");
+
+
+        document.querySelector("#text_total").innertHTML = "0";
+        document.querySelector("#text_zfb_total").innertHTML = "0";
+        document.querySelector("#text_zfb_zb").innertHTML = "0";
+        document.querySelector("#text_wx_total").innertHTML = "0";
+        document.querySelector("#text_wx_zb").innertHTML = "0";
+
+    },
+    downloadtable:function(){
+        $("#reporttable").tableExport({type:'excel',fileName:$('#order_month').val()+"_代理商佣金",escape:'false'});
+    },
+    //列表页展示
+    showlistpage: function(rs)
+    {
+        //console.log(rs);
+        if (rs.data.list&& rs.data.list.length>0)
+        {
+            var innertHTML = "";
+            var text_total=0,text_zfb_total=0,text_wx_total=0,text_zfb_zb=0,text_wx_zb=0;
+
+            rs.data.list.forEach(function(one)
+            {
+                /*<th>支付通道</th>
+                <th>有效成交金额</th>
+                <th>有效成交笔数</th>
+                <th>结算费率</th>
+                <th>应结算总金额</th>*/
+
+                innertHTML += "<tr>";
+                innertHTML += '<td>{:input('order_month')}</td>';
+                innertHTML += '<td title="店铺ID:">' + (one.shop_name)+"<br />"+(one.commission_shop_name) + '</td>';
+                innertHTML += '<td>' + (one.commission_site=="wxpay"?"微信":"支付宝") + '</td>';
+                innertHTML += '<td>￥' + one.commission_total_amount + '</td>';
+                innertHTML += '<td>' + one.commission_count_amount + '</td>';
+                innertHTML += '<td align="right">' + one.commission_feilv + '</td>';
+                innertHTML += '<td align="right">' + one.commission_settle_amount + '</td>';
+                innertHTML += '<td>支付宝：' + one.shop_attr_alipay_rates + ',微信：'+one.shop_attr_wxpay_rates+'</td>';
+                innertHTML += '<td>' + one.shop_attr_rates_cash + '</td>';
+                
+                innertHTML += "</tr>";
+
+                text_total= accAdd(text_total,one.commission_settle_amount);
+                text_total -= one.shop_attr_rates_cash;
+
+                if(one.commission_site=="alipay")
+                {
+                    text_zfb_total=accAdd(text_zfb_total,one.commission_settle_amount);
+                    text_zfb_total-=one.shop_attr_rates_cash;
+                }
+                if(one.commission_site=="wxpay")
+                {
+                    text_wx_total=accAdd(text_wx_total,one.commission_settle_amount);
+                    text_wx_total-=one.shop_attr_rates_cash;
+                }
+
+            });
+
+            $("#text_total").html(text_total.toFixed(2));//总佣金
+            $("#text_zfb_total").html(text_zfb_total.toFixed(2));//微信佣金
+            $("#text_wx_total").html(text_wx_total.toFixed(2));//支付宝佣金
+            $("#text_zfb_zb").html(accMul(accDiv(text_zfb_total,text_total),100).toFixed(2));//微信佣金_占比
+            $("#text_wx_zb").html(accMul(accDiv(text_wx_total,text_total),100).toFixed(2));//支付宝佣金_占比
+
+
+            $("#listpagebody").html(innertHTML);
+
+            //thisOrderPage.showreportchats(rs.data.list);
+
+            //$('#pagination').prepend("总" + rs.total + "条记录<br />");
+        }
+        else
+        {
+            document.querySelector("#text_total").innertHTML = "0";
+            document.querySelector("#text_zfb_total").innertHTML = "0";
+            document.querySelector("#text_zfb_zb").innertHTML = "0";
+            document.querySelector("#text_wx_total").innertHTML = "0";
+            document.querySelector("#text_wx_zb").innertHTML = "0";
+            
+            $("#listpagebody").html("<tr><td colspan='9'>没有数据</td> </tr>");
+            layer.msg("没有数据");
+        }
+    },
+    //
+    showreportchats: function(datalist)
+    {
+        if(!datalist)return;
+        // 基于准备好的dom，初始化echarts实例
+        if((window.dealreport1Chart||false)== false)
+        {
+            window.dealreport1Chart = echarts.init(document.getElementById('reportchats'));    
+        }
+
+        //alert(JSON.stringify(datalist));
+        //return;
+
+        var xAxis_data=[],series_data=[],series_data2=[];
+        datalist.forEach(function(datalistOne){
+            xAxis_data.push(datalistOne.agent_name);
+            series_data.push(datalistOne.order_pay_realprice);
+            series_data2.push(datalistOne.commission);
+        });
+        
+        var option = {
+            title : {
+                text: '',
+            },
+            tooltip : {
+                trigger: 'axis'
+            },
+            legend: {
+                data:['成交额','佣金']
+            },
+            calculable : true,
+            xAxis : [
+                {
+                    type : 'category',
+                    data : xAxis_data
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : [
+                {
+                    name:'成交额',
+                    type:'bar',
+                    data:series_data
+                },
+                {
+                    name:'佣金',
+                    type:'bar',
+                    data:series_data2,
+                }
+            ]
+        };
+
+
+        dealreport1Chart.setOption(option);
+    }
+};
+//thisOrderPage.selectinit();
+
+$(document).ready(function(){
+    thisOrderPage.doGetData(thisOrderPage.showlistpage);
+})
+</script>
+{/block}

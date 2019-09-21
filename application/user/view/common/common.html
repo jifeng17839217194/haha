@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta charset="utf-8" />
+		<title>{:config('site_title')}</title>
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+		<!-- bootstrap & fontawesome -->
+		
+		<link rel="stylesheet" href="/static/user/assets/css/bootstrap.css" />
+		<link rel="stylesheet" href="/static/user/assets/css/font-awesome.css" />
+		<link rel="stylesheet" href="/static/user/assets/css/table.css" />
+		<!-- page specific plugin styles -->
+		<link rel="stylesheet" href="/static/user/assets/css/colorbox.css" />
+		<!-- text fonts -->
+		<link rel="stylesheet" href="/static/user/assets/css/ace-fonts.css" />
+		<link rel="stylesheet" href="/static/user/assets/css/jquery-ui.structure.min.css" />
+		<link rel="stylesheet" href="/static/user/assets/css/bootstrap.min.css" />
+		<!-- ace styles -->
+		<link rel="stylesheet" href="/static/user/assets/css/ace.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+		<!-- dialog -->
+		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" /> -->
+		
+		<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.min.js"></script>-->
+<!--<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.9/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.9/js/bootstrap-dialog.min.js"></script>-->
+	<!-- dialog -->
+		<!--[if lte IE 9]>
+            <link rel="stylesheet" href="/static/user/assets//css/ace-part2.css" class="ace-main-stylesheet" />
+        <![endif]-->
+		<!--[if lte IE 9]>
+          <link rel="stylesheet" href="/static/user/assets//css/ace-ie.css" />
+        <![endif]-->
+		<!-- inline styles related to this page -->
+		<!-- ace settings handler -->
+		<script src="/static/user/assets/js/ace-extra.js"></script>
+		<!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+		<!--[if lte IE 8]>
+        <script src="/static/user/assets//js/html5shiv.js"></script>
+        <script src="/static/user/assets//js/respond.js"></script>
+        <![endif]-->
+		<link rel="stylesheet" type="text/css" href="/static/user/assets/css/chosen.css">
+		<!--[if !IE]> -->
+		<script type="text/javascript" src="/static/user/assets/js/jquery.js"></script>
+		<script type="text/javascript">
+			window.jQuery || document.write("<script src='/static/user/assets/js/jquery.js'>" + "<" + "/script>");
+			var common_url = "{:request()->domain()}";
+		</script> 
+		<!-- <![endif]-->
+		<!--[if IE]>
+        <script type="text/javascript">
+         window.jQuery || document.write("<script src='/static/user/assets//js/jquery1x.js'>"+"<"+"/script>");
+        </script>
+        <![endif]-->
+		<!-- for cjh -->
+		<script type="text/javascript" src="/static/common/js/jquery.form.js"></script>
+		<script type="text/javascript" src="https://cdn.bootcss.com/bootstrap-hover-dropdown/2.2.1/bootstrap-hover-dropdown.js"></script>
+		<script type="text/javascript" src="/static/common/js/admin.js"></script>
+		<script type="text/javascript" src="/static/common/js/layer/layer.js"></script>
+		<!--// for cjh -->
+		<script src="/static/user/assets/js/chosen.jquery.js"></script>
+		<script src="/static/user/js/jquery.cookie.min.js"></script>
+		<script src="/static/user/assets/js/jquery-ui.js"></script>
+		<script src="/static/user/js/user.js"></script>
+		  
+		  
+		{block name="head"}{/block}
+	</head>
+
+
+	<body class="no-skin">
+		<!-- #section:basics/navbar.layout -->
+		{block name="navbar"}
+		<div id="navbar" class="navbar navbar-default">
+			<script type="text/javascript">
+				try {
+					ace.settings.check('navbar', 'fixed')
+				} catch (e) {}
+			</script>
+
+			<div class="navbar-container" id="navbar-container">
+				<!-- #section:basics/sidebar.mobile.toggle -->
+				<button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+					<span class="sr-only">Toggle sidebar</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<!-- /section:basics/sidebar.mobile.toggle -->
+				<div class="navbar-header pull-left" style="margin-top: 10px;">
+					<!-- #section:basics/navbar.layout.brand -->
+					<a href="{:url('user/index/index')}" class="navbar-brand">
+						<small>
+							<i class="fa fa-leaf"></i>
+							<span id="store-name"></span>
+						</small>
+					</a>
+					<!-- /section:basics/navbar.layout.brand -->
+					<!-- #section:basics/navbar.toggle -->
+					<!-- /section:basics/navbar.toggle -->
+				</div>
+				<!-- #section:basics/navbar.dropdown -->
+				<div class="navbar-buttons navbar-header pull-right" role="navigation">
+					<ul class="nav ace-nav">
+						<!-- #section:basics/navbar.user_menu -->
+						<li class="light-blue" id="admin-login">
+							<!-- <a data-toggle="dropdown" href="#" class="dropdown-toggle"> -->
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+									<img class="nav-user-photo" src="/static/user/assets//avatars/avatar2.png" alt="{:input('session.admin_nicename')}" />
+									<span class="user-info">
+										<small>欢迎您,</small>
+										<span id="user-name"></span>
+									</span>
+									<i class="ace-icon fa fa-caret-down"></i>
+								</a>
+								<ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+									<li>
+										<a href="{:url('user/index/update_password')}" id="update-pwd" title="修改密码">
+											<i class="ace-icon fa fa-cog"></i> 修改密码
+										</a>
+									</li>
+									<li class="divider"></li>
+									<li>
+										<a href="#" id="log-off">
+                                    <i class="ace-icon fa fa-power-off"></i> 退出
+                                </a>
+									</li>
+								</ul>
+						</li>
+
+
+						<!-- /section:basics/navbar.user_menu -->
+					</ul>
+				</div>
+				<!-- /section:basics/navbar.dropdown -->
+			</div>
+			<!-- /.navbar-container -->
+		</div>
+		{/block}
+		<!-- /section:basics/navbar.layout -->
+		<script>
+			
+			// var domain = window.location.host;
+			// console.log(domain);
+			// var common_url=domain+"/";
+			// alert(common_url);
+			// console.log(commou_url);
+			// var common_url=damain+"/";
+		</script>
+		<div class="main-container" id="main-container">
+			<script type="text/javascript">
+				try {
+					ace.settings.check('main-container', 'fixed')
+				} catch (e) {}
+			</script>
+			<!-- #section:basics/sidebar -->
+			{block name="nav-list"}
+			<div id="sidebar" class="sidebar responsive">
+				<script type="text/javascript">
+					try {
+						ace.settings.check('sidebar', 'fixed')
+					} catch (e) {}
+				</script>
+				<!-- /.sidebar-shortcuts -->
+				<ul class="nav nav-list">
+					<li class="menu_id_2498">
+						<a menu_url="#" href="#" class="dropdown-toggle">
+							<i class="menu-icon glyphicon glyphicon-list"></i>
+							<span class="menu-text">首页 </span>
+							<b class="arrow fa fa-angle-down"></b>
+						</a>
+						<b class="arrow"></b>
+						<ul class="submenu">
+							<li class="menu_id_2499">
+								<a menu_url="index/index" href="{:url('index/index')}" class="">
+									<i class="menu-icon fa fa-caret-right"></i>默认首页
+								</a>
+								<b class="arrow"></b>
+							</li>
+						</ul>
+					</li>
+					<li class="menu_id_2498">
+						<a menu_url="#" href="#" class="dropdown-toggle">
+							<i class="menu-icon glyphicon glyphicon-list"></i>
+							<span class="menu-text">交易数据</span>
+							<b class="arrow fa fa-angle-down"></b>
+						</a>
+						<b class="arrow"></b>
+						<ul class="submenu">
+							<li class="menu_id_2499">
+								<a menu_url="index/order_list" href="{:url('index/order_list')}" class="">
+									<i class="menu-icon fa fa-caret-right"></i>交易流水
+								</a>
+								<b class="arrow"></b>
+							</li>
+							<li class="menu_id_2499">
+								<a menu_url="index/order_total" href="{:url('index/order_total')}" class="">
+									<i class="menu-icon fa fa-caret-right"></i>交易统计
+								</a>
+								<b class="arrow"></b>
+							</li>
+						</ul>
+					</li>
+					<li class="menu_id_2498">
+						<a menu_url="#" href="#" class="dropdown-toggle">
+							<i class="menu-icon glyphicon glyphicon-list"></i>
+							<span class="menu-text">经营场地信息</span>
+							<b class="arrow fa fa-angle-down"></b>
+						</a>
+						<b class="arrow"></b>
+						<ul class="submenu">
+							<li class="menu_id_2499">
+								<a menu_url="index/store_list" href="{:url('index/store_list')}" class="">
+									<i class="menu-icon fa fa-caret-right"></i>所有经营场地
+								</a>
+								<b class="arrow"></b>
+							</li>
+							<li class="menu_id_2499">
+								<a menu_url="index/user_list" href="{:url('index/user_list')}" class="">
+									<i class="menu-icon fa fa-caret-right"></i>收银账号
+								</a>
+								<b class="arrow"></b>
+							</li>
+							<li class="menu_id_2499">
+								<a menu_url="index/user_info" href="{:url('index/user_info')}" class="">
+									<i class="menu-icon fa fa-caret-right"></i>我的账号
+								</a>
+								<b class="arrow"></b>
+							</li>
+						</ul>
+					</li>
+					<!-- <li class="menu_id_2498"> -->
+						<!-- <a menu_url="#" href="#" class="dropdown-toggle"> -->
+							<!-- <i class="menu-icon glyphicon glyphicon-list"></i> -->
+							<!-- <span class="menu-text">包月管理</span> -->
+							<!-- <b class="arrow fa fa-angle-down"></b> -->
+						<!-- </a> -->
+						<!-- <b class="arrow"></b> -->
+						<!-- <ul class="submenu"> -->
+							<!-- <li class="menu_id_2499"> -->
+								<!-- <a menu_url="index/member_list" href="{:url('index/member_list')}" class=""> -->
+									<!-- <i class="menu-icon fa fa-caret-right"></i>成员列表 -->
+								<!-- </a> -->
+								<!-- <b class="arrow"></b> -->
+							<!-- </li> -->
+							<!-- <li class="menu_id_2499"> -->
+								<!-- <a menu_url="index/car_month" href="{:url('index/car_month')}" class=""> -->
+									<!-- <i class="menu-icon fa fa-caret-right"></i>包月列表 -->
+								<!-- </a> -->
+								<!-- <b class="arrow"></b> -->
+							<!-- </li> -->
+						<!-- </ul> -->
+					<!-- </li> -->
+					<!-- <li class="menu_id_2498"> -->
+						<!-- <a menu_url="#" href="#" class="dropdown-toggle"> -->
+							<!-- <i class="menu-icon glyphicon glyphicon-list"></i> -->
+							<!-- <span class="menu-text">优惠券</span> -->
+							<!-- <b class="arrow fa fa-angle-down"></b> -->
+						<!-- </a> -->
+						<!-- <b class="arrow"></b> -->
+						<!-- <ul class="submenu"> -->
+							<!-- <li class="menu_id_2499"> -->
+								<!-- <a menu_url="index/coupon_create" href="{:url('index/coupon_create')}" class=""> -->
+									<!-- <i class="menu-icon fa fa-caret-right"></i>优惠券生成 -->
+								<!-- </a> -->
+								<!-- <b class="arrow"></b> -->
+							<!-- </li> -->
+							<!-- <li class="menu_id_2499"> -->
+								<!-- <a menu_url="index/coupon_index" href="{:url('index/coupon_index')}" class=""> -->
+									<!-- <i class="menu-icon fa fa-caret-right"></i>优惠券查询 -->
+								<!-- </a> -->
+								<!-- <b class="arrow"></b> -->
+							<!-- </li> -->
+						<!-- </ul> -->
+					<!-- </li> -->
+                    <li class="menu_id_2498">
+                        <a menu_url="#" href="#" class="dropdown-toggle">
+                            <i class="menu-icon glyphicon glyphicon-list"></i>
+                            <span class="menu-text">商品管理</span>
+                            <b class="arrow fa fa-angle-down"></b>
+                        </a>
+                        <b class="arrow"></b>
+                        <ul class="submenu">
+                            <li class="menu_id_2499">
+                                <a menu_url="index/coupon_create" href="{:url('goods_manage/catelist')}" class="">
+                                    <i class="menu-icon fa fa-caret-right"></i>商品分类管理
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="menu_id_2499">
+                                <a menu_url="index/coupon_index" href="{:url('goods_manage/index')}" class="">
+                                    <i class="menu-icon fa fa-caret-right"></i>商品管理
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+                        </ul>
+                    </li>
+				</ul>
+				<!-- /.nav-list -->
+				<!-- #section:basics/sidebar.layout.minimize -->
+				<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+					<i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+				</div>
+				<div class="sidebar-toggle">
+					<div class="badge badge-info">v{:config('softversion')} </div>
+				</div>
+				<!-- /section:basics/sidebar.layout.minimize -->
+				<script type="text/javascript">
+					try {
+						ace.settings.check('sidebar', 'collapsed')
+					} catch (e) {}
+				</script>
+			</div>
+			{/block}
+			<!-- /section:basics/sidebar -->
+			<div class="main-content">
+				<div class="main-content-inner">
+					<!-- #section:basics/content.breadcrumbs -->
+					{block name="breadcrumbswarp"}
+					<div class="breadcrumbs" id="breadcrumbs">
+						<script type="text/javascript">
+							try {
+								ace.settings.check('breadcrumbs', 'fixed')
+							} catch (e) {}
+						</script>
+						{block name="breadcrumbs"}
+						<!-- <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">Home</a>
+                        </li>
+                        <li>
+                            <a href="#">Other Pages</a>
+                        </li>
+                        <li class="active">Blank Page</li>
+                    </ul> -->
+						<!-- /.breadcrumb -->
+						<!-- #section:basics/content.searchbox -->
+						<div class="nav-search" id="nav-search">
+							<form class="form-search">
+								<span class="input-icon">
+									<input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+									<i class="ace-icon fa fa-search nav-search-icon"></i>
+								</span>
+							</form>
+						</div>
+						{/block}
+						<!-- /.nav-search -->
+						<!-- /section:basics/content.searchbox -->
+					</div>
+					{/block}
+					<!-- /section:basics/content.breadcrumbs -->
+					<div class="page-content">
+						<!-- /section:settings.box -->
+						<div class="row">
+							<div class="col-xs-12">
+								<!-- PAGE CONTENT BEGINS -->
+								{block name="page-content"} {/block}
+								<!-- PAGE CONTENT ENDS -->
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.page-content -->
+				</div>
+			</div>
+			<!-- /.main-content -->
+			<a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+				<i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+			</a>
+		</div>
+		{block name="floot"} {/block}
+		<!-- /.main-container -->
+		<!-- basic scripts -->
+		<script type="text/javascript">
+			if ('ontouchstart' in document.documentElement) document.write(
+				"<script src='/static/user/assets//js/jquery.mobile.custom.js'>" + "<" + "/script>");
+		</script>
+		<script src="/static/user/assets//js/bootstrap.js"></script>
+		<!-- page specific plugin scripts -->
+		<!-- ace scripts -->
+		<!--
+        <script src="/static/user/assets//js/ace/elements.scroller.js"></script>
+        
+        <script src="/static/user/assets//js/ace/elements.fileinput.js"></script>
+        <script src="/static/user/assets//js/ace/elements.typeahead.js"></script>
+
+        <script src="/static/user/assets//js/ace/elements.wysiwyg.js"></script>
+        <script src="/static/user/assets//js/ace/elements.spinner.js"></script>
+        -->
+		<!-- page specific plugin scripts -->
+		<script src="/static/user/assets//js/jquery.colorbox.js"></script>
+		<script src="/static/user/assets//js/ace/elements.colorpicker.js"></script>
+		<script src="/static/user/assets//js/ace/elements.treeview.js"></script>
+		<script src="/static/user/assets//js/ace/elements.wizard.js"></script>
+		<script src="/static/user/assets//js/ace/elements.aside.js"></script>
+		<script src="/static/user/assets//js/ace/ace.js"></script>
+		<!-- <script src="/static/user/assets//js/ace/ace.ajax-content.js"></script> -->
+		<script src="/static/user/assets//js/ace/ace.touch-drag.js"></script>
+		<script src="/static/user/assets//js/ace/ace.sidebar.js"></script>
+		<script src="/static/user/assets//js/ace/ace.sidebar-scroll-1.js"></script>
+
+
+		<script type="text/javascript" src="/static/common/js/My97DatePicker/WdatePicker.js"></script>
+
+		<!--
+        <script src="/static/user/assets//js/ace/ace.submenu-hover.js"></script>
+
+        <script src="/static/user/assets//js/ace/ace.widget-box.js"></script>
+        <script src="/static/user/assets//js/ace/ace.settings.js"></script>
+        <script src="/static/user/assets//js/ace/ace.settings-rtl.js"></script>
+        <script src="/static/user/assets//js/ace/ace.settings-skin.js"></script>
+        <script src="/static/user/assets//js/ace/ace.widget-on-reload.js"></script>
+        <script src="/static/user/assets//js/ace/ace.searchbox-autocomplete.js"></script> -->
+		<!-- inline scripts related to this page -->
+		<!-- the following scripts are used in demo only for onpage help and you don't need them -->
+		<!-- <link rel="stylesheet" href="/static/user/assets//css/ace.onpage-help.css" />
+        <link rel="stylesheet" href="../docs/assets/js/themes/sunburst.css" /> -->
+		<!--
+        <script type="text/javascript"> ace.vars['base'] = '..'; </script>
+        <script src="/static/user/assets//js/ace/elements.onpage-help.js"></script>
+        <script src="/static/user/assets//js/ace/ace.onpage-help.js"></script>
+        <script src="../docs/assets/js/rainbow.js"></script>
+        <script src="../docs/assets/js/language/generic.js"></script>
+        <script src="../docs/assets/js/language/html.js"></script>
+        <script src="../docs/assets/js/language/css.js"></script>
+        <script src="../docs/assets/js/language/javascript.js"></script>
+        -->
+	</body>
+	<script type="text/javascript">
+		function isIE() { //ie?
+			if (!!window.ActiveXObject || "ActiveXObject" in window)
+				return true;
+			else
+				return false;
+		}
+		if (isIE() == true) {
+			document.body.innerHTML =
+				'<h1 style="color:#000;text-align:center;">不支持IE浏览器，请使用360（高速模式）、搜狗（高速模式）、google等高级浏览器</h1>';
+			//alert("不支持IE浏览器，请使用360（高速模式）、搜狗（高速模式）、google等高级浏览器");
+		}
+
+		//chosen
+		if (!ace.vars['touch']) {
+			$('.chosen-select').chosen({
+				allow_single_deselect: true,
+				search_contains: true
+			});
+			//resize the chosen on window resize
+
+			$(window)
+				.off('resize')
+				.on('resize', function() {
+					$('.chosen-select').each(function() {
+						var $this = $(this);
+						$this.next().css({
+							'width': $this.parent().width()
+						});
+					})
+				}).trigger('resize');
+			//resize chosen on sidebar collapse/expand
+			$(document).on('settings.ace.chosen', function(e, event_name, event_val) {
+				if (event_name != 'sidebar_collapsed') return;
+				$('.chosen-select').each(function() {
+					var $this = $(this);
+					$this.next().css({
+						'width': $this.parent().width()
+					});
+				})
+			});
+		}
+		//__chosen
+
+
+		//左侧菜单获取焦点
+		if ("{:isset($menu_point_id)?$menu_point_id:''}" != "") {
+			$(".nav .menu_id_{:isset($menu_point_id)?$menu_point_id:''}").parentsUntil(".nav nav-list").addClass("active");
+		} else {
+
+			var leftmenuurl = '{:request()->controller()}/index';
+			var leftmenuurlArray = leftmenuurl.match(/[A-Z]/g);
+			if (leftmenuurlArray) {
+				for (var i = 0; i < leftmenuurlArray.length; i++) {
+					leftmenuurl = leftmenuurl.replace(leftmenuurlArray[i], "_" + (leftmenuurlArray[i]).toLowerCase());
+				}
+				leftmenuurl = leftmenuurl.replace(/^_?/, "");
+			}
+			//layer.alert(leftmenuurl);
+			$(".nav").find("a[menu_url='" + leftmenuurl + "']").parentsUntil(".nav nav-list").addClass("active");
+
+			//双层保障
+			if ("{:request()->action()}" != "index") {
+				var leftmenuurl2 = '{:request()->controller()}/{:request()->action()}';
+				var leftmenuurl2Array = leftmenuurl2.match(/[A-Z]/g);
+				if (leftmenuurl2Array) {
+					for (var i = 0; i < leftmenuurl2Array.length; i++) {
+						leftmenuurl2 = leftmenuurl2.replace(leftmenuurl2Array[i], "_" + (leftmenuurl2Array[i]).toLowerCase());
+					}
+					leftmenuurl2 = leftmenuurl2.replace(/^_?/, "");
+				}
+				$(".nav").find("a[menu_url='" + leftmenuurl2 + "']").parentsUntil(".nav nav-list").addClass("active");
+				$(".nav").find("a[menu_url='index/index']").parentsUntil(".nav nav-list").removeClass("active");
+			}
+		}
+
+		//公共常规事件
+		//图片heighLinghtBox
+		var $overflow = '';
+		var colorbox_params = {
+			rel: 'colorbox',
+			reposition: true,
+			scalePhotos: true,
+			scrolling: false,
+			previous: '<i class="ace-icon fa fa-arrow-left"></i>',
+			next: '<i class="ace-icon fa fa-arrow-right"></i>',
+			close: '&times;',
+			current: '{current} of {total}',
+			maxWidth: '100%',
+			maxHeight: '100%',
+			onOpen: function() {
+				$overflow = document.body.style.overflow;
+				document.body.style.overflow = 'hidden';
+			},
+			onClosed: function() {
+				document.body.style.overflow = $overflow;
+			},
+			onComplete: function() {
+				$.colorbox.resize();
+			}
+		};
+		$('.ace-thumbnails [data-rel="colorbox"]').colorbox(colorbox_params);
+		//__图片heighLinghtBox
+
+		// document.getElementById('admin-login').classList.toggle('open');
+		// 	$(document).ready(function(){
+		//   $("#admin-login").click(function(){
+		//   $("user-menu").toggle();
+		//   });
+		// });
+		//
+	</script>
+
+</html>

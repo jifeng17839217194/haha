@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <title>支付系统-{:config("site_title")}</title>
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/css.css?{:time()}" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/skin-blue.css" />
+        <style type="text/css">
+        html,
+        body {
+            height: 100%;
+        }
+        
+        .vcode-img {
+            padding: 0;
+        }
+        
+        .vcode-img img {
+            height: 44px;
+            max-width: inherit;
+            cursor: pointer;
+        }
+        </style>
+    </head>
+
+    <body class="sign-body">
+
+        <div class="col-xs-12">
+            <div class="row">
+                <div class="top-banner">
+                    <div class="compnay-logo">{:config("site_title")} - 智慧收银系统</div>
+                    <span class="btn-close-window"><i class="glyphicon glyphicon-remove"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="sign-space-auto"></div>
+            <div class="row">
+                <h2 class="sign-logo text-center">收银员登入</h2></div>
+            <div class="col-xs-4 col-xs-offset-4">
+                <div class="row">
+                    <form id="sign-form" action="" method="post">
+                        <div class="form-horizontal">
+                            <div class="form-group form-group-lg">
+                                <input type="text" class="form-control" placeholder="登录名" id="sign_name" value="" />
+                            </div>
+                            <div class="form-group form-group-lg">
+                                <input type="password" class="form-control" placeholder="密&emsp;码" id="sign_pwd" value="" />
+                            </div>
+                            <div class="form-group form-group-lg">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="验证码" id="vcode" value="" />
+                                    <span class="input-group-addon vcode-img"><img id="vcode_img" data-src="/api/index/getcaptcha" src=""></span>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-lg">
+                                <button class="btn btn-block btn-success btn-sign btn-lg"><i class="glyphicon glyphicon-lock"></i> 安全登录</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script src="/static/index/assets/jquery/3.2.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/jquery/jquery.cookie.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/layer/layer.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/js/pc.js?{:time()}" type="text/javascript" charset="utf-8"></script>
+
+        <script type="text/javascript">
+        
+        function show_vcode_img()
+        {
+            window.time = new Date().getTime();
+            window.time += '' + Math.ceil(Math.random() * 100000);
+            var code_url = $('#vcode_img').attr('data-src');
+            code_url += '?identifier=' + window.time;
+            console.log(code_url);
+            $('#vcode_img').attr('src', code_url);
+        }
+        $(document).ready(function()
+        {
+
+            if (window.localStorage.user_name)
+            {
+                $("#sign_name").val(window.localStorage.user_name);
+            }
+
+            var uid = $.cookie('user_id');
+            uid = Number(uid) || 0;
+            console.log('uid' + uid);
+            if (uid > 0)
+            {
+                window.location.href = '/index/pc/index';
+            }
+
+            show_vcode_img();
+        });
+        $('#vcode_img').on('click', function()
+        {
+            show_vcode_img();
+        });
+        $('#sign-form').on('submit', function()
+        {
+            var sign_name = $('#sign_name').val();
+            var sign_pwd = $('#sign_pwd').val();
+            var code = $('#vcode').val();
+            $.ajax(
+            {
+                type: "post",
+                url: "/api/user/login",
+                data:
+                {
+                    'user_name': sign_name,
+                    'user_password': sign_pwd,
+                    'captcha_type': 'image',
+                    'captcha_value': code,
+                    'captcha_identifier': window.time
+                },
+                async: true,
+                dataType: 'json',
+                success: function(res)
+                {
+                    //console.log(JSON.stringify(res));return;
+                    if (res.code == 1)
+                    {
+                        window.localStorage.user_name = sign_name;
+                        $.cookie('user_id', res.data.user_id,
+                        {
+                            path: '/'
+                        });
+                        $.cookie('user_token', res.data.user_token,
+                        {
+                            path: '/'
+                        });
+                        $.cookie('store_name', res.data.store_name,
+                        {
+                            path: '/'
+                        });
+                        $.cookie('user_role', res.data.user_role,
+                        {
+                            path: '/'
+                        });
+                        $.cookie('user_realname', res.data.user_realname,
+                        {
+                            path: '/'
+                        });
+                        $.cookie('user_role_cn', res.data.user_role_cn,
+                        {
+                            path: '/'
+                        });
+                        window.location.href = '/index/pc/index';
+                    }
+                    else
+                    {
+                        layer.alert(res.message, function(index)
+                        {
+                            show_vcode_img();
+                            layer.close(index);
+                        });
+                    }
+                }
+            });
+            return false;
+        });
+        </script>
+    </body>
+
+</html>

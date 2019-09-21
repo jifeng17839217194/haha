@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>无牌车入场</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="stylesheet" type="text/css" href="//res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
+        <link rel="stylesheet" href="//cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+        <style type="text/css">
+        body {
+            margin: 0;
+            background: #e4e4e4;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        .pay-top {
+            padding: 1rem 14px 1.21rem 14px;
+            background: #FFFFFF;
+        }
+        
+        .pay-top .logo {
+            margin: auto auto;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bolder;
+            height: 3.875rem;
+        }
+        
+        .pay-top .logo img {
+            display: block;
+            max-width: 100%;
+        }
+        
+        .type {
+            margin: 0;
+            padding-top: 0.5rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #64c5f0;
+            line-height: 1rem;
+        }
+        
+        .money {
+            padding-top: 0.685rem;
+            font-size: 1rem;
+            text-align: center;
+            line-height: 1rem;
+            color: #333333;
+        }
+        
+        .msg {
+            padding-top: 0.485rem;
+            font-size: 0.6rem;
+            line-height: 0.6rem;
+            text-align: center;
+            color: #949494;
+        }
+        
+        .self-content {
+            margin-top: 10px;
+            background: #f2f2f2;
+            min-height: 9.5rem;
+        }
+        </style>
+    </head>
+
+    <body>
+        <div class="pay-top">
+            <div class="logo">{$parkingOne.store_name}</div>
+            <h6 class="type">
+                <button class="weui-btn weui-btn_plain-primary" onclick="nocarnumberdoLogin()">点击入场</button>
+            </h6>
+            <div class="msg">出场请使用同一个微信或支付宝扫码</div>
+        </div>
+        <!--<div class="self-content">        </div>-->
+    </body>
+    <script type="text/javascript" src="/static/dl/assets/js/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/jquery-weui/1.2.0/js/jquery-weui.min.js"></script>
+    <script type="text/javascript">
+    function nocarnumberdoLogin()
+    {
+        $.showLoading("入场请求中");
+        $.ajax(
+        {
+            "url": "{:url('parking_no_number_in_post')}",
+            "data":
+            {
+                "user_id":"{$parkingOne.parking_channel_user_id}"
+            },
+            "type": "post",
+            "dataType": "json",
+            "success": function(rs)
+            {
+                $.hideLoading();
+                alert(rs.message);
+            },
+            error: function(rs)
+            {
+                $.hideLoading();
+                alert(JSON.stringify(rs));
+            }
+        });
+    }
+    </script>
+
+</html>

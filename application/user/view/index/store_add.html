@@ -1,0 +1,158 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+	<li class="active">
+		<i class="ace-icon fa fa-home home-icon"></i>
+		<span _href="#">店铺详情</span>
+	</li>
+</ul>
+{/block} {block name="page-content"}
+<script type="text/javascript">
+	$(function(){
+		check_login();
+		/*alert(store_name);*/
+		$("#store-name").html(store_name);
+		$("#user-name").html(user_realname);
+		$("#log-off").on('click',function(){
+			clear_cookie();
+			$(location).attr('href', common_url+'/user/index/login');
+		});
+	});
+</script>
+<!-- PAGE CONTENT BEGINS -->
+<!--bof list-->
+<div class="order-body">
+<div class="col-xs-12">
+	<div class="row">
+		<form id="form1" class="form-horizontal">
+            <input type="hidden" name="formaction" value="dologin">
+            <fieldset>
+            	<div class="form-group clearfix">
+				    <label class="col-sm-2 control-label no-padding-right">*经营场地：</label>
+				    <div class="col-sm-10">
+				        <input type="text" placeholder="" pattern="*" [disabled]=""  required="required" name="store_name" value="" title="店铺名称" id="store_mobile" class="col-xs-10 col-sm-5">
+				    </div>
+				</div>  
+                 <div class="form-group clearfix">
+				    <label class="col-sm-2 control-label no-padding-right">经营场地地址：</label>
+				    <div class="col-sm-10">
+				        <input type="text" placeholder="" pattern="*" [disabled]="" name="store_address" required="required" value="" title="店铺地址" id="store_mobile" class="col-xs-10 col-sm-5">
+				    </div>
+				</div>  
+               
+                <div class="form-group clearfix">
+				    <label class="col-sm-2 control-label no-padding-right">经营场地电话：</label>
+				    <div class="col-sm-10">
+				        <input type="text" placeholder="" pattern="*" [disabled]="" name="store_mobile" value="" required="required" title="经营场地电话" id="store_mobile" class="col-xs-10 col-sm-5">
+				        <span class="help-inline col-xs-12 col-sm-7">
+				                <span class="middle">在打印的小票上显示</span>
+				        </span>
+				    </div>
+				</div>                
+                <div class="form-group clearfix">
+                	<label class="col-sm-2 control-label no-padding-right">打赏是否可用：</label>
+                	<div class="col-sm-10">
+		                <input {eq name=" config('saleversion')" value="1"> } disabled {/eq} name="store_open_reward" value="1" id="store_open_reward" class="ace ace-switch" type="checkbox" />	
+		                <span class="lbl">{eq name=" config('saleversion')" value="1"> } &nbsp;&nbsp;&nbsp;&nbsp;打赏不可用 {/eq}</span>
+		            </div>    
+	            </div>
+				<div class="form-group clearfix">
+                	<label class="col-sm-2 control-label no-padding-right">开启预授权(押金)功能：</label>
+                	<div class="col-sm-10">
+		                <input name="store_open_funds_authorized" {eq name=" config('saleversion')" value="1"> } disabled {/eq} value="1" id="store_open_funds_authorized" class="ace ace-switch" type="checkbox" />	
+		                <span class="lbl">{eq name=" config('saleversion')" value="1"> } &nbsp;&nbsp;&nbsp;&nbsp;预授权不可用 {/eq}</span>
+		            </div>    
+	            </div>
+	            {include file="common/fullTextarea" title="广告位" fieldName="store_pay_after_ad" defaultValue='' helpInfo='消费者扫收款码，支付成功后展示'}
+				<div class="form-group">
+	                <label class="col-sm-2 control-label no-padding-right">广告位状态：</label>
+	                <div class="col-sm-10">
+	                    <div class="radio pull-left">
+	                        <label>
+	                            <input name="store_pay_after_ad_active" value="1" type="radio" class="ace" />
+	                            <span class="lbl">&nbsp;&nbsp;开放</span>
+	                        </label>
+	                    </div>
+	                    <div class="radio pull-left">
+	                        <label>
+	                            <input name="store_pay_after_ad_active" value="0" type="radio" class="ace" checked />
+	                            <span class="lbl">&nbsp;&nbsp;关闭</span>
+	                        </label>
+	                    </div>
+	                </div>
+	            </div>
+                <div class="space"></div>
+                <div class="clearfix form-actions">
+       				 <div class="col-md-offset-3 col-md-9">
+	                    <button type="button" class="btn btn-sm btn-primary btn-submit">
+	                        <i class="ace-icon fa fa-key"></i>
+	                        <span class="bigger-110">提交</span>
+	                    </button>
+	                 </div>   
+                </div>
+                <div class="space-4"></div>
+            </fieldset>
+        </form>   
+	</div>
+</div>
+<!--eof list-->
+<div class="space-10"></div>
+</div>
+<script type="text/javascript">
+	$(function() {		        
+        var microtime=Date.parse(new Date())/1000;             
+        $(".btn-submit").on("click",function(){
+        	var store_name=$("input[name='store_name']").val();
+        	var store_address=$("input[name='store_address']").val();
+        	var store_mobile=$("input[name='store_mobile']").val();
+        	if($('#store_open_reward').is(':checked')) {
+			    var store_open_reward=$("input[name='store_open_reward']:checked").val();
+			}else{
+				var store_open_reward=0;
+			}
+			if($('#store_open_funds_authorized').is(':checked')) {
+			    var store_open_funds_authorized=$("input[name='store_open_funds_authorized']:checked").val();
+			}else{
+				var store_open_funds_authorized=0;
+			}
+			var store_pay_after_ad_active=$("input[name='store_pay_after_ad_active']:checked").val();
+			var store_pay_after_ad=UE.getEditor('store_pay_after_ad').getContent();
+            
+            var postParam = {
+                user_id: user_id,
+                store_name: store_name,
+                store_address: store_address,
+                store_mobile:store_mobile,
+                store_open_funds_authorized:store_open_funds_authorized,
+                store_pay_after_ad_active:store_pay_after_ad_active,
+                store_open_reward:store_open_reward,
+                time:microtime
+            };
+            
+			if(store_pay_after_ad!=''){
+				postParam.store_pay_after_ad = store_pay_after_ad; 
+			}
+			
+            var sign = getsign(postParam);
+            postParam.sign = sign; //不这么传值下，有错误
+            
+        	$.ajax({
+        		type:"post",
+        		url:common_url+"/api/store/addstoreone",
+        		async:true,
+        		dataType:"json",   
+        		data:postParam,
+        		success:function(res){
+        			if(res.code){
+        				console.log(res);
+        				alert("添加成功！");
+        				$(location).attr("href",common_url+'/user/index/store_list');
+        			}else{
+        				alert(res.message);
+        			}
+        		}
+        	});
+        });
+	});
+</script>
+<!-- PAGE CONTENT ENDS -->
+{/block}

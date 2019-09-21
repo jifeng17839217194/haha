@@ -1,0 +1,98 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">新闻中心</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block} {block name="page-content"}
+<div class="order-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    <input type="hidden" name="news_id" value="{:$one?$one->news_id:''}">
+
+    {include file="common/input" title="标题" fieldName="news_title" defaultValue='<?php echo(isset($one->news_title)?$one->news_title:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+	{include file="common/uploadImg" title="图片" fieldName="news_small_image" defaultValue='<?php echo(isset($one->news_small_image)?$one->news_small_image:"");?>' imgWidth="750" imgHeight="233" helpInfo='750px * 233px' usehelp=""}
+
+    {include file="common/fullTextarea" title="详情" fieldName="news_content" defaultValue='<?php echo(isset($one->news_content)?$one->news_content:"");?>' helpInfo=''}
+    
+    {include file="common/input" title="商品组描述" fieldName="news_goods_content" defaultValue='<?php echo(isset($one->news_goods_content)?$one->news_goods_content:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+    
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-top" for="duallist"> 商品组： </label>
+
+		<div class="col-sm-8">
+			<!-- #section:plugins/input.duallist -->
+			<select multiple="multiple" size="10" name="goods_list[]" id="duallist">
+				<?php if(isset($one->news_goods_id_str)){?>
+					{volist name="goods_list" id="vo"}
+						{in name="vo.goods_id" value="$one.news_goods_id_str"}
+							<option selected="selected" value="{$vo.goods_id}">{$vo.goods_title}--{$vo.goods_model}</option>
+						{else /}	
+							<option value="{$vo.goods_id}">{$vo.goods_title}--{$vo.goods_model}</option>
+						{/in}					
+					{/volist}
+				<?php }else{?>
+					{volist name="goods_list" id="vo"}
+							<option value="{$vo.goods_id}">{$vo.goods_title}--{$vo.goods_model}</option>	
+					{/volist}
+				<?php }?>				
+			</select>
+
+			<!-- /section:plugins/input.duallist -->
+			<div class="hr hr-16 hr-dotted"></div>
+		</div>
+	</div>
+    {include file="common/date" title="添加时间" fieldName="news_addtime" defaultValue='<?php echo(isset($one->news_addtime)?$one->news_addtime:"");?>' placeholder="" required="required" startDate="" dateFmt="yyyy-MM-dd HH:mm:ss" pattern="*" helpInfo=''}
+
+    {include file="common/input" title="排序" fieldName="news_sortnum" defaultValue='<?php echo(isset($one->news_sortnum)?$one->news_sortnum:"0");?>' placeholder="" required="required" pattern="[\d]*" helpInfo='（按1~N排序。但0特殊无穷大）'}
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right"> 状态：</label>
+        <div class="col-sm-10">
+            <div class="radio pull-left">
+                <label>
+                    <input name="news_active" value="1" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;正常</span>
+                </label>
+            </div>
+            <div class="radio pull-left">
+                <label>
+                    <input name="news_active" value="0" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;隐藏</span>
+                </label>
+            </div>
+            <script type="text/javascript">
+            $("input[name='news_active'][value='{:isset($one->news_active)?$one->news_active:'1'}']").attr("checked", "checked");
+            </script>
+        </div>
+    </div>
+   
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit">
+                <i class="ace-icon fa fa-check bigger-110"></i> 提交
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+<script src="../assets/js/jquery.bootstrap-duallistbox.js"></script>
+<script type="text/javascript">
+	jQuery(function($){
+	    var demo1 = $('select[name="goods_list[]"]').bootstrapDualListbox({infoTextFiltered: '<span class="label label-purple label-lg">Filtered</span>'});
+		var container1 = demo1.bootstrapDualListbox('getContainer');
+		container1.find('.btn').addClass('btn-white btn-info btn-bold');	
+	});	
+</script>
+{/block}

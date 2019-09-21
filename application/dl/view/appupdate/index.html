@@ -1,0 +1,64 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">设置</span>
+    </li>
+    <li class="active">
+        APP版本设置
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+<div class="nav-search nav-positions" id="nav-search">
+    <!-- <form class="form-search form-inline">
+        <span class="input-icon">
+            <input type="text" placeholder="关键词" name="keyword" value="{:input('get.keyword')}" class="nav-search-input" autocomplete="off" />
+            <i class="ace-icon fa fa-search nav-search-icon"></i>
+        </span>
+        <input type="submit" class="btn btn-info btn-xs " value="搜索">
+        <a href="{:url('add')}" class="btn btn-info btn-xs "><i class="glyphicon glyphicon-plus"></i>新增</a>
+    </form> -->
+</div>
+{/block}
+{block name="page-content"}
+<div class="admin-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    
+
+    
+    {include file="common/textarea" title="android版本描述" fieldName="appupdate_android_updatetip" defaultValue='<?php echo(isset($one->appupdate_android_updatetip)?$one->appupdate_android_updatetip:"");?>' placeholder="" required="" pattern="*" helpInfo=''}
+    
+    {include file="common/input" title="android版本号" fieldName="appupdate_android_version" defaultValue='<?php echo(isset($one->appupdate_android_version)?$one->appupdate_android_version:"");?>' placeholder="" required="" pattern="*" helpInfo=''}
+    
+    {include file="common/input" title="更新日期" fieldName="appupdate_android_time" defaultValue='<?php echo(isset($one->appupdate_android_time)?$one->appupdate_android_time:"");?>' placeholder="" required="" pattern="*" helpInfo='2017-8-2'}
+
+    {include file="common/input" title="下载URL" fieldName="appupdate_android_source" defaultValue='<?php echo(isset($one->appupdate_android_source)?$one->appupdate_android_source:"");?>' placeholder="" required="" pattern="*" helpInfo='http://xxx.com/abc.apk'}
+
+    <hr />
+     
+    {include file="common/textarea" title="ios版本描述" fieldName="appupdate_ios_updatetip" defaultValue='<?php echo(isset($one->appupdate_ios_updatetip)?$one->appupdate_ios_updatetip:"");?>' placeholder="" required="" pattern="*" helpInfo=''}
+    
+    {include file="common/input" title="ios版本号" fieldName="appupdate_ios_version" defaultValue='<?php echo(isset($one->appupdate_ios_version)?$one->appupdate_ios_version:"");?>' placeholder="" required="" pattern="*" helpInfo=''}
+    
+    {include file="common/input" title="更新日期" fieldName="appupdate_ios_time" defaultValue='<?php echo(isset($one->appupdate_ios_time)?$one->appupdate_ios_time:"");?>' placeholder="" required="" pattern="*" helpInfo='2017-8-2'}
+
+    {include file="common/input" title="下载URL" fieldName="appupdate_ios_source" defaultValue='<?php echo(isset($one->appupdate_ios_source)?$one->appupdate_ios_source:"");?>' placeholder="" required="" pattern="*" helpInfo='http://xxx.com/abc.apk'}
+
+    
+
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit">
+                <i class="ace-icon fa fa-check bigger-110"></i> 提交
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+{/block}

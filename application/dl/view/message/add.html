@@ -1,0 +1,41 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">站内信</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block} {block name="page-content"}
+<div class="order-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    <input type="hidden" name="message_id" value="{:$one?$one->message_id:''}">
+
+    {include file="common/input" title="标题" fieldName="message_title" defaultValue='<?php echo(isset($one->message_title)?$one->message_title:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+
+    {include file="common/fullTextarea" title="详情" fieldName="message_content" defaultValue='<?php echo(isset($one->message_content)?$one->message_content:"");?>' helpInfo=''}
+
+
+    {include file="common/date" title="添加时间" fieldName="message_addtime" defaultValue='<?php echo(isset($one->message_addtime)?$one->message_addtime:"");?>' placeholder="" required="required" startDate="" dateFmt="yyyy-MM-dd HH:mm:ss" pattern="*" helpInfo=''}
+
+    
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit">
+                <i class="ace-icon fa fa-check bigger-110"></i> 提交
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+{/block}

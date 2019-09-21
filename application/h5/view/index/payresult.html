@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{$storeone.store_name}-支付结果</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta content="telephone=no" name="format-detection" />
+        <meta content="email=no" name="format-detection" />
+        <!-- <link rel="stylesheet" type="text/css" href="//a.alipayobjects.com/g/antui/antui/10.0.18/rem/antui-all.css"> -->
+        <!-- https://antui.alipay.com/10.0.18/docs/#Message 信息状态 -->
+        <style type="text/css">
+        *{padding: 0;margin: 0;}
+        .success1{width: 100%;}
+        .success1 img{width: 100%;}
+        .adinfo{padding: 0;margin: 0; margin-top: 10px;}
+        .adinfo img{max-width: 100%;}
+        .orderinfowarp{text-align: left; padding: 20px; line-height: 1.5em;}
+        </style>
+    </head>
+    <body>
+        <div class="success1">
+            <img src="/static/h5/image/20180107130613_01.jpg">
+        </div>
+        <div class="orderinfowarp">
+            <div class="storename">商户：{$storeone.store_name}</div>
+            <div class="ordercash">金额：{$cash}元</div>
+        </div>
+        <div class="adinfo">
+        {$storeone.store_pay_after_ad}
+        </div>
+    </body>
+    <!-- <script src="https://a.alipayobjects.com/g/h5-lib/alipayjsapi/3.0.6/alipayjsapi.inc.min.js"></script> -->
+    <script type="text/javascript">
+    // var btnPop = document.querySelector('#J_btn_pop');
+    // btnPop.addEventListener('click', function()
+    // {
+    //     ap.popWindow();
+    // });
+    </script>
+</html>

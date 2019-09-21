@@ -1,0 +1,287 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">商户中心</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+    <li class="active">
+        <?php echo(isset($one->shop_name)?$one->shop_name:"");?>
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block}
+{block name="head"}
+<script type="text/javascript" src="/static/common/js/jquery.qrcode.min.js"></script>
+<style type="text/css">
+    #qrcodebox{padding: 20px; float: left; text-align: center;}
+</style>
+{/block}
+{block name="page-content"}
+<div class="shopadd-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    <input type="hidden" name="shop_id" value="{:$one?$one->shop_id:''}">
+
+    <ul class="nav nav-tabs" id="recent-tab">
+        <li class="active">
+            <a data-toggle="tab" href="#comment-base" aria-expanded="true">基本信息</a>
+        </li>
+
+        <li class="">
+            <a data-toggle="tab" href="#comment-alipay" aria-expanded="false">支付宝配置</a>
+        </li>
+
+        <li class="">
+            <a data-toggle="tab" href="#comment-wechat" aria-expanded="false">微信配置</a>
+        </li>
+    </ul>
+     <div class="tab-content padding-8">
+        <div id="comment-base" class="tab-pane active">
+
+           {include file="common/input" title="*签约商户名称" fieldName="shop_name" defaultValue='<?php echo(isset($one->shop_name)?$one->shop_name:"");?>' placeholder="" required="required" pattern="*" helpInfo='营业执照上面的名称'}
+
+           <!--{include file="common/input" title="*营业执照号码" fieldName="shop_business_license" defaultValue='<?php echo(isset($one->shop_business_license)?$one->shop_business_license:"");?>' placeholder="" required="required" pattern="*" helpInfo='营业执照上面的号码'}-->
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label no-padding-right">*营业执照号码：</label>
+                <div class="col-sm-10">
+                    <input type="text" placeholder="" pattern="*" required="required" name="shop_business_license" value="<?php echo(isset($one->shop_business_license)?$one->shop_business_license:"");?>" title="*营业执照号码" id="shop_business_license" class="col-xs-10 col-sm-5" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"/>
+                    <span class="help-inline col-xs-12 col-sm-7">
+                <span class="middle">营业执照上面的号码</span>
+        </span>
+                </div>
+            </div>
+
+           {include file="common/input" title="*法人/负责人" fieldName="shop_master_name" defaultValue='<?php echo(isset($one->shop_master_name)?$one->shop_master_name:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+            {include file="common/input" title="*收款支付宝账号" fieldName="shop_alipay_account" defaultValue='<?php echo(isset($one->shop_alipay_account)?$one->shop_alipay_account:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+          
+
+           {include file="common/input" title="*负责人联系电话" fieldName="shop_master_mobile" defaultValue='<?php echo(isset($one->shop_master_mobile)?$one->shop_master_mobile:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+
+           {include file="common/textarea" title="商户简介" placeholder="商户简介" fieldName="shop_content" defaultValue='<?php echo(isset($one->shop_content)?$one->shop_content:"");?>' helpInfo=''}
+            
+            <div class="form-group">
+                <label class="col-sm-2 control-label no-padding-right"> 状态：</label>
+                <div class="col-sm-10">
+                    <div class="radio pull-left">
+                        <label>
+                            <input name="shop_active" value="1" type="radio" class="ace" />
+                            <span class="lbl">&nbsp;&nbsp;开放</span>
+                        </label>
+                    </div>
+                    <div class="radio pull-left">
+                        <label>
+                            <input name="shop_active" value="0" type="radio" class="ace" />
+                            <span class="lbl">&nbsp;&nbsp;关闭</span>
+                        </label>
+                    </div>
+                    <script type="text/javascript">
+                    $("input[name='shop_active'][value='{:isset($one->shop_active)?$one->shop_active:'1'}']").attr("checked", "checked");
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div id="comment-alipay" class="tab-pane">
+            {eq name="one.shop_alipay_app_auth_token" value=""}
+            <div class="alert alert-block alert-warning ">
+                <button type="button" class="close" data-dismiss="alert">
+                    <i class="ace-icon fa fa-times"></i>
+                </button>
+                请使用账号是“<span style="color: red;">{$one->shop_alipay_account}</span>”的支付宝打开“商户授权链接”或扫描“商户授权二维码”
+            </div>
+            {/eq}
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label no-padding-right">当前状态：</label>
+                <div class="col-sm-10" style="padding-top: 8px;">
+                    <?php echo(empty($one->shop_alipay_app_auth_token)?"<span class='label label-default arrowed-in arrowed-in-right'>未授权</span>":"<span class='label label-success arrowed-in arrowed-in-right'>已授权</span>");?>
+
+                </div>
+            </div>
+            
+            {eq name="one.shop_alipay_app_auth_token" value=""}
+            <div>
+                <div class="form-group ">
+                    <label class="col-sm-2 control-label no-padding-right">商户授权链接：</label>
+                    <div class="col-sm-10" style="padding-top: 8px;">
+                        <script type="text/javascript">
+                        var redirect_uri = "{:request()->domain()}{:url('cmd/oauth/alipayset?uid='.$one->shop_id_token)}";
+                        document.write(redirect_uri);
+                        </script>
+                        
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label no-padding-right">商户授权二维码：</label>
+                    <div class="col-sm-10">
+                        <div id="qrcodebox">
+                            <div id="qrcode"></div>
+                            <div>请使用<br /><div style="color: red;">{$one->shop_name}</div><div style="color: red;">{$one->shop_alipay_account}</div>的支付宝扫码</div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div style="padding-top: 10px;">
+                            <button type="button" class="btn btn-minier btn-purple" onclick="layer.alert('将上方的二维码及文字<br />使用QQ或微信进行截图后<br />发送给商户')" style="margin-left:50px">点击提示文字</button>
+                        </div>
+                        <script type="text/javascript">
+                        $("#qrcode").qrcode({ 
+                            width: 150, //宽度 
+                            height:150, //高度 
+                            text: redirect_uri //任意内容 
+                        }); 
+                        </script>
+                    </div>
+                </div>
+            </div>
+            {else/}
+
+                <div class="form-group ">
+                    <label class="col-sm-2 control-label no-padding-right">操作：</label>
+                    <div class="col-sm-10" style="padding-top: 8px;">
+                        <button type='button' class='btn btn-minier btn-msg' onclick="thisPageApp.clear_alipay_app_auth_token()">清除授权信息</button>                        
+                    </div>
+                </div>
+            {/eq}
+            
+            <div class="form-group">
+                <label class="col-sm-2 control-label no-padding-right">支付宝手动返佣：<br />
+                    <p style="font-size: 12px;color:#666;">(10,000元返20元，则填0.0020)&nbsp;&nbsp;</p>
+                </label>
+                <div class="col-sm-10">
+                    <input type="text" onkeyup="javascript:CheckInputIntFloat(this);"  value="<?php echo(isset($one->shop_attr_alipay_rates)?floatval($one->shop_attr_alipay_rates):"");?>" name="shop_attr_alipay_rates" placeholder="0.0000" title="手动返佣金额比例">
+                </div>
+            </div>
+        </div>
+        <div id="comment-wechat" class="tab-pane">
+
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label no-padding-right">微信支付商户号：</label>
+                <div class="col-sm-10">
+                    <input type="text" placeholder="" pattern=""  name="shop_wxpay_sub_mch_id" value="<?php echo(isset($one->shop_wxpay_sub_mch_id)?$one->shop_wxpay_sub_mch_id:"");?>" title="微信支付商户号" id="shop_wxpay_sub_mch_id" class="col-xs-10 col-sm-5"    onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" />
+                    <span class="help-inline col-xs-12 col-sm-7">
+                <span class="middle">服务商·微信支付商户平台->特约商户管理->某商户->开发配置->商户号</span>
+        </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label no-padding-right">支付后自动关注的微信：</label>
+                <div class="col-sm-10" style="padding-top: 9px;">
+                    在“<a href="https://pay.weixin.qq.com/index.php/core/affiliate" target="_blank">服务商·微信支付商户平台</a>->特约商户管理->某商户->开发配置->关注公众号”
+                    <span class="help-button" data-rel="popover" data-trigger="hover" data-placement="right" data-content="1、已经关注的不展示推荐栏<br />2、服务号未设置头像的在IOS不展示推荐关注栏<br />3、用户取消过关注的默认不勾选<br />4、对于粉丝数大于50w的不默认勾选关注<br />5、公众号支付和扫码支付需要5元以上才有推荐关注" title="关注规则">?</span>
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label no-padding-right">微信手动返佣：<br />
+                    <p style="font-size: 12px;color:#666;">(10,000元返20元，则填0.0020)&nbsp;&nbsp;</p>
+                </label>
+                <div class="col-sm-10">
+                    <input type="text" onkeyup="javascript:CheckInputIntFloat(this);"  value="<?php echo(isset($one->shop_attr_wxpay_rates)?floatval($one->shop_attr_wxpay_rates):"");?>" name="shop_attr_wxpay_rates" placeholder="0.0000" title="手动返佣金额比例">
+                </div>
+            </div>
+
+        </div>
+     </div>
+
+  
+	
+
+  
+
+	
+
+
+    
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit" id="submit_button">
+                <i class="ace-icon fa fa-check bigger-110"></i> 保存
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="javascript:window.location.href='{:session('historylistpage')}';">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+{/block}
+
+{block name="floot"}
+<script>
+    function CheckInputIntFloat(oInput) {
+        if('' != oInput.value.replace(/\d{1,}\.{0,1}\d{0,}/,'')) {
+            oInput.value = oInput.value.match(/\d{1,}\.{0,1}\d{0,}/) == null ? '' :oInput.value.match(/\d{1,}\.{0,1}\d{0,}/);
+        }
+    }
+    $("#submit_button").on('click', function() {
+        var shop_name = $("input[name='shop_name']").val();
+        var shop_business_license = $("input[name='shop_business_license']").val();
+        var shop_master_name = $("input[name='shop_master_name']").val();
+        var shop_alipay_account = $("input[name='shop_alipay_account']").val();
+        var shop_master_mobile=$("input[name='shop_master_mobile']").val();
+
+        if (shop_name == '' || shop_name==null) {
+            alert('请输入代理商名称');
+            return false;
+        }
+        if(shop_business_license==''){
+            alert('请输入营业执照号码');
+            return false;
+        }
+        if(shop_master_name==''){
+            alert('请填写负责人');
+            return false;
+        }
+        if(shop_alipay_account==''){
+            alert('请填写支付宝账号');
+            return false;
+        }
+        if(shop_master_mobile==''){
+            alert('请填写负责人联系电话');
+            return false;
+        }
+    });
+</script>
+
+
+
+<script type="text/javascript">
+var thisPageApp={
+    clear_alipay_app_auth_token:function(){
+        layer.confirm('清除授权信息后支付宝将不能收款', {
+          title:"警告",
+          btn: ['确定','取消'] //按钮
+        }, function(){
+          $.ajax({
+            url:"{:url('shop/clearalipayauthtoken')}",
+            data:{shop_id:{:input('shop_id')}},
+            success:function(rs){
+                if(rs.code==1)
+                {
+                    alert("清除成功");
+                    window.location.reload();
+                }
+                else
+                {
+                    layer.msg(rs.message);
+                }
+            },
+            error:function(rs){
+                layer.alert(JSON.stringify(rs));
+              }
+          })
+        }, function(){
+          
+        });
+    },
+}
+</script>
+{/block}

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+
+
+
+<html>
+
+
+
+	<head>
+
+
+
+		<meta charset="utf-8">
+
+
+
+		<title>附近停车场</title>
+
+
+
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+
+
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+
+
+
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+
+
+		<link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
+
+
+
+        <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+
+
+
+		<style type="text/css">
+
+
+
+			*{margin:0;padding:0;box-sizing:border-box;}
+
+
+
+			html,body{background:#efeff4;}
+
+
+
+			.park-list{margin-bottom:0.5rem;}
+
+
+
+			.park-item{margin:0.7rem;border:1px solid #dedede;border-radius:5px;padding:0 0.6rem;margin-bottom:initial;background:#FFFFFF;overflow:hidden;}
+
+
+
+			.park-item-head{min-height:2.5rem;}
+
+
+
+			.park-item-head.on{border-bottom:1px solid #dedede;}
+
+
+
+			.park-item-head-title{line-height:2.5rem;font-size:0.8rem;}
+
+
+
+			.park-item-head-title .num{color:rgba(42, 130, 228, 1);font-size:0.75rem;}
+
+
+
+			.park-item-content-li{padding:0.7rem 0;}
+
+
+
+			.park-item-content-li .txt{display:block;height:1.4rem;line-height:1.4rem;font-size:0.65rem;color:#888888;}
+
+
+
+			.park-item-content-img{position:relative;margin-bottom:0.5rem;width:100%;overflow:hidden;}
+
+
+
+			.park-item-content-img::before{content:'';display:block;padding-bottom:35%;background:#EEEEEE;}
+
+
+
+			.park-item-content-img img{display:block;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);max-width:100%;backface-visibility:hidden;overflow:hidden;}
+
+
+
+			.park-item-footer{display:flex;justify-content:flex-end;align-content:space-between;align-content:center;height:2.5rem;}
+
+
+
+			.park-item-footer.on{border-top:1px solid #DEDEDE;}
+
+
+
+			.park-item-footer .btns{min-width:80px;text-align:right;height:2.5rem;line-height:2.5rem;font-size:0.7rem;color:#555555;}
+
+
+
+		</style>
+
+
+
+	</head>
+
+
+
+	<body> 
+
+
+
+		<div class="content">
+
+
+
+			<div class="park-list" id="list">
+
+
+
+				<!-- <div class="park-item">
+
+
+
+					<div class="park-item-head on">
+
+
+
+						<div class="park-item-head-title"><span class="num">1、</span>智慧信息产业园停车场</div>
+
+
+
+					</div>
+
+
+
+					<div class="park-item-content">
+
+
+
+						<div class="park-item-content-li">
+
+
+
+							<span class="txt">临时:￥4元/小时</span>
+
+
+
+							<span class="txt">包月:￥150元</span>
+
+
+
+							<span class="txt">距离:485米（驾车距离）</span>
+
+
+
+							<span class="txt">地址:祥园路88号N座</span>
+
+
+
+						</div>
+
+
+
+						<div class="park-item-content-img">
+
+
+
+							<img src="https://img.xiaopiu.com/userImages/img13715ae5879f38.png" />
+
+
+
+						</div>
+
+
+
+					</div>
+
+
+
+					<div class="park-item-footer on">
+
+
+
+						<div class="btns">详情 ></div>
+
+
+
+					</div>
+
+
+
+				</div>
+
+
+
+				<div class="park-item">
+
+
+
+					<div class="park-item-head on">
+
+
+
+						<div class="park-item-head-title"><span class="num">1、</span>智慧信息产业园停车场</div>
+
+
+
+					</div>
+
+
+
+					<div class="park-item-content">
+
+
+
+						<div class="park-item-content-li">
+
+
+
+							<span class="txt">临时:￥4元/小时</span>
+
+
+
+							<span class="txt">包月:￥150元</span>
+
+
+
+							<span class="txt">距离:485米（驾车距离）</span>
+
+
+
+							<span class="txt">地址:祥园路88号N座</span>
+
+
+
+						</div>
+
+
+
+						<div class="park-item-content-img">
+
+
+
+							<img src="" />
+
+
+
+						</div>
+
+
+
+					</div>
+
+
+
+					<div class="park-item-footer on">
+
+
+
+						<div class="btns">详情 ></div>
+
+
+
+					</div>
+
+
+
+				</div> -->
+
+
+
+			</div>
+
+
+
+		</div>
+
+
+
+		<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+
+
+
+		<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+
+
+
+		<script src="/static/h5/js/jquery-weui.min.js"></script>
+
+
+
+		<script src="/static/h5/js/mui.min.js"></script>
+
+
+
+		<script type="text/javascript" src="/static/h5/js/app.js" ></script>
+
+
+
+
+
+		<script type="text/javascript" charset="utf-8">
+
+
+
+			var pageSpace = {
+
+
+
+				init:function(){
+
+
+
+				},				
+
+
+
+				toPage:function(name,ags){
+					
+					DOM.openWin(name,ags);
+
+
+
+				}				
+
+
+
+			};
+
+
+
+
+
+
+
+		    var latitude = ''; // 纬度，浮点数，范围为90 ~ -90
+
+
+
+			var longitude = ''; // 经度，浮点数，范围为180 ~ -180。
+
+
+
+			var speed = ''; // 速度，以米/每秒计
+
+
+
+			var accuracy = ''; // 位置精度
+
+			var car_number="{:input('car_number')}";
+console.log('车牌号：'+car_number);
+			var pageIndex = 1;
+
+			 wx.config(<?php echo $js->config(array('getLocation','openLocation'), false) ?>);
+
+		     function shownav(lng,lat,name,addr)
+
+			 {
+
+				 wx.openLocation({
+
+					latitude: lat, // 纬度，浮点数，范围为90 ~ -90
+
+					longitude: lng, // 经度，浮点数，范围为180 ~ -180。
+
+					name: name, // 位置名
+
+					address: addr, // 地址详情说明
+
+					scale: 17, // 地图缩放级别,整形值,范围从1~28。默认为最大
+
+					infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+
+				});
+
+			 }
+
+		    wx.ready(function(){
+
+
+
+		    	wx.checkJsApi({
+
+
+
+				    jsApiList: ['getLocation'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+
+
+
+				    success: function(res) {
+
+
+
+					    console.log(JSON.stringify(res));
+
+
+
+				    }
+
+
+
+				});
+
+
+
+				wx.getLocation({
+
+
+
+					type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+
+
+
+					success: function (res) {
+
+
+
+						latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+
+
+
+						longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+
+
+
+						speed = res.speed; // 速度，以米/每秒计
+
+
+
+						accuracy = res.accuracy; // 位置精度
+
+
+
+						console.log('纬度：'+latitude+' 经度：'+longitude);
+
+
+
+						getData();
+
+
+
+					},
+
+
+
+					fail:function (res) {
+
+
+
+						console.log(JSON.stringify(res));
+
+
+
+					},
+
+
+
+					complete:function (res) {
+
+
+
+						console.log(JSON.stringify(res));
+
+
+
+					}
+
+
+
+				});				
+
+
+
+		    });
+
+
+
+		    function getData(){
+
+
+
+		    	$.ajax({
+
+
+
+					url:"{:url('get_park_list')}",
+
+
+
+					data:{'single_lng':120.11699,'single_lat':30.338715,'pageIndex':pageIndex},
+
+
+
+					type:"post",
+
+
+
+					dataType:"json",
+
+
+
+					success:function(data) {
+
+
+
+						console.log(data);
+
+
+
+						html='';
+
+
+
+						$.each(data.data,function(k,v){
+
+
+
+							html+='<div class="park-item">';
+
+
+
+							html+='<div class="park-item-head on">';
+
+
+
+							html+='<div class="park-item-head-title"><span class="num">'+v.num+'、</span>'+v.store_name+'</div>';
+
+
+
+							html+='</div>';
+
+
+
+							html+='<div class="park-item-content">';
+
+
+
+							html+='<div class="park-item-content-li">';
+
+
+
+							html+='<span class="txt">临时:￥'+v.store_temporary_parking_fee+'元/小时</span>';
+
+
+
+							html+='<span class="txt">包月:￥'+v.store_monthly_fee+'元</span>';
+
+
+
+							html+='<span class="txt">距离:'+v.juli+'</span>';
+
+
+
+							html+='<span class="txt">地址:'+v.store_address+'</span>';
+
+
+
+							html+='</div>';
+
+
+
+							html+='<div class="park-item-content-img">';
+
+
+
+							html+='<a onClick="shownav(\''+v.store_parking_lng+'\',\''+v.store_parking_lat+'\',\''+v.store_name+'\',\''+v.store_address+'\')"><img src="https://restapi.amap.com/v3/staticmap?markers=mid,0xFF0000,A:'+v.store_parking_lng+','+v.store_parking_lat+'&key=d3a613bb02ec5e7237e6e20dcc390d72"></a>';
+
+
+
+							html+='</div>';
+
+
+
+							html+='</div>';
+
+
+
+							html+='<div class="park-item-footer on">';
+
+
+							if(car_number!=''){
+								html+='<div class="btns" onclick="pageSpace.toPage(\'pay\',\'park_id='+v.store_id+'&car_number='+car_number+'\')">详情 ></div>';
+							}else{
+								html+='<div class="btns" onclick="pageSpace.toPage(\'querynum\',\'park_id='+v.store_id+'\')">详情 ></div>';
+							}						
+
+
+
+							html+='</div>';
+
+
+
+							html+='</div>';
+
+
+
+						});
+
+
+
+						$(".park-list").append(html);
+
+
+
+					}
+
+
+
+				});
+
+
+
+		    };
+
+
+
+		    $(function () {
+
+
+
+				var loading = false;  //状态标记
+
+
+
+		        $(document.body).infinite().on("infinite", function() {
+
+
+
+		            if(loading) return;
+
+
+
+		            loading = true;
+
+
+
+		            setTimeout(function() {
+
+
+
+		            	pageIndex ++;
+
+
+
+		               	getData();
+
+
+
+		                loading = false;
+
+
+
+		            }, 1000);   //模拟延迟
+
+
+
+		        })    
+
+
+
+			});
+
+
+
+		    wx.error(function(res){
+
+
+
+			    console.log(JSON.stringify(res));
+
+
+
+			});
+
+
+
+		</script>
+
+
+
+	</body>
+
+
+
+</html>  
+
+
+

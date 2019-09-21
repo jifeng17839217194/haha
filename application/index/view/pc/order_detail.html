@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <title>订单详情-支付系统</title>
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_513044_wlr751abe3o9a4i.css" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/css.css?{:date('H',time())}" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/skin-blue.css" />
+    </head>
+
+    <body>
+        <div class="detail-header">订单详情</div>
+        <div class="container">
+            <div class="col-xs-12">
+                <div class="space-10"></div>
+                <div class="order-detail">
+                    <div class="order-detail-row">
+                        <div class="col-xs-3 order-detail-label">订单金额</div>
+                        <div class="col-xs-9 order-detail-control" id="order_total_amount"></div>
+                    </div>
+                    <div class="order-detail-row">
+                        <div class="col-xs-3 order-detail-label">实付金额</div>
+                        <div class="col-xs-9 order-detail-control" id="order_pay_realprice"></div>
+                    </div>
+                    <div class="order-detail-row">
+                        <div class="col-xs-3 order-detail-label">订单编号</div>
+                        <div class="col-xs-9 order-detail-control" id="order_num"></div>
+                    </div>
+                    <div class="order-detail-row">
+                        <div class="col-xs-3 order-detail-label">订单状态</div>
+                        <div class="col-xs-9 order-detail-control" id="order_status_info"></div>
+                    </div>
+                    <div class="order-detail-row">
+                        <div class="col-xs-3 order-detail-label">创建时间</div>
+                        <div class="col-xs-9 order-detail-control" id="order_addtime"></div>
+                    </div>
+                    <div class="order-detail-row">
+                        <div class="col-xs-3 order-detail-label">支付时间</div>
+                        <div class="col-xs-9 order-detail-control" id="order_pay_time"></div>
+                    </div>
+                    <div class="order-detail-row">
+                        <div class="col-xs-3 order-detail-label">支付通道</div>
+                        <div class="col-xs-9 order-detail-control" id="order_channel"></div>
+                    </div>
+                    <div class="order-detail-row">
+                        <div class="col-xs-3 order-detail-label">店铺名称</div>
+                        <div class="col-xs-9 order-detail-control" id="store_name"></div>
+                    </div>
+                    <div class="order-detail-row">
+                        <div class="col-xs-3 order-detail-label">收银员</div>
+                        <div class="col-xs-9 order-detail-control" id="user_name"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 text-center">
+                <div class="space-15"></div>
+                <button type="button" class="btn btn-danger btn-sm" id="btn_close">关闭详情</button>
+            </div>
+        </div>
+        <script src="/static/index/assets/jquery/3.2.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/jquery/jquery.cookie.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/layer/layer.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/js/pc.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+        window.pageconfig = {
+            domain: "{:request()->domain()}",
+            scriptdir: "{:SCRIPT_DIR}",
+            module: "{:request()->module()}",
+            controller: "{:strtolower(request()->controller())}",
+            action: "{:request()->action()}",
+            goEasy:
+            {
+                subscribe_key: "{:config('goEasy_Subscribe_key')}",
+            }
+        };
+
+        //bof 订单详情信息获取
+        $(document).ready(function()
+        {
+            //var index = parent.layer.getFrameIndex(window.name);
+            //window.parent.layer.iframeAuto(index);
+
+            var order_num = $.cookie('detail_order_num');
+            var uid = $.cookie('user_id');
+            uid = isNaN(uid) ? 0 : (Number(uid) || 0);
+            if (uid <= 0)
+            {
+                return;
+            }
+            back_money(uid, order_num);
+
+            $('#btn_close').on('click', function()
+            {
+                var index = parent.layer.getFrameIndex(window.name);
+                window.parent.layer.close(index);
+            });
+        });
+
+        function back_money(uid, order_num)
+        {
+            var postParam = {
+                user_id: uid,
+                order_num: order_num,
+                create_where: "pc",
+                version: 1,
+                time: thisFrontApp.gettime()
+            };
+            var sign = thisFrontApp.getsign(postParam);
+            postParam.sign = sign; //不这么传值下，有错误
+            layer.msg("加载中……");
+            $.ajax(
+            {
+                type: "post",
+                url: pageconfig.domain + "/api/order/detail",
+                data: postParam,
+                dataType: 'json',
+                success: function(res)
+                {
+                	layer.closeAll();
+                    if (res.code == 1)
+                    {
+                        console.log(JSON.stringify(res));
+                        $('#order_total_amount').html(res.data.order_total_amount);
+                        $('#order_pay_realprice').html(res.data.order_pay_realprice);
+                        $('#order_num').html(res.data.order_num);
+                        $('#order_channel').html(res.data.order_channel_info);
+                        $('#order_addtime').html(res.data.order_addtime);
+                        $('#order_pay_time').html(res.data.order_pay_time);
+                        $('#store_name').html(res.data.store_name);
+                        $('#user_name').html(res.data.user_name);
+                        $('#order_status_info').html(res.data.order_status_info);
+                        if (res.data.refund_list)
+                        {
+                            var refundhtml = '<div class="order-detail-row"><div class="col-xs-3 order-detail-label">退款记录</div><div class="col-xs-9 order-detail-control">';
+                            res.data.refund_list.forEach(function(obj)
+                            {
+                                refundhtml += obj.refund_time+' 退款 ¥'+obj.refund_amount + "<br />";
+                            });
+                            refundhtml += '</div></div>';
+                            $(".order-detail").append(refundhtml);
+                        }
+
+                    }
+                    else
+                    {
+                        layer.alert(res.message,
+                        {
+                            success: function(layero)
+                            {
+                                $(document).on('keypress', function(e)
+                                {
+                                    if (e.keyCode == 13)
+                                    {
+                                        window.parent.layer.closeAll();
+                                    }
+                                })
+                            }
+                        }, function()
+                        {
+                            window.parent.layer.closeAll();
+                        });
+                    }
+                }
+            });
+        }
+        //eof 订单详情信息获取
+        </script>
+    </body>
+
+</html>

@@ -1,0 +1,63 @@
+﻿@charset "utf-8";
+/* CSS Document */
+*{margin:0;padding:0; list-style:none;} 
+body{font-size:12px; font-family:"微软雅黑";}
+table {border-collapse:collapse;border-spacing:0;} 
+fieldset,img {border:0} 
+address,caption,cite,code,dfn,em,strong,th,var {font-style:normal;font-weight:normal} 
+strong{ font-weight:bold;}
+caption,th {text-align:left} 
+h1,h2,h3,h4,h5,h6 {font-size:100%;font-weight:normal} 
+q:before,q:after {content:''} 
+abbr,acronym { border:0}
+.clear{
+ height:0px;
+ clear:both;
+ font-size:0px;
+ line-height:0px;
+ zoom: 1;
+}
+.w1000{width:1000px; margin-left:auto; margin-right:auto;}
+a{text-decoration:none;}
+
+/*清除链接虚框*/
+a,area {blr:expression(this.onFocus=this.blur()) ;}
+:focus {-moz-outline-style: none; }
+
+.clearfix:after {
+  clear: both;
+  content: " ";
+  display: block;
+  font-size: 0;
+  height: 0;
+  visibility: hidden;
+}
+
+input,select{ vertical-align:-3px;}
+html,body{-webkit-text-size-adjust:none;}/*wikit 内核浏览器字符小于12px*/
+.debug{ border:1px dotted #CCCC00; background-color:#0000FF;}
+/*IE下li中img的垂直间距*/
+li img,li{vertical-align:bottom;}
+.error{ color:#C00; padding-left:4px;}
+.radius{behavior: url(./public/js/pie.php); }//让IE6/IE7/IE8支持CSS3属性（圆角、投影等）的脚本
+
+
+.basetable {
+		*border: 1px solid #999999;
+		_border: 1px solid #999999;
+		border-collapse: collapse;
+}
+.basetable tr th { text-align:center; font-weight:bold; font-size:14px; background-color:#E4E4E4; text-align:center; font-weight:bold;}
+.basetable td a{ font-size:12px; color:#0071bd;}
+.basetable td,.basetable th {
+  color:#272727;
+  padding:5px;
+  border: 1px solid #ccc;
+}
+
+.pagechange{text-align:center;padding-top:3em;padding-bottom:30px;color:#666;font-size:14px}
+.pagechange{text-align:center;padding-bottom:50px}
+.pagechange a.page_link{padding:1px 6px;color:#666;margin-right:4px;background-color:#e6e7e4;border:1px solid #535250;color:#000;font-size:12px}
+.pagechange .current{padding:1px 6px;margin-right:4px;border:1px solid #0a794b;font-size:12px}
+.pagechange a.page_link:hover,.current{color:#f4eee0;background-color:#3b9ee5;}
+.pagechange a.page_next,a.page_down,a.page_last,a.page_first,a.page_up,a.page_prev{margin-right:5px;color:#56514a;font-size:14px}

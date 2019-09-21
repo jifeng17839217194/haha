@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <title>退款-支付系统</title>
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_513044_ahc156s6ixczyqfr.css" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/css.css" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/skin-blue.css" />
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="panel">
+                <div class="panel-body">
+                    <div class="space-15"></div>
+                    <div class="space-15"></div>
+                    <div class="text-center"><img src="/static/index/assets/images/timg.gif"></div>
+                    <div class="text-center back-money-help">请扫描付款凭证退款码</div>
+                    <div class="text-center form-group-lg">
+                        <input type="text" id="code" class="form-control text-center" value="" placeholder="输入订单编号,按回车">
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="row">
+                    <div class="space-15"></div>
+                    <div class="space-15"></div>
+                    <div class="panel hidden ">
+                        <div class="panel-heading line"><span class="panel-title">今日订单</span></div>
+                        <div class="panel-body order-nearly">
+                            <!--最新订单-->
+                            <!--<div class="col-xs-3">
+								<div class="panel panel-default">
+									<div class="panel-heading"><span class="panel-title"><i class="m-icon iconfont icon-alipay"></i>支付宝</span></div>
+									<div class="panel-body">
+										<h3>&yen;100</h3>
+									</div>
+									<div class="panel-footer text-right">2012-12-12 12:12</div>
+								</div>
+							</div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/static/index/assets/jquery/3.2.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/jquery/jquery.cookie.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/layer/layer.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/js/pc.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+        window.pageconfig = {
+            domain: "{:request()->domain()}",
+            scriptdir: "{:SCRIPT_DIR}",
+            module: "{:request()->module()}",
+            controller: "{:strtolower(request()->controller())}",
+            action: "{:request()->action()}",
+            goEasy:
+            {
+                subscribe_key: "{:config('goEasy_Subscribe_key')}",
+            }
+        };
+        $(document).ready(function()
+        {
+            $('input#code').focus();
+
+            //获取订单列表
+            //get_nearly_order();
+            function get_nearly_order()
+            {
+                var uid = $.cookie('user_id');
+                var postParam = {
+                    order_status: 100,
+                    page: 1,
+                    per_page: 16,
+                    user_id: uid,
+                    create_where: "pc",
+                    version: 1,
+                    time: thisFrontApp.gettime()
+                };
+                var sign = thisFrontApp.getsign(postParam);
+                postParam.sign = sign; //不这么传值下，有错误
+
+                $.ajax(
+                {
+                    type: "post",
+                    url: pageconfig.domain + "/api/order/list",
+                    data: postParam,
+                    dataType: 'json',
+                    async: true,
+                    success: function(res)
+                    {
+                        layer.closeAll();
+                        if (res.code == 1)
+                        {
+                            if (res.data)
+                            {
+                                res.data.data.forEach(function(item)
+                                {
+                                    var html = thisFrontApp.getordertemplate(item, 'order');
+                                    $('.order-nearly').append(html);
+                                });
+                            }
+                        }
+                        else
+                        {
+                            layer.alert('最新订单获取失败！');
+                        }
+                    }
+                });
+            }
+
+            $('#code').on('keypress', function(e)
+            {
+                e.stopPropagation();
+                if (e.keyCode == 13)
+                {
+                    var uid = $.cookie('user_id');
+                    var order_num = $(this).val();
+
+                    layer.prompt(
+                    {
+                        title: '输入退款金额-默认全额',
+                        formType: 0,
+                        value: '',
+                        success: function(layero)
+                        {
+                            layero.find("input").attr('placeholder', '默认全额').val(' ').on('keypress', function(e)
+                            {
+                                if (e.keyCode == 13)
+                                {
+                                    layero.find('.layui-layer-btn0').trigger('click');
+                                }
+                            });
+                        }
+                    }, function(price, index)
+                    {
+                        price = isNaN(price) ? 0 : (Number(price) || 0);
+                        layer.close(index);
+                        layer.prompt(
+                        {
+                            title: '输入退款密码',
+                            formType: 1,
+                            success: function(layero, index)
+                            {
+                                layero.find("input").on('keypress', function(e)
+                                {
+                                    if (e.keyCode == 13)
+                                    {
+                                        layero.find('.layui-layer-btn0').trigger('click');
+                                    }
+                                });
+                            }
+                        }, function(pwd, index)
+                        {
+                            layer.close(index);
+                            back_money(uid, order_num, pwd, price);
+                        });
+                    });
+
+                }
+            });
+
+            function back_money(uid, order_num, pwd, price)
+            {
+
+                var postParam = {
+                    user_id: uid,
+                    order_num: order_num,
+                    refund_fee: price,
+                    password: pwd,
+                    create_where: "pc",
+                    version: 1,
+                    time: thisFrontApp.gettime()
+                };
+                var sign = thisFrontApp.getsign(postParam);
+                postParam.sign = sign; //不这么传值下，有错误
+                layer.alert("退款中……");
+                $.ajax(
+                {
+                    type: "post",
+                    url: pageconfig.domain + "/api/pay/dorefundrequest",
+                    data: postParam,
+                    dataType: 'json',
+                    success: function(res)
+                    {
+                        $('#code').val('');
+                        layer.closeAll();
+                        if (res.code == 1)
+                        {
+                            layer.alert('成功退款&yen;' + res.data.refund_fee,
+                            {
+                                success: function(layero)
+                                {
+                                    $(document).on('keypress', function(e)
+                                    {
+                                        if (e.keyCode == 13)
+                                        {
+                                            $('#code').focus();
+                                            layer.closeAll();
+                                        }
+                                    })
+                                    //$('#code').focus();
+                                    //$('.order-nearly').find('.'+order_num).children('.panel').attr('class','panel panel-default');
+                                    //$('.order-nearly').find('.'+order_num).find('.panel-title').append(' <i class="iconfont icon-back-money-font"></i>');
+                                }
+                            }, function()
+                            {
+                                layer.closeAll();
+                            });
+
+                            // layer.msg('成功退款&yen;'+res.data.refund_fee,{time:1200},function () {
+                            // 	layer.closeAll();
+                            // 	$('#code').focus();
+                            // 	$('.order-nearly').find('.'+order_num).children('.panel').attr('class','panel panel-default');
+                            // 	$('.order-nearly').find('.'+order_num).find('.panel-title').append(' <i class="iconfont icon-back-money-font"></i>');
+                            // });
+                        }
+                        else
+                        {
+                            layer.alert(res.message,
+                            {
+                                success: function(layero)
+                                {
+                                    $(document).on('keypress', function(e)
+                                    {
+                                        if (e.keyCode == 13)
+                                        {
+                                            $('#code').focus();
+                                            layer.closeAll();
+                                        }
+                                    })
+                                }
+                            }, function()
+                            {
+                                layer.closeAll();
+                            });
+                        }
+                    }
+                });
+            }
+
+
+        });
+        </script>
+    </body>
+
+</html>

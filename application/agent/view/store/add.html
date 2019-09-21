@@ -1,0 +1,94 @@
+{extend name="common/common"}
+{block name="navbar"}
+{/block}
+{block name="nav-list"}
+{/block}
+{block name="breadcrumbs"}
+<!-- #section:basics/content.searchbox -->
+<style>
+	.page-content{
+		margin: 0!important;
+	}	
+</style>
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">商户中心中心</span>
+    </li>
+    <li class="active">
+        经营场地
+    </li>
+</ul>
+{/block}
+{block name="page-content"}
+<div class="order-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    <input type="hidden" name="store_id" value="{:$one?$one->store_id:''}">
+    <input type="hidden" name="store_shop_id" value="{:$one?$one->store_shop_id:input('store_shop_id',0)}">
+   {include file="common/input" title="*经营场地名称" fieldName="store_name" defaultValue='<?php echo(isset($one->store_name)?$one->store_name:"");?>' placeholder="" required="required" pattern="*" helpInfo='在收银设备端显示'}
+   {include file="common/input" title="*经营场地地址" fieldName="store_address" defaultValue='<?php echo(isset($one->store_address)?$one->store_address:"");?>' placeholder="" required="required" pattern="*" helpInfo='在收银设备端显示'}
+   {include file="common/input" title="*经营场地电话" fieldName="store_mobile" defaultValue='<?php echo(isset($one->store_mobile)?$one->store_mobile:"");?>' placeholder="" required="required" pattern="*" helpInfo='在打印的小票上显示'}
+
+   {include file="common/input" title="绑定停车场parking_uuid" fieldName="parking_uuid" defaultValue='<?php echo(isset($one->parking_uuid)?$one->parking_uuid:"");?>' placeholder="" required="" pattern="*" helpInfo='停车场才需要填写（由易泊提供，绑定后不可修改）'}
+
+        {include file="common/input" title="绑定高德地图唯一标识" fieldName="store_parking_poiid" defaultValue='<?php echo(isset($one->store_parking_poiid)?$one->store_parking_poiid:"");?>' placeholder="" required="" pattern="*" helpInfo="（<a href='https://ditu.amap.com/' target='_blank'>查看高德地图</a>）"}
+        
+    <div {eq name=" config('saleversion')" value="2"> } style="display:none;" {/eq}>
+            <div class="form-group">
+                <label class="col-sm-2 control-label no-padding-right">开启收银员打赏功能：</label>
+                <div class="col-sm-10" style="padding-top: 8px;">
+                    <label>
+                        <input name="store_open_reward" value="1" <?php echo(isset($one->store_open_reward)?($one->store_open_reward==1?'checked':''):'');?> id="store_open_reward" class="ace ace-switch" type="checkbox" />
+                        <span class="lbl"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label no-padding-right">开启预授权(押金)功能：</label>
+                <div class="col-sm-10" style="padding-top: 8px;">
+                    <label>
+                        <input name="store_open_funds_authorized" value="1" <?php echo(isset($one->store_open_funds_authorized)?($one->store_open_funds_authorized==1?'checked':''):'');?> id="store_open_funds_authorized" class="ace ace-switch" type="checkbox" />
+                        <span class="lbl"> &nbsp;&nbsp;&nbsp;&nbsp;开启后PC收银台将出现“押金”菜单</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    <div {eq name=" config('saleversion')" value="2"> } style="display:none;" {/eq}>
+    {include file="common/fullTextarea" title="广告位" fieldName="store_pay_after_ad" defaultValue='<?php echo(isset($one->store_pay_after_ad)?$one->store_pay_after_ad:"");?>' helpInfo='消费者扫收款码，支付成功后展示'}
+           <div class="form-group">
+                <label class="col-sm-2 control-label no-padding-right">广告位状态：</label>
+                <div class="col-sm-10">
+                    <div class="radio pull-left">
+                        <label>
+                            <input name="store_pay_after_ad_active" value="1" type="radio" class="ace" />
+                            <span class="lbl">&nbsp;&nbsp;开放</span>
+                        </label>
+                    </div>
+                    <div class="radio pull-left">
+                        <label>
+                            <input name="store_pay_after_ad_active" value="0" type="radio" class="ace" />
+                            <span class="lbl">&nbsp;&nbsp;关闭</span>
+                        </label>
+                    </div>
+                    <script type="text/javascript">
+                    $("input[name='store_pay_after_ad_active'][value='{$one.store_pay_after_ad_active|default=0}']").attr("checked", "checked");
+                    </script>
+                </div>
+            </div>
+    </div>
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit">
+                <i class="ace-icon fa fa-check bigger-110"></i> 提交
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+{/block}

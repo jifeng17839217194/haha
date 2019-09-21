@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <title>智慧收银-{:config("site_title")}</title>
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_513044_wlr751abe3o9a4i.css" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/css.css?{:time()}" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/skin-blue.css" />
+        <style type="text/css">
+		html,body{height: 100%; overflow: hidden;}
+		/*#main-frame{height:700px;}*/
+        </style>
+    </head>
+
+
+    <body>
+        <div class="col-xs-12">
+            <div class="row">
+                <div class="top-banner">
+                    <div class="compnay-logo" id="store_name"></div>
+                    <span class="btn-close-window"><i class="glyphicon glyphicon-remove"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <div class="row">
+                <div class="col-xs-2 nav-side">
+                    <div class="nav-side-top-space"></div>
+                    <div class="user-side">
+                        <div class="face-img"></div>
+                        <!-- <div class="nickname" id="store_name"></div> -->
+                        <div class="nickname">
+                        	<strong><span id="real_name"></span></strong>
+                        	
+                        </div>
+                        (<small id="role_name" class="nickname small"></small>)
+                    </div>
+                    <div class="nav-side-nav">
+                        <div class="item" data-src="money_get.html"><span><i class="m-icon iconfont icon-get-money"></i>收款</span></div>
+                        <div class="item hidden" data-src="money_static.html"><span><i class="m-icon iconfont icon-static-money"></i>押金</span></div>
+                        <div class="item" data-src="order.html"><span><i class="m-icon iconfont icon-order"></i>订单</span></div>
+                        <div class="item" data-src="money_back.html"><span><i class="m-icon iconfont icon-back-money"></i>退款</span></div>
+                    </div>
+                    <div class="nav-side-setting">
+                        <div class="item" data-src="settings.html"><span><i class="m-icon glyphicon glyphicon-cog"></i>设置</span></div>
+                        <div class="nav-side-vision">版本：1.1.2</div>
+                    </div>
+                </div>
+                <div class="col-xs-10 right-container">
+                    <div class="row">
+                        <iframe id="main-frame"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/static/index/assets/jquery/3.2.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/jquery/jquery.cookie.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/js/pc.js?{:time()}" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+        $(document).ready(function()
+        {
+            var store_name = $.cookie('store_name');
+            $('#store_name').html(store_name);
+            var role_name = $.cookie('user_role_cn');
+            $('#role_name').html(role_name);
+            var real_name = $.cookie('user_realname');
+            $('#real_name').html(real_name);
+
+            var cookie = $.cookie('nav_url');
+            var autoload_url = '';
+            if ($.trim(cookie).length > 0)
+            {
+                autoload_url = cookie;
+                $('.item[data-src="' + cookie + '"]').addClass('current').siblings().removeClass('current');
+            }
+            else
+            {
+                autoload_url = $('.nav-side-nav').find('.item').eq(0).addClass('current').attr('data-src');
+            }
+            autoload_url = '/index/pc/' + autoload_url + '?rand=' + Math.ceil(Math.random() * 1000);
+            $('#main-frame').attr('src', autoload_url);
+
+            $('.nav-side-nav').on('click', '.item', function()
+            {
+                var src = $(this).attr('data-src');
+                $.cookie('nav_url', src,
+                {
+                    path: '/'
+                });
+                src = '/index/pc/' + src + '?rand=' + Math.ceil(Math.random() * 1000);
+                $('#main-frame').attr('src', src);
+                $(this).addClass('current').siblings().removeClass('current');
+                $('.nav-side-setting').find('.item').removeClass('current');
+            });
+            $('.nav-side-setting').on('click', '.item', function()
+            {
+                var src = $(this).attr('data-src');
+                $.cookie('nav_url', src,
+                {
+                    path: '/'
+                });
+                src = '/index/pc/' + src + '?rand=' + Math.ceil(Math.random() * 1000);
+                $('#main-frame').attr('src', src);
+                $(this).addClass('current');
+                $('.nav-side-nav').find('.item').removeClass('current');
+            });
+        });
+        </script>
+    </body>
+
+</html>

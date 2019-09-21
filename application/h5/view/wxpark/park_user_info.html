@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>我的账户</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
+        <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_793169_m9hkjfxgy7g.css" />
+		<style type="text/css">
+			*{margin:0;padding:0;box-sizing:border-box;}
+			html,body{background:#efeff4;}
+			.user-item{display:flex;justify-content:space-between;border-bottom:1px solid #DEDEDE;padding:0 0.7rem;background:#FFFFFF;height:2.4rem;line-height:2.4rem;}
+			.user-item.on{margin-top:0.5rem;border-top:1px solid #DEDEDE;}
+			.user-item-left{justify-content:center;align-items:center;}
+			.user-item-left.wx-on .iconfont{color:#00bc13;}
+			.user-item-left.ali-on .iconfont{color:#00a0e9;}
+			.user-item-left .iconfont{display:inline-block;font-size:0.93rem;width:1.5rem;color:rgba(42, 130, 228, 1);vertical-align:-2px;}
+			.user-item-name{font-size:0.7rem;color:#333333;} 
+			.user-item .icon-youjiantou{margin-left:0.25rem;font-size:0.75rem;color:#888888;}
+			.user-item-right .right-txt{font-size:0.65rem;color:#888888;}
+		</style>
+	</head>
+	<body> 
+		<div class="content">
+			<div class="user-item on" id="member_realname"><div class="user-item-left"><span class="iconfont icon-wode"></span><span class="user-item-name">姓名</span></div><div class="user-item-right"><span class="right-txt">{$member_info['member_realname']?:'未设置'}</span><span class="iconfont icon-youjiantou"></span></div></div>
+			<div class="user-item" id="member_tel"><div class="user-item-left"><span class="iconfont icon-shouji"></span><span class="user-item-name">手机号 </span></div><div class="user-item-right"><span class="right-txt">{$member_info['member_tel']?:'未绑定'}</span><span class="iconfont icon-youjiantou"></span></div></div>
+			<div class="user-item on" id="member_wx"><div class="user-item-left wx-on"><span class="iconfont icon-weixin"></span><span class="user-item-name">微信</span></div><div class="user-item-right"><span class="right-txt">{$member_info['member_nickname']}</span></div></div>
+			<div class="user-item" id="member_zfb"><div class="user-item-left ali-on"><span class="iconfont icon-zhifubao"></span><span class="user-item-name">支付宝</span></div><div class="user-item-right"><span class="right-txt">{$member_info['member_zfb']?:'未绑定'}</span></div></div>
+		</div>
+		<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+		<script src="/static/h5/js/jquery-weui.min.js"></script>
+		<script src="/static/h5/js/mui.min.js"></script>
+		<script type="text/javascript" src="/static/h5/js/app.js" ></script>
+		<!--bof  create:2018-8-18-->
+		<script type="text/javascript">
+			var pageSpace = {
+				init:function(){
+					window.onload = function(){
+						pageSpace.onEvt();						
+					};
+				},
+				dataRequest:function(){
+					
+				},
+				toPage:function(name,ags){
+					DOM.openWin(name,ags);
+				},
+				onEvt:function(){
+					DOM.addListen('#member_realname','tap',function(){
+						pageSpace.toPage('user_realname');
+					}).addListen('#member_tel','tap',function(){
+						pageSpace.toPage('user_tel');
+					}).addListen('#member_wx','tap',function(){						
+					});
+				},
+			};
+			pageSpace.init();
+		</script>
+		<!--eof  create:2018-8-18-->
+	</body>
+</html>  

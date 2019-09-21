@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    	<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>设置-支付系统</title>
+		<link rel="stylesheet" type="text/css" href="/static/index/assets/bootstrap-3.3.7-dist/css/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_513044_wlr751abe3o9a4i.css"/>
+		<link rel="stylesheet" type="text/css" href="/static/index/assets/css/css.css"/>
+		<link rel="stylesheet" type="text/css" href="/static/index/assets/css/skin-blue.css"/>
+	</head>
+	<body>
+		<div class="container">
+			<div class="col-xs-12">
+				<div class="row">
+					<div class="space-10"></div>
+					<div class="panel panel-default">
+						<div class="panel-heading"><span class="panel-title">账户信息</span></div>
+						<div class="panel-body settings-list short">
+							<div class="item"><span class="control-label">商户名称：</span><span id="store_name"></span></div>
+							<div class="item"><span class="control-label">登录账号：</span><span id="user_realname"></span></div>
+							<div class="item"><span class="control-label">登录密码：</span><span>*********</span></div>
+						</div>
+						<div class="panel-footer text-right">
+							<button type="button" id="btn_update_paypwd" class="btn btn-info">修改退款密码</button>
+							<button type="button" id="btn_update_pwd" class="btn btn-default">修改登录密码</button>
+							<button type="button" id="btn_sign_out" class="btn btn-danger">安全退出</button>
+						</div>
+					</div>
+				</div>
+				<div class="row hidden">
+					<div class="space-10"></div>
+					<div class="panel panel-default">
+						<div class="panel-heading"><span class="panel-title">账户信息</span></div>
+						<div class="panel-body settings-list">
+							<div class="item"><span class="control-label">是否开启打印：</span><input id="id-button-borders" type="checkbox" class="ace ace-switch ace-switch-5"><span class="lbl middle"></span></div>
+							<div class="item"><span class="control-label">是否开启声音提醒：</span><input id="id-button-borders" type="checkbox" class="ace ace-switch ace-switch-5"><span class="lbl middle"></span></div>
+							<div class="item"><span class="control-label">是否开启收款码收款提醒：</span><input id="id-button-borders" type="checkbox" class="ace ace-switch ace-switch-5"><span class="lbl middle"></span></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="/static/index/assets/jquery/3.2.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/static/index/assets/jquery/jquery.cookie.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/static/index/assets/layer/layer.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/static/index/assets/js/pc.js" type="text/javascript" charset="utf-8"></script>		
+		<script type="text/javascript">
+			
+			function clear_cookie(){
+				$.cookie('user_id',null,{path:'/'});
+				$.cookie('user_token',null,{path:'/'});
+				$.cookie('store_name',null,{path:'/'});
+				$.cookie('user_role',null,{path:'/'});
+				$.cookie('user_realname',null,{path:'/'});
+				$.cookie('user_role_cn',null,{path:'/'});
+				$.cookie('nav_url','money_get.html',{path:'/'});
+			}
+			
+			$(document).ready(function () {
+				
+				var store_name=$.cookie('store_name');
+				var user_realname=$.cookie('user_realname');
+				$('#store_name').html(store_name);
+				$('#user_realname').html(user_realname);
+				
+				$('#btn_sign_out').on('click',function () {
+					clear_cookie();
+					layer.alert('退出成功！',function (index) {
+						layer.close(index);
+						window.parent.location.href='/index/pc/sign';	
+					});
+					
+				});
+				
+				$('#btn_update_pwd').on('click',function () {
+					layer.prompt({title:'输入原登录密码',formType:1},function (pwd,index) {
+						layer.close(index);
+						layer.prompt({title:'输入新的登录密码',formType:1},function (npwd,index) {
+							if(pwd==npwd){
+								layer.close(index);
+								layer.alert('原密码和新密码不能相同');return;
+							}
+							var uid=$.cookie('user_id');
+							var postParam = {
+						        user_id: uid,
+						        oldpassword: pwd,
+						        newpassword: npwd,
+						        version: 1,
+						        time: thisFrontApp.gettime()
+						    };
+						    var sign = thisFrontApp.getsign(postParam);
+						    postParam.sign = sign; //不这么传值下，有错误
+							
+							$.ajax({
+								type:"post",
+								url:pageconfig.domain + "/api/user/updateloginpassword",
+								data:postParam,
+								dataType:'json',
+								async:true,
+								success:function (res) {
+									layer.closeAll();
+									if(res.code==1){
+										layer.alert('<h4 class="text-center">密码修改成功</h4><div class="text-right text-gray">请退出重新登录</div>',function (index) {
+											layer.close(index);
+											clear_cookie();
+											window.parent.location.href='/index/pc/sign';
+										});
+									}else{
+										layer.alert(res.message);
+									}
+								}
+							});
+						});
+						
+					});
+				});
+				
+				$('#btn_update_paypwd').on('click',function () {
+					layer.prompt({title:'输入原退款密码',formType:1},function (pwd,index) {
+						layer.close(index);
+						layer.prompt({title:'输入新的退款密码',formType:1},function (npwd,index) {
+							if(pwd==npwd){
+								layer.close(index);
+								layer.alert('原密码和新密码不能相同');return;
+							}
+							var uid=$.cookie('user_id');
+							var postParam = {
+						        user_id: uid,
+						        oldpassword: pwd,
+						        newpassword: npwd,
+						        version: 1,
+						        time: thisFrontApp.gettime()
+						    };
+						    var sign = thisFrontApp.getsign(postParam);
+						    postParam.sign = sign; //不这么传值下，有错误
+							
+							$.ajax({
+								type:"post",
+								url:pageconfig.domain + "/api/user/updatepaypassword",
+								data:postParam,
+								dataType:'json',
+								async:true,
+								success:function (res) {
+									layer.closeAll();
+									if(res.code==1){
+										layer.alert('<h4 class="text-center">修改成功请牢记</h4>',function (index) {
+											layer.close(index);
+										});
+									}else{
+										layer.alert(res.message);
+									}
+								}
+							});
+						});
+						
+					});
+				});
+			
+			});
+			
+		</script>
+	</body>
+</html>

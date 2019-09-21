@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+
+		<title>我的车牌</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
+
+        <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_793169_m9hkjfxgy7g.css" />
+
+		<style type="text/css">
+
+			*{margin:0;padding:0;box-sizing:border-box;}
+
+			html,body{background:#efeff4;}
+
+			.btn-add-card{margin:1.5rem 0.7rem;border-radius:4px;height:2.4rem;line-height:2.4rem;background: linear-gradient(to left,#1ac8ff,#009cfe);background: -webkit-linear-gradient(left,#009cfe,#1ac8ff);color:#FFFFFF;text-align:center;font-size:0.8rem;}
+
+			.cart-item{display:flex;justify-content:space-between;margin-top:0.5rem;border:1px solid #DEDEDE;padding:0.5rem 0.7rem;background:#FFFFFF;}
+
+			.cart-item-left{display:flex;flex-direction:column;}
+
+			.cart-item-left .name{color:#333333;font-size:0.8rem;}
+
+			.cart-item-left .time{color:#777777;font-size:0.65rem;}
+
+			.cart-item-right{display:flex;justify-content:flex-end;width:2.5rem;font-size:1rem;line-height:1rem;color:#888888;}
+
+		</style>
+
+	</head>
+
+	<body> 
+
+		<div class="content">
+
+			<div class="cart-list">
+
+				<!-- <div class="cart-item">
+
+					<div class="cart-item-left"><span class="name">沪C60BA2</span><span class="time">绑定时间:2018-02-02 12:17:58</span></div>
+
+					<div class="cart-item-right"><span class="iconfont icon-shanchu"></span></div>
+
+				</div>	 -->			
+
+			</div>
+
+			<div class="btn-add-card">添加车牌</div>
+
+		</div>
+
+		<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+
+		<script src="/static/h5/js/jquery-weui.min.js"></script>
+
+		<script src="/static/h5/js/mui.min.js"></script>
+
+		<script type="text/javascript" src="/static/h5/js/app.js" ></script>
+
+		<script type="text/javascript">
+
+			var pageSpace = {
+
+				init:function(){
+
+					window.onload = function(){
+
+						pageSpace.dataRequest();
+
+						pageSpace.onEvt();						
+
+					};
+
+				},
+
+				dataRequest:function(){
+
+					var json_obj = {},
+
+						json__data = JSON.stringify(json_obj);
+
+					DOM.ajax("{:url('user_carnum_list')}",json__data,function(res){
+
+						//alert(JSON.stringify(res));
+
+						pageSpace.fillPage(res.data);
+
+					});
+
+				},		
+
+				fillPage:function(data){
+
+					html='';
+
+					console.log(data);
+
+					$.each(data,function(k,v){
+
+						console.log(JSON.stringify(v));
+
+						html+='<div class="cart-item">';
+
+						html+='<div class="cart-item-left"><span class="name">'+v.car_number_plate+'</span><span class="time">绑定时间:'+v.car_addtime+'</span></div>';
+
+						html+='<div class="cart-item-right" onclick="pageSpace.removeItem(this);" data-id="'+v.car_id+'"><span class="iconfont icon-shanchu"></span></div>';
+
+						html+='</div>';	
+
+					});
+
+					$('.cart-list').html(html);
+
+				},
+
+				removeItem:function(el){
+
+					var id = el.dataset.id;
+
+		          	el.parentNode.remove();
+
+		          	var json_obj = {'car_id':id},
+
+						json__data = JSON.stringify(json_obj);
+
+		          	DOM.ajax("{:url('user_carnum_del')}",json__data,function(res){
+
+										
+
+					});
+
+		        },
+
+				toPage:function(name,ags){
+
+					DOM.openWin(name,ags);
+
+				},
+
+				onEvt:function(){
+
+					DOM.addListen('.btn-add-card','tap',function(){
+
+						pageSpace.toPage('bind_car_num');
+
+					});
+
+				}
+
+			};
+
+			pageSpace.init();
+
+		</script>
+
+	</body>
+
+</html>  
+

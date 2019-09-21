@@ -1,0 +1,26 @@
+<?php 
+/**
+* 
+*/
+class ClassName
+{
+	
+	function __construct($argument="")
+	{
+		if(method_exists($this, $argument))
+		{
+			$this->$argument();
+		}
+		else
+		{
+			echo $argument." not found aa";
+		}
+		
+	}
+
+	public function abc($value='')
+	{
+		echo time();
+	}
+}
+$ab=new ClassName("abc1");

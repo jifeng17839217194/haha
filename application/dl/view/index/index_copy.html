@@ -1,0 +1,282 @@
+{extend name="common/common"} 
+{block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">欢迎使用{:config('site_title')}支付管理系统</span>
+    </li>
+    <div class="nav-search">
+        <span>当前版本：v{:config('softversion')}</span>
+    </div>
+</ul>
+{/block} {block name="page-content"}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title smaller">统计</h4>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main clearfix">
+                    <div class="grid4">
+                        <span class="bigger-175 blue" id="tj_count">0</span><span class="help-button" data-rel="popover" data-trigger="hover" data-placement="right" data-content="含退款的" title="">?</span>
+                        <br> 今日订单数
+                    </div>
+                    <div class="grid4">
+                        <span class="bigger-175 blue" id="tj_total">￥0.00</span><span class="help-button" data-rel="popover" data-trigger="hover" data-placement="right" data-content="含退款的" title="">?</span>
+                        <br> 今日交易额
+                    </div>
+                    <div class="grid4">
+                        <span class="bigger-175 blue" id="tj_shop_count">0</span>
+                        <br> 总商户数
+                    </div>
+                    <div class="grid4">
+                        <span class="bigger-175 blue" id="tj_store_count">0</span>
+                        <br> 总经营场地数
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="space-10"></div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title smaller">活跃经营场地(最近10天)</h4>
+            </div>
+            <div class="widget-body">
+                <table class="table table-striped" style="height:298px;">
+                    <thead class="thin-border-bottom">
+                        <tr>
+                            <th>
+                                <i class="ace-icon fa fa-caret-right blue"></i>经营场地
+                            </th>
+                            <th>
+                                <i class="ace-icon fa fa-caret-right blue"></i>商户
+                            </th>
+                            <th class="hidden-480">
+                                <i class="ace-icon fa fa-caret-right blue"></i>交易额
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="huoyuemendianlist" style="min-height:200px;">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title smaller">交易流水走势</h4>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div id="dealreport1" style="height:298px;">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title smaller">服务器配置</h4>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <!--<code class="pull-right" id="dt-list-code">&lt;dl&gt;</code>-->
+                    <dl class="f_12 line-height-125">
+                        <dt>服务器时间</dt>
+                        <dd>{:date("Y-m-d H:i:s")}</dd>
+                        <dt>服务器域名/IP地址</dt>
+                        <dd>{$serverip}</dd>
+                        <dt>文件上传限制</dt>
+                        <dd>{$uploadinfo}</dd>
+                        <dt>图片高清压缩</dt>
+                        <dd>{:function_exists("imagecreatetruecolor")==true?"支持":"不支持"}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title smaller">帮助说明</h4>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <dl id="helperlist">
+                        没有数据
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="space-10"></div>
+<!-- PAGE CONTENT ENDS -->
+{/block} 
+{block name="floot"}
+<script type="text/javascript" src="/static/common/js/echarts/echarts.common.min.js"></script>
+<script type="text/javascript">
+var thisPageApp = {
+    init: function()
+    {
+        $.ajax(
+        {
+            url: "{:url('order/gettjdata')}",
+            dateType: "json",
+            success: function(rs)
+            {
+                if (rs.data)
+                {
+                    $("#tj_count").html(rs.data.tj_count);
+                    $("#tj_shop_count").html(rs.data.tj_shop_count);
+                    $("#tj_store_count").html(rs.data.tj_store_count);
+                    $("#tj_total").html(rs.data.tj_total);
+                    //活跃经营场地
+                    var huoyuemendianlist = "";
+                    if (rs.data.huoyuemendianlist)
+                    {
+                        rs.data.huoyuemendianlist.forEach(function(obj)
+                        {
+
+                            huoyuemendianlist += '<tr>';
+                            huoyuemendianlist += '    <td>' + obj.store_name + '</td>';
+                            huoyuemendianlist += '    <td>';
+                            huoyuemendianlist += '        ' + obj.shop_name
+                            huoyuemendianlist += '    </td>';
+                            huoyuemendianlist += '    <td>';
+                            huoyuemendianlist += '        <span class="label label-warning arrowed arrowed-right">￥' + obj.order_total_amount + '</span>';
+                            huoyuemendianlist += '    </td>';
+                            huoyuemendianlist += '</tr>';
+                        });
+
+                    }
+                    else
+                    {
+                        huoyuemendianlist = "<p>没有数据</p>";
+                    }
+                    $("#huoyuemendianlist").html(huoyuemendianlist);
+                    //__活跃经营场地
+
+                    if(rs.data.yiliushuizoushilist)
+                    {
+                        thisPageApp.showdealreport1(rs.data.yiliushuizoushilist);
+                    }
+
+                }
+            }
+        })
+        
+    },
+    //获取交易流水走势
+    showdealreport1: function(datalist)
+    {
+        if(!datalist)return;
+        // 基于准备好的dom，初始化echarts实例
+        if((window.dealreport1Chart||false)== false)
+        {
+            window.dealreport1Chart = echarts.init(document.getElementById('dealreport1'));    
+        }
+        var xAxis_data=[],series_order_count=[],series_pay_realprice=[];
+        datalist.forEach(function(datalistOne){
+            xAxis_data.push(datalistOne.order_addtime_ymh);
+            series_order_count.push(datalistOne.count);
+            series_pay_realprice.push(datalistOne.order_pay_realprice_sum);
+        });
+        
+        var option = {
+            title:
+            {
+                text: ''
+            },
+            tooltip:
+            {
+                trigger: 'axis'
+            },
+            legend:
+            {
+                data: ['订单数', '成交额']
+            },
+            toolbox:
+            {
+                feature:
+                {
+                    saveAsImage:{}
+                }
+            },
+            grid:
+            {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data: xAxis_data
+            }],
+            yAxis: [
+            {
+                type: 'value'
+            }],
+            series: [
+            {
+                name: '订单数',
+                type: 'line',
+                stack: '总量',
+                areaStyle:
+                {
+                    normal:{}
+                },
+                label:
+                {
+                    normal:
+                    {
+                        show: true,
+                        position: 'top'
+                    }
+                },
+                data: series_order_count
+            },
+            {
+                name: '成交额',
+                type: 'line',
+                stack: '总量',
+                areaStyle:
+                {
+                    normal:{}
+                },
+                label:
+                {
+                    normal:
+                    {
+                        show: true,
+                        position: 'top'
+                    }
+                },
+                data: series_pay_realprice
+            }]
+        };
+
+        dealreport1Chart.setOption(option);
+    }
+};
+$(document).ready(function()
+{
+    thisPageApp.init();
+});
+</script>
+<!-- 帮助文档 -->
+<script type="text/javascript" src="http://www.iaapp.cn/paysystem/outapi/helplist"></script>
+{/block}

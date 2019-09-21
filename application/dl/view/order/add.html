@@ -1,0 +1,277 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">订单管理</span>
+    </li>
+    <li class="active">
+        订单号：{:$one->order_num}
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block}
+{block name="page-content"}
+    <div class="page-content">
+        <!-- #section:settings.box -->
+        <div class="row">
+            <div class="col-xs-12">
+                <!-- PAGE CONTENT BEGINS -->
+                
+                    <table class="table table-striped table-bordered">
+                        <tr>
+                            <td class="tabmidtop">基本信息</td>
+                        </tr>
+                        <tr>
+                            <td valign="top">
+                                <input type="hidden" name="mid" value="" />
+                                <table class="table table-striped table-bordered ">
+                                    <!--cid,特殊，单独处理-->
+                                    <tr>
+                                        <td align="right" width="150">订单号：</td>
+                                        <td colspan="3">
+                                            {$one?$one->order_num:''}<span class="bz"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">下单时间：</td>
+                                        <td colspan="3">
+                                            {$one?$one->order_addtime:''}<span class="bz"></span>
+                                        </td>
+                                    </tr>
+                                    {notempty name="$one->order_wuliu_sendtime"}
+                                    <tr>
+                                        <td align="right">发货时间：</td>
+                                        <td colspan="3">
+                                            {$one?$one->order_wuliu_sendtime:''}<span class="bz"></span>
+                                        </td>
+                                    </tr>
+                                    {/notempty}
+                                    {notempty name="$one->order_wuliu_gettime"}
+                                    <tr>
+                                        <td align="right">收货时间：</td>
+                                        <td colspan="3">
+                                            {$one?$one->order_wuliu_gettime:''}<span class="bz"></span>
+                                        </td>
+                                    </tr>
+                                    {/notempty}
+                                    {notempty name="$one->order_cancel_time"}
+                                    <tr>
+                                        <td align="right">取消时间：</td>
+                                        <td colspan="3">
+                                            {$one?$one->order_cancel_time:''}<span class="bz"></span>
+                                        </td>
+                                    </tr>
+                                    {/notempty}
+                                    <tr>
+                                        <td align="right">订单状态：</td>
+                                        <td colspan="3">{$one?$one->order_nicestatus:''}</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">是否自提：</td>
+                                        <td colspan="3">{$one->order_is_selfget==1?'是':'不是'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">配送/自提门店：</td>
+                                        <td colspan="3">{$one?$one->shop_name:''}</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">是否安装：</td>
+                                        <td colspan="3">{$one->order_is_build==1?'是':'不是'}</td>
+                                    </tr>
+                                    {if condition="$one->order_is_build gt 0"}
+                                    <tr>
+                                        <td align="right">安装门店：</td>
+                                        <td colspan="3">{$one?$one->shop_build_name:''}</td>
+                                    </tr>
+                                    {/if}
+                                    <tr>
+                                        <td align="right">会员名：</td>
+                                        <td colspan="3">
+                                            {$one?$one->order_name:''}<span class="bz"></span>
+                                        </td>
+                                    </tr>
+                                    
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table class="table table-striped table-bordered">
+                        <tr>
+                            <td class="tabmidtop">商品信息</td>
+                        </tr>
+                        <tr>
+                            <td valign="top">
+                                <table class="table table-striped table-bordered">
+                                	<tr>
+                                		<td align="right" width="150">商品图片： </td>
+	                                    <td colspan="4"><img src="{$one->order_list_goods->goods_small_image}" width="100" height="100"><span class="bz"></span></td>
+	                                </tr>
+	                                <tr>
+                                		<td align="right" width="150" >商品标题： </td>
+	                                    <td colspan="4"><a href="{:url('goods/add',['goods_id'=>$one->order_list_goods_id])}" target="_blank">{$one->order_title}</a><span class="bz"></span></td>
+	                                </tr>
+	                                <tr>
+	                                	<td align="right" width="150" >是否团购商品： </td>
+                                        <td colspan="3">{$one->order_list_goods->goods_is_groupbuy==1?'是':'不是'}                                            <span class="bz"></span>
+                                        </td>
+                                    </tr>
+	                                <tr>
+	                                	<td align="right" width="150" >sku： </td>
+                                        <td colspan="3">{:$one?$one->order_list_suk:''}                                            <span class="bz"></span>
+                                        </td>
+                                    </tr>
+	                                <tr>
+	                                	<td align="right" width="150" >购买单价： </td>
+                                        <td colspan="3">{:$one?$one->order_list_price:''}                                            <span class="bz"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    	<td align="right">数量： </td>
+                                        <td colspan="3">{:$one?$one->order_list_count:''}                                            <span class="bz"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    	<td align="right">总价： </td>
+                                        <td colspan="3">{:$one?$one->order_allprice_static:''}                                            <span class="bz"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+	                                	<td align="right">附言： </td>
+	                                    <td colspan="3">{:$one?$one->order_fuyan:''}<span class="bz"></span></td>
+	                                </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="table table-striped table-bordered ">
+                        <tr>
+                            <td class="tabmidtop">支付信息</td>
+                        </tr>
+                        <tr>
+                            <td valign="top">
+                                <table class="table table-striped table-bordered ">
+                                    <tr>
+                                        <td width="150" align="right">订单金额：</td>
+                                        <td colspan="3">
+                                            {:$one?$one->order_allprice:''}
+                                            {if condition="$one->order_status eq 0"}
+                                            </br></br>
+                                            <form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    											<input type="hidden" name="order_id" value="{:$one?$one->order_id:''}">
+    											<input type="hidden" name="action" value="order_allprice">
+    											<input type="text" name="order_allprice" placeholder="修改金额,最小0.1" value="">
+    											<input type="submit" value="修改">
+    										</form>
+    										{/if}
+                                        </td>
+                                    </tr>
+                                    {if condition="$one->order_pay_jifen_cash gt 0"}
+                                    <tr>
+                                        <td align="right">积分抵扣：</td>
+                                        <td colspan="3">
+                                            {:$one?$one->order_pay_jifen_cash:''}       </td>
+                                    </tr>
+                                    {/if}
+                                    {if condition="$one->order_pay_coupon_cash gt 0"}
+                                    <tr>
+                                        <td align="right">优惠券：</td>
+                                        <td colspan="3">
+                                            {:$one?$one->order_pay_coupon_cash:''}       </td>
+                                    </tr>
+                                    {/if}
+                                    {if condition="$one->order_wuliu_youfei gt 0"}
+                                    <tr>
+                                        <td align="right">运费：</td>
+                                        <td colspan="3">
+                                            {:$one?$one->order_wuliu_youfei:''}
+                                            {if condition="$one->order_status eq 0"}
+                                            </br></br>
+                                            <form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    											<input type="hidden" name="order_id" value="{:$one?$one->order_id:''}">
+    											<input type="hidden" name="action" value="order_wuliu_youfei">
+    											<input type="text" name="order_wuliu_youfei" placeholder="修改运费" value="">
+    											<input type="submit" value="修改">
+    										</form>
+    										{/if}
+                                        </td>
+                                    </tr>
+                                    {/if}
+                                    {if condition="$one->order_is_build eq 1"}
+                                    <tr>
+                                        <td align="right">安装费：</td>
+                                        <td colspan="3">
+                                            {:$one?$one->order_build_fee:''}
+                                            {if condition="$one->order_status eq 0"}
+                                            </br></br>
+                                            <form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    											<input type="hidden" name="order_id" value="{:$one?$one->order_id:''}">
+    											<input type="hidden" name="action" value="order_build_fee">
+    											<input type="text" name="order_build_fee" placeholder="修改安装费" value="">
+    											<input type="submit" value="修改">
+    										</form>
+    										{/if}
+                                        </td>
+                                    </tr>
+                                    {/if}
+                                    <tr>
+                                        <td align="right">实付：</td>
+                                        <td colspan="3">
+                        					{:$one->order_payrealprice>0?$one->order_payrealprice:'未支付'}
+                                        </td>
+                                    </tr>
+									{notempty name="$one->order_cancel_time"}
+                                    <tr>
+                                        <td align="right">支付时间：</td>
+                                        <td colspan="3">
+                                            {$one->order_paytime}<span class="bz"></span>
+                                        </td>
+                                    </tr>
+                                    {/notempty}
+                                    <tr>
+                                        <td align="right">商家验证码：</td>
+                                        <td colspan="3">
+                                            {$one->order_shop_yzm}<span class="bz"></span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+					
+					{if condition="$one->order_status gt 1"}
+						 <table class="table table-striped table-bordered ">
+	                        <tr>
+	                            <td class="tabmidtop">物流信息</td>
+	                        </tr>
+	                        <tr>
+	                            <td valign="top">
+	                                <table class="table table-striped table-bordered ">
+	                                    <tr>
+	                                        <td width="150" align="right">物流公司：</td>
+	                                        <td colspan="3">
+	                                        	{$one->order_wuliu_title}
+	                                        </td>
+	                                    </tr>
+	                                    <tr>
+	                                        <td align="right">物流单号：</td>
+	                                        <td colspan="3">
+	                                           {$one->order_wuliu_number}
+	                                        </td>
+	                                    </tr>	                                     
+	                                </table>
+	                            </td>
+	                        </tr>
+	                        
+	                    </table>
+					{/if}
+                    <table>
+                        <tr>
+                            <td align="right">&nbsp;</td>
+                            <td colspan="3">
+                                <input name="Submit2" type="button" onclick="history.back();" class="btn btn-default" value=" 返 回 " />
+                                <input name="dopost" type="hidden" id="dopost" value="save" />
+                            </td>
+                        </tr>
+                    </table>
+{/block}

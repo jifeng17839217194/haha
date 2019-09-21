@@ -1,0 +1,100 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">会员列表</span>
+    </li>
+</ul>
+{/block} {block name="page-content"}
+<script type="text/javascript">
+    $(function(){
+        check_login();
+        /*alert(store_name);*/
+        $("#store-name").html(store_name);
+        $("#user-name").html(user_realname);
+        $("#log-off").on('click',function(){
+            clear_cookie();
+            $(location).attr('href', common_url+'/user/index/login');
+        });
+    });
+</script>
+<!-- PAGE CONTENT BEGINS -->
+<!--bof list-->
+<div class="member-body">
+<div class="col-xs-12">
+    <div class="row">
+        <table id="store_table" class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th width="">用户昵称</th>
+                    <th width="">用户真实姓名</th>
+                    <th width="">用户电话</th>
+                    <th width="">用户公司名称</th>
+                    <th>用户公司地址</th>
+                    <th>用户绑定的微信号</th>
+                    <th>用户绑定的支付宝</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>            
+        </table>
+    </div>
+</div>
+<!--eof list-->
+<div class="space-10"></div>
+</div>
+<script type="text/javascript">
+    $(function() {              
+        var microtime=Date.parse(new Date())/1000;
+        get_member_list();
+        //bof 获取订单列表数据方法
+        function get_member_list()
+        {
+            var postParam = {
+                user_id: user_id,
+                version: 1,
+                time: microtime
+            };
+            var sign= getsign(postParam);
+            postParam.sign = sign; //不这么传值下，有错误
+            $.ajax(
+                {
+                    type: "post",
+                    url: common_url+ "/api/member/get_list",
+                    data: postParam,
+                    dataType: 'json',
+                    success: function(res)
+                    {
+                        if(res.code == 1)
+                        {
+                            $('#store_table>tbody').html('');
+                            if(res.data)
+                            {
+                                res.data.data.forEach(function(item)
+                                    {
+                                        var html = '<tr id="' + item.member_id + '">' +                                          
+                                            '<td>' + item.member_nickname + '</td>' +
+                                            '<td>' + item.member_realname + '</td>' +
+                                            '<td>' + item.member_tel + '</td>';       
+                                            html += '<td>' + item.member_company_name + '</td>';
+                                            html += '<td>' + item.member_company_address + '</td>';
+                                            html += '<td>' + item.member_wx_nickname + '</td>';
+                                            html += '<td>' + item.member_zfb + '</td>';
+                                            html += '</tr>';
+                                        $('#store_table>tbody').append(html);
+                                        //var html=thisFrontApp.getordertemplate(item,'order');
+                                        //$('.order-nearly').append(html);
+                                    });
+                            }
+                        } else
+                        {
+                            alert(res.message);
+                        }
+                    }
+                });
+        }       
+    });
+</script>
+
+<!-- PAGE CONTENT ENDS -->
+{/block}

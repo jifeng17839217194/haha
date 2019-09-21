@@ -1,0 +1,35 @@
+{extend name="common/common"} 
+{block name="head"}
+<style type="text/css">
+.sortnum{ height:20px; line-height:10px; width:30px; font-size:10px; font-weight:lighter; font-family:Arial, Helvetica, sans-serif;}
+.menu_hide a,span.menu_hide{ color:#ccc; text-decoration:line-through;}
+.menu_hide a:hover{color:#ccc; text-decoration:line-through;}
+</style>
+{/block}
+{block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">菜单管理</span>
+    </li>
+    <!--<li class="active">-->
+        <!--后台菜单-->
+    <!--</li>-->
+</ul>
+<!-- #section:basics/content.searchbox -->
+<div class="nav-search nav-positions" id="nav-search">
+    <form class="form-search form-inline">
+        <!-- <span class="input-icon">
+            <input type="text" placeholder="关键词" name="keyword" value="{:input('get.keyword')}" class="nav-search-input" autocomplete="off" />
+            <i class="ace-icon fa fa-search nav-search-icon"></i>
+        </span>
+        <input type="submit" class="btn btn-info btn-xs " value="搜索"> -->
+        <a href="{:url('add')}" class="btn btn-info btn-xs "><i class="glyphicon glyphicon-plus"></i>新增</a>
+    </form>
+</div>
+{/block} 
+{block name="page-content"}
+<div class="admin-body">
+{$menuHtml}
+</div>
+{/block}

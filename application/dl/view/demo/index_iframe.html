@@ -1,0 +1,97 @@
+{extend name="common/common"}
+
+{block name="navbar"}
+{/block}
+{block name="nav-list"}
+{/block}
+
+{block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">新闻中心</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+<div class="nav-search nav-positions" id="nav-search">
+    <form class="form-search form-inline">
+        <select data-placeholder="省份" title="省份"  name="city_province_id" id="city_province_id" class="chosen-select ">
+            <option value="">--全部--</option>
+            
+            
+        </select>
+        <script type="text/javascript">
+        $("#city_province_id").val("{:input('city_province_id')}");
+        </script>
+
+        <span class="input-icon">
+            <input type="text" placeholder="关键词" name="keyword" value="{:input('get.keyword')}" class="nav-search-input" autocomplete="off" />
+            <i class="ace-icon fa fa-search nav-search-icon"></i>
+        </span>
+        <input type="submit" class="btn btn-info btn-xs " value="搜索">
+        {if checkActionAuth()}
+        <a href="{:url('add')}" class="btn btn-info btn-xs "><i class="glyphicon glyphicon-plus"></i>新增</a>
+        {/if}
+    </form>
+</div>
+{/block} {block name="page-content"}
+<div class="amdin-body">
+<form action="" id="form2" method="POST">
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th width="20">
+                    <input class="ace" onclick="javascript:thisApp.selectByChecked($(this),'news_id');" type="checkbox" />
+                    <span class="lbl"></span>
+                </th>
+                <th width="50">ID</th>
+                <th>标题</th>
+                <th width="151"><i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>新增时间</th>
+                <th width="50">排序</th>
+                <th width="120">操作</th>
+            </tr>
+        </thead>
+        {volist name="lists" id="vo"}
+        <tr >
+            <td align="center">
+                <input class="ace" name="news_id[]" type="checkbox" value="{$vo.news_id}" />
+                <span class="lbl"></span>
+            </td>
+            <td>{$vo.news_id}</td>
+            <td>{$vo.news_title}</td>
+            <td>{$vo.news_addtime}</td>
+            <td>
+                <input type="text" title="排序" readonly class="input-mini" ajax='{"data":"news_id={:$vo['news_id']}","url":"{:url('sortnum')}","prompt":"text"}' value="{:$vo['news_sortnum']}">
+            </td>
+            <td>
+                {if checkActionAuth('','add')}
+                <a href="{:url('add?news_id='.$vo['news_id'])}" class="tooltip-success" data-rel="tooltip" title="编辑"><span class="green"><i class="ace-icon fa fa-pencil-square-o bigger-120"></i></span>编辑</a> &nbsp;
+                {/if}
+
+                {if checkActionAuth()}
+                <a ajax='{"confirm":"删除吗？","url":"{:url("delete?news_id=" .$vo[ "news_id"])} "}' href="javascript:; " class="tooltip-error "><span class="red "><i class="ace-icon fa fa-trash-o bigger-120 "></i></span>删除</a>
+                {/if}
+            </td>
+        </tr>
+        {/volist}
+    </table>
+</form>
+<div class="pull-left ">
+    {if checkActionAuth()}
+        <a ajax='{"confirm":"删除吗？ ","data-form":"#form2 ","url":"{:url("delete")}"}' class="btn btn-white btn-inverse btn-sm " href="javascript:; ">删除</a>
+    {/if}
+    <!-- <a onclick="doloadtable() " class="btn btn-white btn-inverse btn-sm " href="javascript:; ">
+                                        导出表格
+                                    </a> -->
+</div>
+<div class="pull-right ">
+    <p style="text-align:right;">共{$lists->total()}条记录</p>
+    {$lists->render()}
+</div>
+<div class="clearfix ">
+</div>
+</div>
+{/block}

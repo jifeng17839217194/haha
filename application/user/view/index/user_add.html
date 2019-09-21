@@ -1,0 +1,234 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">经营场地信息</span>
+    </li>
+    <li class="active">
+        收银账号
+    </li>
+    <li class="active">
+
+        <span _href="#">新增收银员</span>
+    </li>
+</ul>
+<!--<div class="nav-search nav-positions" id="nav-search">-->
+     <!--<a href="{:url('user_add',array('store_shop_id'=>input('store_shop_id')))}" class="btn btn-info btn-xs "><i class="glyphicon glyphicon-plus"></i>新增</a>  -->
+<!--</div>-->
+{/block} {block name="page-content"}
+<script type="text/javascript">
+	$(function(){
+		check_login();
+		/*alert(store_name);*/
+		$("#store-name").html(store_name);
+		$("#user-name").html(user_realname);
+		$("#log-off").on('click',function(){
+			clear_cookie();
+			$(location).attr('href', common_url+'/user/index/login');
+		});
+	});
+</script>
+<!-- PAGE CONTENT BEGINS -->
+<!--bof list-->
+<div class="admin-body">
+<div class="col-xs-12">
+	<div class="row">
+		<form id="form1" class="form-horizontal">  
+            <fieldset>
+            	<div class="form-group clearfix">
+				    <label class="col-sm-2 control-label no-padding-right">*收银员名称：</label>
+				    <div class="col-sm-10">
+				        <input type="text"  placeholder="" pattern="*" [disabled]="" name="user_realname" value="" title="备注/名称" id="user_realname" class="col-xs-10 col-sm-5">
+				    </div>
+				</div>  
+                 <div class="form-group clearfix">
+				    <label class="col-sm-2 control-label no-padding-right">手机号：</label>
+				    <div class="col-sm-10">
+				        <input type="text" placeholder="" pattern="*" [disabled]="" name="user_mobile" value="" title="手机号" id="user_mobile" class="col-xs-10 col-sm-5">				       
+				    </div>
+				</div>  
+				<div class="form-group clearfix">
+				    <label class="col-sm-2 control-label no-padding-right">*密码：</label>
+				    <div class="col-sm-10">
+				        <input type="text" placeholder="登陆密码" pattern="*" [disabled]="" name="user_password" value="" title="密码" id="user_password" class="col-xs-10 col-sm-5">
+				    </div>
+				</div> 
+                <div class="form-group" id="user_store_open_reward" style="display: none">
+                    <label class="col-sm-2 control-label no-padding-right">接受打赏：</label>
+                    <div class="col-sm-10" style="padding-top: 8px;">
+                        <label>
+                            <input name="user_play_reward" value="0" id="user_play_reward" class="ace ace-switch" type="checkbox" />
+                            <span class="lbl"></span>
+                        </label>
+                    </div>
+                </div>
+				<div class="form-group">
+			        <label class="col-sm-2 control-label no-padding-right">退款权限：</label>
+			        <div class="col-sm-10" style="padding-top: 8px;">
+			            <label>
+			                <input name="user_refund_auth" onchange="javascript:$('#box_user_refund_password').toggleClass('hidden');" value="1" id="user_refund_auth" class="ace ace-switch" type="checkbox" />
+			                <span class="lbl"></span>
+			            </label>
+			        </div>
+			    </div>
+			    <div class="form-group hidden" id="box_user_refund_password">
+			        <label class="col-sm-2 control-label no-padding-right">退款密码：</label>
+			        <div class="col-sm-10">
+			            <div class="input-group col-sm-5">
+			                <input type="text" placeholder="输入退款密码" pattern="*" name="user_refund_password" value="" title="退款密码" id="user_refund_password" class="col-xs-10 col-sm-12" />
+			                <span class="input-group-btn">
+			                    <button class="btn btn-sm " type="button" onclick="javascript:$('#user_refund_password').val(GetRandomNum(11111111,99999999));">
+			                        <i class="ace-icon fa fa-gavel bigger-110"></i>
+			                        随机
+			                    </button>
+			                </span>
+			            </div>            
+			            <span class="help-inline col-xs-12 col-sm-7">
+			                    <span class="middle">字母或数字,8~20位</span>
+			            </span>
+			        </div>
+			    </div>
+			    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">角色：</label>
+        <div class="col-sm-10">
+            <div class="radio">
+                <label>
+                    <input name="user_role" value="0" type="radio" class="ace" />
+                    <span class="lbl">老板</span>
+                    <a class="help-button" title="能查看所有经营场地的交易数据，全部的权限">?</a>
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input name="user_role" value="1" type="radio" class="ace" />
+                    <span class="lbl">店长</span>
+                    <a class="help-button" title="能查看当前经营场地的所有交易数据，全部的权限">?</a>
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input name="user_role" value="2" type="radio" class="ace" />
+                    <span class="lbl">收银员</span>
+                    <a class="help-button" title="能查看当前经营场地的自己交易数据">?</a>
+                </label>
+            </div>
+            <script type="text/javascript">
+            $("input[name='user_role'][value='2']").attr("checked", "checked");
+            </script>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right"> 状态：</label>
+        <div class="col-sm-10">
+            <div class="radio pull-left">
+                <label>
+                    <input name="user_active" value="1" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;正常</span>
+                </label>
+            </div>
+            <div class="radio pull-left">
+                <label>
+                    <input name="user_active" value="0" type="radio" class="ace" />
+                    <span class="lbl">&nbsp;&nbsp;关闭</span>
+                </label>
+            </div>
+            <script type="text/javascript">
+            $("input[name='user_active'][value='1']").attr("checked", "checked");
+            </script>
+        </div>
+    </div>
+                <div class="space"></div>
+                <div class="clearfix form-actions">
+       				 <div class="col-md-offset-3 col-md-9">
+	                    <button type="button" class="btn btn-primary btn-submit">
+	                        <i class="ace-icon fa fa-key"></i>
+	                        <span class="bigger-110">提交</span>
+	                    </button>
+	                      &nbsp; &nbsp; &nbsp;
+			            <button class="btn" type="button" onclick="history.back();">
+			                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+			            </button>
+	                 </div>   
+                </div>
+                <div class="space-4"></div>
+            </fieldset>
+        </form>   
+	</div>
+</div>
+<!--eof list-->
+<div class="space-10"></div>
+</div>
+<script type="text/javascript">
+    function GetRandomNum(Min,Max)
+    {
+        var Range = Max - Min;
+        var Rand = Math.random();
+        return(Min + Math.round(Rand * Range));
+    }
+
+    $(function() {
+        var microtime=Date.parse(new Date())/1000;
+        var user_role=$.cookie("user_role");
+        var store_open_reward=$.cookie("store_open_reward");
+        if(user_role==1){
+        	$("input:radio[name=user_role][value='0']").parents(".radio").css("display","none");
+        	$("input:radio[name=user_role][value='1']").parents(".radio").css("display","none");
+        }
+        if(store_open_reward==1){
+            if(user_role<2){
+                $("#user_store_open_reward").css('display','block');
+            }
+        }
+        $(".btn-submit").on("click",function(){
+        	var user_realname=$("input[name='user_realname']").val();
+        	var user_mobile=$("input[name='user_mobile']").val();
+        	var user_password=$("input[name='user_password']").val();
+        	if($('#user_refund_auth').is(':checked')) {
+			    var user_refund_auth=$("input[name='user_refund_auth']:checked").val();
+			    var user_refund_password=$("input[name='user_refund_password']").val();
+			}else{
+				var user_refund_auth=0;
+				var user_refund_password='';
+			}        	
+        	var user_role=$("input[name='user_role']:checked").val();
+        	var user_active=$("input[name='user_active']:checked").val();
+        	var user_store_id={:input('store_shop_id',0)};
+            
+            var postParam = {
+                user_id: user_id,
+                user_realname: user_realname,
+                user_mobile: user_mobile,
+                user_password:user_password,
+                user_refund_auth:user_refund_auth,
+                user_refund_password:user_refund_password,
+                user_role:user_role,
+                user_active:user_active,
+                user_store_id:user_store_id,
+                time:microtime
+            };
+
+            var sign = getsign(postParam);
+            postParam.sign = sign; //不这么传值下，有错误
+            
+        	$.ajax({
+        		type:"post",
+        		url:common_url+"/api/store/adduserone",
+        		async:true,
+        		dataType:"json",   
+        		data:postParam,
+        		success:function(res){
+        			if(res.code){
+        				console.log(res);
+        				alert("添加成功！");
+                        $(location).attr("href",common_url+"/user/index/user_list/store_shop_id/"+res.data.user_store_id);
+        			}else{
+        				alert(res.message);
+        			}
+        		}
+        	});
+        });
+	});
+</script>
+<!-- PAGE CONTENT ENDS -->
+{/block}

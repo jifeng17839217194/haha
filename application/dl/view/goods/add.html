@@ -1,0 +1,857 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">所有商品</span>
+    </li>
+    <li class="active">
+        编辑
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block} {block name="head"}
+<style type="text/css">
+.ui-sortable li {
+    margin-bottom: 10px;
+}
+
+#goods_more_images_warp li {
+    margin-bottom: 10px;
+}
+
+.ui-state-highlight {
+    height: 50px;
+    background: #ccc;
+    opacity: 0.5;
+}
+
+#sukpriceset {
+    display: none;
+}
+
+#sukitemlist ul li {
+    padding-top: 10px;
+    display: block;
+}
+
+#sukitemlist ul li .itemsonname {
+    height: 22px;
+    line-height: 22px;
+    font-size: 12px;
+    width: 5em;
+}
+
+#sukitemlist ul li .itemsonlist {
+    padding-left: 1em;
+}
+
+#sukitemlist ul li .itemsonlist label {
+    position: relative;
+    display: inline-block;
+    padding-right: 10px;
+}
+
+#sukitemlist ul li .itemsonlist .closebtn1 {
+    position: absolute;
+    cursor: pointer;
+    line-height: 10px;
+    padding: 0;
+    text-align: center;
+    width: 12px;
+    height: 12px;
+    right: 5px;
+    font-size: 10px;
+    top: -5px;
+    overflow: hidden;
+    font-style: normal;
+    background-color: #f00;
+    color: #fff;
+    z-index: 8;
+    border-radius: 10px;
+}
+
+.itemsonval {
+    height: 22px;
+    line-height: 22px;
+    font-size: 12px;
+    width: 80px;
+}
+
+#pricetable td {
+    max-width: 200px;
+}
+</style>
+{/block} {block name="page-content"}
+<form class="form-horizontal ajaxForm" onsubmit="suk.getsukalldata();" role="form" id="form1" name="form1" method="post" action="{:url('save')}">
+    <input name="formaction" type="hidden" id="dopost" value="add" />
+    <input name="goods_id" type="hidden" id="goods_id" value="{:input('goods_id')}" />
+    <input name="fromurl" type="hidden" id="fromurl" value="{:$_SERVER['HTTP_REFERER']}" /> 
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding">分类标签：</label>
+        <div class="col-sm-10">
+            <div class="col-xs-10 col-sm-5 no-padding">
+                <div class="wrap">
+				  <fieldset id="city_china_val">
+				    <p>
+				      <select id="mainClass" name="goods_class_pid" required data-first-title="选择分类">
+				        <option value="">请选择</option>
+				        {volist name="ClassList" id="vo"}
+				        <option value="{$vo.goods_class_id}" {if condition="$vo.goods_class_id eq $goods_Pclass"}selected{/if}>{$vo.goods_class_name}</option>
+				        {/volist}
+				      </select>
+				      {volist name="ClassList" id="vo"}
+				      {notempty name="$vo.son"}
+				      <select name="goods_class_id{$vo.goods_class_id}" class="sonClass sonClass_{$vo.goods_class_id}" data-first-title="选择分类" style="display:none;">
+				        <option value="">请选择</option>
+				        {volist name="vo.son" id="vo2"}
+				        <option value="{$vo2.goods_class_id}" <?php if(isset($one->goods_goods_class_id)): ?>{if condition="$vo2.goods_class_id eq $one->goods_goods_class_id"}selected{/if}<?php endif;?>>{$vo2.goods_class_name}</option>
+				        {/volist}
+				      </select>
+				      {/notempty}
+				      {/volist}
+				    </p>
+				  </fieldset>
+				</div>
+				<script>
+				$("#mainClass").change(function(){
+	               $(".sonClass").hide();
+	               $(".sonClass").attr("name","goods_class_id1");
+	               $(".sonClass_"+$("#mainClass").val()).show();
+	               $(".sonClass_"+$("#mainClass").val()).attr("name","goods_class_id");
+	            });
+		        $("#mainClass").change();
+				</script>
+            </div>
+            <span class="help-inline col-xs-12 col-sm-7">
+                <span class="middle"></span>
+            </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">风格：</label>
+        <div class="col-sm-10">
+            <div class="col-xs-10 col-sm-5 no-padding-left">
+                <select data-placeholder="风格" title="风格" name="goods_goods_style_id" id="goods_goods_style_id" class="chosen-select ">
+                    {volist name="goods_Style" id="vo"}
+                    <option value="{$vo.goods_style_id}">{$vo.goods_style_name}</option>
+                    {/volist}
+                </select>
+                <script type="text/javascript">
+                    var goods_goods_style_id_string = '{:$one?$one->goods_goods_style_id:""}';
+                    if(goods_goods_style_id_string)
+                    {
+                        $("#goods_goods_style_id").val(goods_goods_style_id_string);
+                    }
+                </script>
+            </div>
+            <span class="help-inline col-xs-12 col-sm-7">
+                <span class="middle"></span>
+            </span>
+        </div>
+    </div>
+
+    {include file="common/input" title="产品名称" fieldName="goods_title" defaultValue='<?php echo(isset($one->goods_title)?$one->goods_title:"");?>' placeholder="" required="required" pattern="*" helpInfo=''}
+	
+    {include file="common/uploadImg" title="Logo" fieldName="goods_small_image" defaultValue='<?php echo(isset($one->goods_small_image)?$one->goods_small_image:"");?>' imgWidth="200" imgHeight="200" usehelp="" helpInfo="宽 340 X 高 340"}
+    
+    {include file="common/uploadImgMore" title="多个图片上传" fieldName="goods_more_images" helpInfo='宽 750 X 高 580 宽度不要超过750px，组合商品一个商品一张图' usehelp="上传返回的url路径"  defaultValue='<?php echo(isset($one->goods_more_images)?$one->goods_more_images:"");?>' }
+    
+    
+
+  	{include file="common/input" title="简易描述" fieldName="goods_brief" defaultValue='<?php echo(isset($one->goods_brief)?$one->goods_brief:"");?>' placeholder="" required="" pattern="*" helpInfo=''}
+
+  	{include file="common/fullTextarea" title="商品描述" fieldName="goods_content" defaultValue='<?php echo(isset($one->goods_content)?$one->goods_content:"");?>' helpInfo=''}
+    
+    
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label">上架时间：</label>
+        <div class="col-sm-10">
+            <input name="goods_online_start_time" onclick="WdatePicker({isShowClear:false,startDate:'%y-%M-01 00:00:00',dateFmt:'yyyy-MM-dd HH:mm:ss',alwaysUseStartDate:true})" value="{$one->goods_online_start_time|default=date('Y-m-d H:i:s')}" data-message-required="上架时间不可为空" required type="text" placeholder="上架时间" class="input-large"> -
+            <input name="goods_online_end_time" onclick="WdatePicker({isShowClear:false,startDate:'%y-%M-01 00:00:00',dateFmt:'yyyy-MM-dd HH:mm:ss',alwaysUseStartDate:true})" value="{$one->goods_online_end_time|default=date('Y-m-d H:i:s',strtotime('+1 month'))}" data-message-required="下架时间不可为空" required type="text" placeholder="下架时间" class="input-large">
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">运费模板：</label>
+        <div class="col-sm-10">
+            <div class="col-xs-10 col-sm-5 no-padding-left">
+                <select data-placeholder="运费模板" title="运费模板" name="goods_shipping_template_id" id="goods_shipping_template_id" class="chosen-select ">
+                    {volist name="goods_shipping_template" id="so"}
+                    <option value="{$so.shipping_template_id}">{$so.shipping_template_name}</option>
+                    {/volist}
+                </select>
+                <script type="text/javascript">
+                    var goods_shipping_template_id_string = '{:$one?$one->goods_shipping_template_id:""}';
+                    if(goods_shipping_template_id_string)
+                    {
+                        $("#goods_shipping_template_id").val(goods_shipping_template_id_string);
+                    }
+                </script>
+            </div>
+            <span class="help-inline col-xs-12 col-sm-7">
+                <span class="middle"></span>
+            </span>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label">是否参团：</label>
+        <div class="col-sm-10">
+            <div class="radio">
+                <label>
+                    <input name="goods_is_groupbuy" value="1"  type="radio" class="ace"
+                    {if $one}
+                    	{if $one->goods_is_groupbuy eq 1}
+                    		checked
+                    	{/if}
+                    {/if}
+                    >
+                    <span class="lbl"> 是</span>
+                </label>
+                <label>
+                    <input name="goods_is_groupbuy" value="0" 
+                    {if $one}
+                    	{if $one->goods_is_groupbuy eq 0} checked {/if}
+	                        {else/}
+	                        checked
+                    {/if}
+                    type="radio" class="ace">
+                    <span class="lbl"> 不是</span>
+                </label>
+            </div>
+            
+        </div>
+    </div>
+    <div id="goods_is_groupbuy" {if $one}
+                    	{if $one->goods_is_groupbuy eq 0}
+                    		style="display:none;"
+                    	{/if}
+                    	{else/}
+	                        style="display:none;"
+                    {/if}>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">参团人数：</label>
+            <div class="col-sm-10">
+                <input name="goods_groupbuy_num" min="0" data-message-required="必需为数字" value="{$one.goods_groupbuy_num|default=0}" required type="number" placeholder="参团人数,单位个" class="input-medium">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">参团价格：</label>
+            <div class="col-sm-10">
+                <input name="goods_groupbuy_price" min="0" data-message-required="必需为数字" value="{$one.goods_groupbuy_price|default=0}" required type="number" placeholder="参团价格,单位元" class="input-medium">
+            </div>
+        </div>
+        <div class="form-group">
+        <label class="col-sm-2 control-label">团购截止时间：</label>
+        <div class="col-sm-10">
+            <input name="goods_groupbuy_time" onclick="WdatePicker({isShowClear:false,startDate:'%y-%M-01 00:00:00',dateFmt:'yyyy-MM-dd HH:mm:ss',alwaysUseStartDate:true})" value="{$one->goods_groupbuy_time|default=date('Y-m-d H:i:s')}"  type="text" placeholder="团购截止时间" class="input-large">
+            
+        </div>
+    	</div>
+         
+        
+    </div>
+    
+    <div id="basepriceset">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">现价：</label>
+            <div class="col-sm-10">
+                <input name="goods_price_now" min="0" data-message-required="必需为数字" value="{$one.goods_price_now|default=0}" required type="number" placeholder="价格,单位元" class="input-medium">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">原价：</label>
+            <div class="col-sm-10">
+                <input name="goods_price_old" min="0" data-message-required="必需为数字" value="{$one.goods_price_old|default=0}" required type="number" placeholder="原价,单位元" class="input-medium">
+            </div>
+        </div>
+    </div>
+	<div class="form-group">
+        <label class="col-sm-2 control-label">安装费：</label>
+        <div class="col-sm-10">
+            <input name="goods_build_price" min="0" data-message-required="必需为数字" value="{$one.goods_build_price|default=0}" required type="number" placeholder="价格,单位元" class="input-medium">
+        </div>
+    </div>
+    <div class="form-group" style="" alt="开关sku">
+        <label class="col-sm-2 control-label">价格项：</label>
+        <div class="col-sm-10">
+            <div>
+                <div class="radio">
+                    <label>
+                        <input name="goods_sukactive"  type="radio" class="ace"  value="1"
+                        {if $one}
+	                        {if $one->goods_sukactive neq ''} checked {/if}
+	                        {if $one->goods_sukactive eq 1} checked {/if}
+                        {/if}
+                        >
+                        <span class="lbl">启用SKU</span><span class="bz">（有多种价格时开启）</span>
+                    </label>	
+                </div>
+                <div class="radio">
+                    <label>
+                        <input name="goods_sukactive" value="0" type="radio" class="ace"
+                        {if $one}
+	                        {if $one->goods_sukactive eq 0} checked {/if}
+	                        {else/}
+	                        checked
+                        {/if}
+
+                        >
+                        <span class="lbl">关闭SKU</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sukpriceset" style="">
+        <div class="form-group" style="display:block;">
+            <label class="col-sm-2 control-label">多项价格：</label>
+            <div class="col-sm-10">
+                <div>
+                    <a onclick="javascript:suk.showadditem();" class="badge badge-info">新增属性</a>
+                </div>
+                <div id="sukitemlist">
+                    <ul>
+                    </ul>
+                </div>
+                <div>
+                    <hr/>
+                </div>
+                <div id="pictable"  style="width:500px">
+                    <!-- <table class="table"></table> -->
+                </div>
+                <div id="pricetable">
+                    <!-- <table class="table"></table> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">是否启用：</label>
+        <div class="col-sm-10">
+            <div class="radio">
+                <label>
+                    <input name="goods_active" value="1"  type="radio" class="ace"
+                    {if $one}
+                    	{if $one->goods_active eq 1}
+                    		checked
+                    	{/if}
+                    {/if}
+                    >
+                    <span class="lbl"> 启用</span>
+                </label>
+                <label>
+                    <input name="goods_active" value="0" 
+                    {if $one}
+                    	{if $one->goods_active eq 0}
+                    		checked
+                    	{/if}
+                    {/if}
+                    type="radio" class="ace">
+                    <span class="lbl"> 关闭</span>
+                </label>
+            </div>
+            
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">是否推荐拼团享特价：</label>
+        <div class="col-sm-10">
+            <div class="radio">
+                <label>
+                    <input name="goods_is_recommend" value="1"  type="radio" class="ace"
+                    {if $one}
+                    	{if $one->goods_is_recommend eq 1}
+                    		checked
+                    	{/if}
+                    {/if}
+                    >
+                    <span class="lbl"> 是</span>
+                </label>
+                <label>
+                    <input name="goods_is_recommend" value="0" 
+                    {if $one}
+                    	{if $one->goods_is_recommend eq 0} checked {/if}
+	                        {else/}
+	                        checked
+                    {/if}
+                    type="radio" class="ace">
+                    <span class="lbl"> 不是</span>
+                </label>
+            </div>
+            
+            <span class="help-inline col-xs-12 col-sm-7">
+                <span class="middle">拼团享特价，只有一个商品，以最后推荐的商品为准</span>
+            </span>
+        </div>
+    </div>
+    <div id="goods_is_recommend" {if $one}
+                    	{if $one->goods_is_recommend eq 0}
+                    		style="display:none;"
+                    	{/if}
+                    	{else/}
+	                        style="display:none;"
+                    {/if}>
+                    
+        {include file="common/uploadImg" title="推荐图片" fieldName="goods_recommend_image" defaultValue='<?php echo(isset($one->goods_recommend_image)?$one->goods_recommend_image:"");?>' imgWidth="200" imgHeight="200" usehelp="" helpInfo="拼团广告图片:宽 750 X 高 325"}
+    
+    </div>
+    
+                    
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label">排序：</label>
+        <div class="col-sm-1">
+            <input name="goods_sortnum" value="{$one.goods_sortnum|default=0}" required type="text" placeholder="输入数字" class="width-100">
+        </div>
+    </div>
+    <div class="clearfix form-actions">
+        <div class="col-sm-offset-2">
+            <button class="btn btn-info" onclick="javascript:suk.getsukalldata();" type="submit">
+                <i class="ace-icon fa fa-check bigger-110"></i> 保存
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="window.history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+</form>
+
+
+<textarea id="goods_sukvalue" style="display: none;">{$one?$one->goods_sukvalue:""}</textarea>
+<textarea id="goods_sukitem" style="display: none;">{$one?$one->goods_sukitem:""}</textarea>
+<textarea id="goods_sukpic" style="display: none;">{$one?$one->goods_sukpic:""}</textarea>
+
+
+<script language="javascript">
+
+/**
+ * suk
+ */
+
+var suk = (function() {
+    var funs = {
+        "clearhtml": function(html) {
+
+            html = html.split("\\n").join("<br />");
+            html = html.replace(new RegExp("\"", "gmi"), "“");
+            return html;
+        },
+        "showadditem": function() {
+            var index = layer.prompt({
+                //placeholder: '',
+                title: '输入属性分类名称'
+            }, function(value, index, elem) {
+                suk.additem(value);
+                layer.close(index);
+            });
+            $("input[class=layui-layer-input]").attr("placeholder", "“颜色”/“尺寸”/“型号”等");
+        },
+        "getsukalldata": function() {
+            var alldata = [];
+            var alldatahtml = "";
+            $("input[name='itemname']").each(function(index, el) {
+                var sondata = [];
+                //价格规格项
+                $(this).parent().find(".itemsonname").each(function(index, el) {
+                    if (suk.clearhtml($(this).val().trim()) != "") {
+                        sondata.push(suk.clearhtml($(this).val().trim()));
+                    }
+                });
+                if (sondata.length > 0) {
+                    var stringstr = '{"' + suk.clearhtml($(this).val().trim()) + '":' + JSON.stringify(sondata) + '}';
+                    //console.log(stringstr);
+                    alldata.push(stringstr);
+                }
+            });
+            if (alldata.length > 0) {
+                alldatahtml = alldata.join(",");
+            }
+            $("#form1").find("textarea[name='sukitemdata']").remove();
+            $("#form1").append('<textarea style="display:none;" name="sukitemdata">' + alldatahtml + '</textarea>');
+
+
+
+            var allpricenum = [];
+            var allpricenumhtml = [];
+            var allpicnum = [];
+            var allpicnumhtml = [];
+            var setdefautlval = function(v) {
+                if (v != "") {
+                    //console.log(v);
+                    return "\"" + suk.clearhtml(v) + "\"";
+                } else {
+                    return "\"\"";
+                }
+            };
+            $("input[name='itemsonnamekey[]']").each(function(index, el) {
+                //alert(suk.clearhtml($(this).val().trim()));
+                if ($("input[name='itemsonprice" + suk.clearhtml($(this).val().trim()) + "']").val() != "") {
+                    //stringstr='"'+suk.clearhtml($(this).val().trim())+'":{"price":'+setdefautlval($("input[name='itemsonprice"+suk.clearhtml($(this).val())+"']").val())+',"oldprice":'+setdefautlval($("input[name='itemsonoldprice"+suk.clearhtml($(this).val())+"']").val())+',"num":'+setdefautlval($("input[name='itemsonnum"+suk.clearhtml($(this).val().trim())+"']").val())+',"info":'+setdefautlval($("[name='itemsoninfo"+suk.clearhtml($(this).val().trim())+"']").val())+'}';
+                    stringstr = '"' + suk.clearhtml($(this).val().trim()) + '":{';
+                    stringstr += '"price":' + setdefautlval($("input[name='itemsonprice" + suk.clearhtml($(this).val()) + "']").val()) + ','; //最后一个不要豆号
+                    //stringstr += '"number":' + setdefautlval($("input[name='itemsonnumber" + suk.clearhtml($(this).val()) + "']").val()) + ','; //最后一个不要豆号
+                    stringstr += '"goodsno":' + setdefautlval($("input[name='itemsongoodsno" + suk.clearhtml($(this).val()) + "']").val()) + ','; //最后一个不要豆号
+                    stringstr += '"info":' + setdefautlval($("input[name='itemsoninfo" + suk.clearhtml($(this).val()) + "']").val()) + ''; //最后一个不要豆号
+
+                    stringstr += '}';
+                    allpricenum.push(stringstr);
+                }
+
+            });
+            $("input[name='picitemsonnamekey[]']").each(function(index, el) {
+                //alert(suk.clearhtml($(this).val().trim()));
+                if ($("input[name='itemsonpic" + suk.clearhtml($(this).val().trim()) + "']").val() != "") {
+                    //stringstr='"'+suk.clearhtml($(this).val().trim())+'":{"price":'+setdefautlval($("input[name='itemsonprice"+suk.clearhtml($(this).val())+"']").val())+',"oldprice":'+setdefautlval($("input[name='itemsonoldprice"+suk.clearhtml($(this).val())+"']").val())+',"num":'+setdefautlval($("input[name='itemsonnum"+suk.clearhtml($(this).val().trim())+"']").val())+',"info":'+setdefautlval($("[name='itemsoninfo"+suk.clearhtml($(this).val().trim())+"']").val())+'}';
+                    stringstr = '"' + suk.clearhtml($(this).val().trim()) + '":{';
+                    stringstr += '"pic":' + setdefautlval($("input[name='itemsonpic" + suk.clearhtml($(this).val()) + "']").val()) + ''; //最后一个不要豆号
+                    
+                    stringstr += '}';
+                    allpicnum.push(stringstr);
+                }
+
+            });
+            if (allpricenum.length > 0) {
+                allpricenumhtml = "{" + allpricenum.join(",") + "}";
+            }
+            if (allpicnum.length > 0) {
+                allpicnumhtml = "{" + allpicnum.join(",") + "}";
+            }
+            //console.log(allpricenumhtml);
+            //alert("");
+            goods_sukvalue = allpricenumhtml; //缓存下，恢复数据用
+            goods_sukpic = allpicnumhtml; //缓存下，恢复数据用
+            $("#form1").find("textarea[name='allpricenum']").remove();
+            $("#form1").find("textarea[name='allpicnum']").remove();
+            
+            $("#form1").append('<textarea style="display:none;" name="allpricenum">' + allpricenumhtml + '</textarea>');
+            $("#form1").append('<textarea style="display:none;" name="allpicnum">' + allpicnumhtml + '</textarea>');
+
+        },
+        "additem": function(value, dataobj) {
+            var htmlcode = '<li><span class="badge">' + value + '</span><input name="itemname" type="hidden" value="' + value + '" />';
+            htmlcode += '<div style="display: inline-block;" class="itemsonlist">';
+            if (typeof dataobj == "undefined") {
+                htmlcode += '		<label><input class="input-sm itemsonname" type="text" value="" placeholder="红色/XXL等"><i class="closebtn1">x</i></label>';
+            } else {
+                $.each(dataobj, function(index, el) {
+                    htmlcode += '		<label><input class="input-sm itemsonname" type="text" value="' + el + '" placeholder="红色/XXL等"><i class="closebtn1">x</i></label>';
+                });
+            }
+            htmlcode += '</div>';
+            htmlcode += '<a onclick="javascript:suk.additemson($(this));" class="badge badge-success">+</a>&nbsp;<a onclick="javascript:suk.removeitem($(this));" class="badge badge-inverse" title="删除该栏目">x</a></li>';
+            $('#sukitemlist ul').append(htmlcode);
+        },
+        "removeitem": function(thisobj) {
+            layer.confirm('移除当前所有项吗?', {
+                icon: 3,
+                title: '提示'
+            }, function(index) {
+                layer.close(index);
+                thisobj.parent().remove();
+                suk.biludpricetable('', '');
+                suk.biludpricedata(goods_sukvalue);
+                suk.biludpicdata(goods_sukpic);
+            });
+        },
+        "additemson": function(thisobj) {
+            suk.getsukalldata();
+            thisobj.parent().find(".itemsonlist").append('<label><input class="input-sm itemsonname" type="text" value="" placeholder="红色/XXL等"><i class="closebtn1">x</i></label>');
+        },
+        "getitemdata": function() {
+            var sukitemlist_li = $("#sukitemlist").find("li");
+            var alldata = [];
+            if (sukitemlist_li.size() > 0) {
+                $.each(sukitemlist_li, function(index, val) {
+                    var sondata = [];
+                    $.each($(this).find("input.itemsonname"), function(index2, itemsonname) {
+                        if (suk.clearhtml($(this).val().trim()) != "") {
+                            //console.log(suk.clearhtml($(this).val().trim()));
+                            sondata.push(suk.clearhtml($(this).val().trim()));
+                        }
+                    });
+                    if (sondata.length >= 1) alldata.push(sondata);
+                });
+            }
+            //console.log(JSON.stringify(alldata));
+            return alldata;
+        },
+        "biludpricetable": function(titledata, data) {
+            var arr;
+            if (data == "") {
+                arr = suk.getitemdata();
+            } else {
+                arr = data;
+            }
+            if (titledata == "") {
+                titledata = [];
+                $("input[name='itemname']").each(function(index, el) {
+                    titledata.push(suk.clearhtml($(this).val().trim()));
+                });
+            }
+
+            if (arr.length >= 1) {
+                //console.log(arr);
+            	var res = suk.combine(arr);
+                var row = [];
+                var rowspan = res.length;
+                for (var n = arr.length - 1; n > -1; n--) {
+                    row[n] = parseInt(rowspan / arr[n].length);
+                    rowspan = row[n];
+                }
+                row.reverse();
+
+                //table tr td
+                var str = "";
+                var len = res[0].length;
+                for (var i = 0; i < res.length; i++) {
+                    //for (var i=res.length-1; i>=0; i--) {
+                    var keyitem = [];
+                    var tmp = "";
+                    for (var j = 0; j < len; j++) {
+                        //for(var j=len-1; j>=0; j--) {
+                        keyitem.unshift(res[i][j]);
+                        
+                        if (i % row[j] == 0 && row[j] > 1) {
+                            tmp += "<td rowspan='" + row[j] + "'>" + res[i][j] + "</td>";
+                        } else if (row[j] == 1) {
+                            tmp += "<td>" + res[i][j] + "</td>";
+                        }
+                        
+                    }
+                    
+                    //str += "<tr>" + tmp + "<td><input class='itemsonval' type='hidden' name='itemsonnamekey[]' value='"+ keyitem.join("_") +"' /><input class='itemsonval' type='text' name='itemsonprice"+ keyitem.join("_") +"' value='' /></td><td><input class='itemsonval' type='text' name='itemsonoldprice"+ keyitem.join("_") +"' value='' /></td><td><input class='itemsonval' type='text' name='itemsonnum"+ keyitem.join("_") +"' value='' /></td><td><textarea class='itemsonval width-100' style='height:4em;padding:1px;' type='text' name='itemsoninfo"+ keyitem.join("_") +"'></textarea></td>" + "</tr>";
+                    str += "<tr>" + tmp + "<input class='itemsonval' type='hidden' name='itemsonnamekey[]' value='" + keyitem.join("_") + "' />";
+                    str += "<td><input class='itemsonval' pattern='[0-9]*' type='text' name='itemsonprice" + keyitem.join("_") + "' value='' /> <span>数字</span></td>";
+
+                    //str += "<td><input class='itemsonval' pattern='[0-9]*' type='text' name='itemsonnumber" + keyitem.join("_") + "' value='' /> <span>数字</span></td>";
+                    str += "<td><input class='itemsonval' type='text' name='itemsongoodsno" + keyitem.join("_") + "' value='' /> <span>所有编号不一致</span></td>";
+                    str += "<td><input class='itemsonval' type='text' name='itemsoninfo" + keyitem.join("_") + "' value='' /></td>";
+
+                    str += "</tr>";
+                   	
+                }
+				
+                var picstr = "";
+                var pictmp = "";
+                for (var i = 0; i < arr[0].length; i++) {
+                	var pictmp = "";
+                	pictmp += "<td>" + arr[0][i] + "</td>";
+                	
+                	picstr += "<tr>" + pictmp + "<input class='picitemsonval' type='hidden' name='picitemsonnamekey[]' value='" + arr[0][i] + "' />";
+                    picstr += "<td><input class='form-control' type='hidden' value='' name='itemsonpic" + arr[0][i] + "' id='itemsonpic" + arr[0][i] + "' />";
+                    picstr += "<img src=''  style='margin-right:10px;' style='display:none;' width='100' height='100' id='img" + arr[0][i] + "'>";
+                    picstr += "<input type='button' value='上传图片' ids='" + arr[0][i] + "' id='itemsonpicFile" + arr[0][i] + "'>";
+                    picstr += "</td>";
+                    picstr += "</tr>";
+                }
+                //thead
+                var th = "";
+                var picth = "";
+                for (var k = 0; k < len; k++) {
+                    th = "<th>" + titledata[k] + "</th>" + th;
+                }
+                picth = "<th>" + titledata[0] + "</th>" + picth;
+                th = "<thead>"+th+"<th>价格</th><th>商品编号</th><th>说明</th>" +"</thead>";
+                //th = "<thead>"+th+"<th>首次</th>" +"</thead>";
+                str = "<table class='table table-bordered' >" + th + str + "</table>";
+                
+                picth = "<thead>"+picth+"<th>图片</th>" +"</thead>";
+                //th = "<thead>"+th+"<th>首次</th>" +"</thead>";
+                picstr = "<table class='table table-bordered' >" + picth + picstr + "</table>";
+                
+                $("#pricetable").html(str);
+                $("#pictable").html(picstr);
+                for (var i = 0; i < arr[0].length; i++) {
+                thisApp.buttonBindUploadPlus('{:url("uploadfile")}','itemsonpicFile' + arr[0][i] + '',call_upload);
+                }
+            } else {
+                $("#pricetable").html("");
+                $("#pictable").html("");
+            }
+
+
+        },
+        "combine": function(arr) {
+            var r = [];
+            (function f(t, a, n) {
+                if (n == 0) return r.push(t);
+                for (var i = 0; i < a[n - 1].length; i++) {
+                    f(t.concat(a[n - 1][i]), a, n - 1);
+                }
+            })([], arr, arr.length);
+            return r;
+        },
+        "showorhidesukbox": function(state) {
+        	if (state == 1) {
+                $("#basepriceset").hide();
+                $("#sukpriceset").show();
+				
+                //return false;
+            } else {
+                $("#basepriceset").show();
+                $("#sukpriceset").hide();
+            }
+        },
+        "biludpricedata": function(goods_sukvalue_json_obj) {
+            if (goods_sukvalue_json_obj) {
+                //alert(goods_sukvalue_json_obj);
+                if (typeof goods_sukvalue_json_obj == "string") {
+                    try {
+                        goods_sukvalue_json_obj = eval("[" + goods_sukvalue_json_obj + "]");
+                    } catch (e) {
+                        //console.log(typeof goods_sukvalue_json_obj);
+                        //console.log(goods_sukvalue_json_obj);
+                    }
+
+                }
+                $.each(goods_sukvalue_json_obj, function(index, el) {
+                    $.each(el, function(index2, val2) {
+                        $("[name='itemsonprice" + index2 + "']").val(val2["price"]);
+                        //$("[name='itemsonnumber" + index2 + "']").val(val2["number"]);
+                        $("[name='itemsongoodsno" + index2 + "']").val(val2["goodsno"]);
+                        $("[name='itemsoninfo" + index2 + "']").val(val2["info"]);
+                        //$("[name='itemsonoldprice"+index2+"']").val(val2["oldprice"]);
+                        //$("[name='itemsonnum"+index2+"']").val(val2["num"]);
+                        //$("[name='itemsoninfo"+index2+"']").val((val2["info"]).split("<br />").join("\\n"));
+                        
+                    });
+                });
+            }
+        },
+        "biludpicdata": function(goods_sukvalue_json_obj) {
+        	if (goods_sukvalue_json_obj) {
+                if (typeof goods_sukvalue_json_obj == "string") {
+                    try {
+                        goods_sukvalue_json_obj = eval("[" + goods_sukvalue_json_obj + "]");
+                    } catch (e) {
+                        //console.log(typeof goods_sukvalue_json_obj);
+                        //console.log(goods_sukvalue_json_obj);
+                    }
+
+                }
+                $.each(goods_sukvalue_json_obj, function(index, el) {
+                    $.each(el, function(index2, val2) {
+                        $("[name='itemsonpic" + index2 + "']").val(val2["pic"]);
+                        $("#img"+index2).attr("src",val2["pic"]);
+                        $("#img"+index2).show();
+                    });
+                });
+            }
+        }
+    };
+    return funs;
+})();
+
+
+	
+$(document).on("click", "input[name='goods_sukactive']", function() {
+    suk.showorhidesukbox($("input[name='goods_sukactive']:checked").val());
+    if ($("input[name='goods_sukactive']:checked").val() == 1) {
+        layer.message("启用SUK，常规价格设置将失效");
+    }
+});
+$("input[name='goods_is_groupbuy']").click(function(){
+	if ($("input[name='goods_is_groupbuy']:checked").val() == 1) {
+		$("#goods_is_groupbuy").show();
+	}else{
+		$("#goods_is_groupbuy").hide();
+	}
+
+	});
+	
+$("input[name='goods_is_recommend']").click(function(){
+	if ($("input[name='goods_is_recommend']:checked").val() == 1) {
+		$("#goods_is_recommend").show();
+	}else{
+		$("#goods_is_recommend").hide();
+	}
+
+	});
+
+$(document).on("click", "i.closebtn1", function() {
+    var thisobj = $(this);
+    layer.confirm('移除吗?', {
+        icon: 3,
+        title: '提示'
+    }, function(index) {
+        layer.close(index);
+        thisobj.parent().remove();
+        suk.biludpricetable('', '');
+        suk.biludpricedata(goods_sukvalue);
+        suk.biludpicdata(goods_sukpic);
+    });
+});
+
+
+$(document).on("input", "input.itemsonname", function() {
+    //var thisobj=$(this);
+    suk.biludpricetable('', '');
+    suk.biludpricedata(goods_sukvalue);
+    suk.biludpicdata(goods_sukpic);
+});
+
+/**
+ * _suk
+ */
+
+//编辑
+var goods_sukvalue;
+var goods_sukpic;
+if ("{$one?$one.goods_sukactive:''}" == 1) {
+    suk.showorhidesukbox({$one?$one.goods_sukactive:''});
+    //还原属性
+    var goods_sukitem = $("#goods_sukitem").val();
+    goods_sukvalue = $("#goods_sukvalue").val();
+    goods_sukpic = $("#goods_sukpic").val();
+    //alert(goods_sukpic);
+    if (goods_sukitem != "") {
+        var tableval = [];
+        goods_sukitem = eval("[" + goods_sukitem + "]");
+        //goods_sukvalue=eval("["+goods_sukvalue+"]");
+        $.each(goods_sukitem, function(index, el) {
+            $.each(el, function(index2, val2) {
+                suk.additem(index2, val2);
+                tableval.push(val2);
+            });
+        });
+        //还原表格
+        suk.biludpricetable('', tableval);
+        //__还原表格
+
+        //还原数据
+        suk.biludpricedata(goods_sukvalue);
+        suk.biludpicdata(goods_sukpic);
+        //__还原数据
+    }
+} else {
+    //设置默认打开suk
+    //suk.additem("投资金额");
+    //$("#sukitemlist").find(".badge-success").click();
+    //$("input.itemsonname").eq(0).val("100-1000");
+    //$("input.itemsonname").eq(1).val("1000-2000");
+    //suk.biludpricetable('', '');
+
+    suk.biludpricedata(goods_sukvalue);
+    suk.biludpicdata(goods_sukpic);
+}
+//__编辑
+
+// var arr = [['1','2', '3'],
+//                 ['a','b', 'c'],
+//                 ['x','y','z'],
+//                 ['e','f','g','h', 'i']];
+// suk.biludpricetable(arr,'');
+
+
+function call_upload(JqObj,url){
+	var itemid = JqObj.attr("ids");
+	$('#img'+itemid).attr("src",url);
+	$("#img"+itemid).show();
+	$('#itemsonpic'+itemid).val(url);
+}
+</script>
+{/block}

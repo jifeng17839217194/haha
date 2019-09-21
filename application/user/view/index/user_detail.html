@@ -1,0 +1,249 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+	<li class="active">
+		<i class="ace-icon fa fa-home home-icon"></i>
+		<span _href="#">收银员详情</span>
+	</li>
+</ul>
+{/block} {block name="page-content"}
+<script type="text/javascript">
+	$(function(){
+		check_login();
+		/*alert(store_name);*/
+		$("#store-name").html(store_name);
+		$("#user-name").html(user_realname);
+		$("#log-off").on('click',function(){
+			clear_cookie();
+			$(location).attr('href', common_url+'/user/index/login');
+		});
+	});
+    function GetRandomNum(Min,Max)
+    {
+        var Range = Max - Min;
+        var Rand = Math.random();
+        return(Min + Math.round(Rand * Range));
+    }
+
+</script>
+<!-- PAGE CONTENT BEGINS -->
+<div class="form-horizontal">
+    <div class="col-xs-12">
+        	<div class="form-group clearfix">
+			    <label class="col-sm-2 control-label no-padding-right">手机号：</label>
+			    <div class="col-sm-10">
+			        <input type="text" placeholder="" pattern="*" [disabled]="" name="user_mobile" value="" title="手机号" id="user_mobile" class="col-xs-10 col-sm-5">				       
+			    </div>
+			</div>  
+            <div class="form-group clearfix">
+			    <label class="col-sm-2 control-label no-padding-right">密码：</label>
+			    <div class="col-sm-10">
+			        <input type="text" placeholder="不修改保持为空" pattern="*" [disabled]="" name="user_password" value="" title="密码" id="user_password" class="col-xs-10 col-sm-5">				       
+			    </div>
+			</div>  
+           <div class="form-group clearfix">
+		        <label class="col-sm-2 control-label no-padding-right">退款权限：</label>
+		        <div class="col-sm-10" style="padding-top: 8px;">
+		            <label>
+		                <input name="user_refund_auth" onchange="javascript:$('#box_user_refund_password').toggleClass('hidden');" value="1" id="user_refund_auth" class="ace ace-switch" type="checkbox" />
+		                <span class="lbl"></span>
+		            </label>
+		        </div>
+			</div>
+		    <div class="form-group hidden clearfix" id="box_user_refund_password">
+		        <label class="col-sm-2 control-label no-padding-right">退款密码：</label>
+		        <div class="col-sm-10">
+		            <div class="input-group col-sm-5">
+		                <input type="text" placeholder="不修改保持为空" pattern="*" name="user_refund_password" value="" title="退款密码" id="user_refund_password" class="col-xs-10 col-sm-12" />
+		                <span class="input-group-btn">
+		                    <button class="btn btn-sm " type="button" onclick="javascript:$('#user_refund_password').val(GetRandomNum(11111111,99999999));">
+		                        <i class="ace-icon fa fa-gavel bigger-110"></i>
+		                        随机
+		                    </button>
+		                </span>
+		            </div>            
+		            <span class="help-inline col-xs-12 col-sm-7">
+		                    <span class="middle">字母或数字,8~20位</span>
+		            </span>
+		        </div>
+		    </div>
+		    <div class="form-group clearfix" id="user_play_reward_status" style="display: none">
+		    	 <label class="col-sm-2 control-label no-padding-right">接受打赏：</label>
+		        <div class="col-sm-10" style="padding-top: 8px;">
+		            <label>
+		                <input name="user_play_reward" value="1" id="user_play_reward" class="ace ace-switch" type="checkbox" />
+		                <span class="lbl"></span>
+		            </label>
+		        </div>
+		    </div>
+			<div class="form-group clearfix">
+		        <label class="col-sm-2 control-label no-padding-right">角色：</label>
+		        <div class="col-sm-10">
+		            <div class="radio">
+		                <label>
+		                    <input name="user_role" value="0" type="radio" class="ace" />
+		                    <span class="lbl">老板</span>
+		                    <a class="help-button" title="能查看所有经营场地的交易数据，全部的权限">?</a>
+		                </label>
+		            </div>
+		            <div class="radio">
+		                <label>
+		                    <input name="user_role" value="1" type="radio" class="ace" />
+		                    <span class="lbl">店长</span>
+		                    <a class="help-button" title="能查看当前经营场地的所有交易数据，全部的权限">?</a>
+		                </label>
+		            </div>
+		            <div class="radio">
+		                <label>
+		                    <input name="user_role" value="2" type="radio" class="ace" />
+		                    <span class="lbl">收银员</span>
+		                    <a class="help-button" title="能查看当前经营场地的自己交易数据">?</a>
+		                </label>
+		            </div>
+		        </div>
+		    </div>
+		    <div class="form-group clearfix">
+		        <label class="col-sm-2 control-label no-padding-right"> 状态：</label>
+		        <div class="col-sm-10">
+		            <div class="pull-left">
+		                <label>
+		                    <input name="user_active" value="1" type="radio" class="ace" />
+		                    <span class="lbl">&nbsp;&nbsp;正常</span>
+		                </label>
+		            </div>
+		            <div class="pull-left">
+		                <label>
+		                    <input name="user_active" value="0" type="radio" class="ace" />
+		                    <span class="lbl">&nbsp;&nbsp;关闭</span>
+		                </label>
+		            </div>
+		        </div>
+		    </div>               
+            <div class="space"></div>
+            <div class="clearfix form-actions">
+   				<div class="col-md-offset-3 col-md-9">
+                    <button type="button" class="btn btn-sm btn-primary btn-submit">
+                        <i class="ace-icon fa fa-key"></i>
+                        <span class="bigger-110">提交</span>
+                    </button>
+                </div>   
+            </div>
+    </div>
+</div>          
+<div class="space-10"></div>
+<script type="text/javascript">
+	var microtime=Date.parse(new Date())/1000;
+	var user_role=$.cookie("user_role");
+	var store_open_reward=$.cookie("store_open_reward");
+	$(function() {		
+		var current_user_id = {:input('current_user_id')};
+        uid = isNaN(user_id) ? 0 : (Number(user_id) || 0);
+        if (uid <= 0)
+        {
+            return;
+        }
+        
+        back_user_detail(uid, current_user_id);
+        $(".btn-submit").on("click",function(){
+        	var user_mobile=$("input[name='user_mobile']").val();
+        	var user_password=$("input[name='user_password']").val();
+        	if($('#user_refund_auth').is(':checked')) {
+			    var user_refund_auth=$("input[name='user_refund_auth']:checked").val();
+			    var user_refund_password=$("input[name='user_refund_password']").val();
+			}else{
+				var user_refund_auth=0;
+				var user_refund_password='';
+			}        	
+        	var user_role=$("input[name='user_role']:checked").val();
+        	var user_active=$("input[name='user_active']:checked").val();
+            
+            var postParam = {
+                user_id: user_id,
+                user_mobile: user_mobile,
+                current_user_id:current_user_id,
+                user_password:user_password,
+                user_refund_auth:user_refund_auth,
+                user_refund_password:user_refund_password,
+                user_role:user_role,
+                user_active:user_active,
+                time:microtime
+            };
+
+            var sign = getsign(postParam);
+            postParam.sign = sign; //不这么传值下，有错误
+            
+        	$.ajax({
+        		type:"post",
+        		url:common_url+"/api/store/useronesave",
+        		async:true,
+        		dataType:"json",   
+        		data:postParam,
+        		success:function(res){
+        			if(res.code){
+        				console.log(res);
+        				alert("修改成功！");
+        				$(location).attr('href', common_url+'/user/index/user_list/store_shop_id/'+res.data.user_store_id);
+        			}else{
+        				alert(res.message);
+        			}
+        		}
+        	});
+        });
+        function back_user_detail(uid, current_user_id){
+        	var postParam = {
+                user_id: uid,
+                current_user_id: current_user_id,
+                version: 1,
+                time:microtime
+
+            };
+
+            var sign = getsign(postParam);
+
+            postParam.sign = sign; //不这么传值下，有错误
+
+            $.ajax(
+
+                {
+                    type: "post",
+
+                    url: common_url+ "/api/store/getUserDetail",
+
+                    data: postParam,
+
+                    dataType: 'json',
+
+                    success: function(res)
+
+                    {
+                        if (res.code == 1)
+                        {
+                            console.log(JSON.stringify(res));
+                            $('#user_mobile').val(res.data.one.user_mobile);
+                            if(res.data.one.user_refund_auth>0){
+                            	$("input:checkbox").attr('checked','true');
+                            	$("#box_user_refund_password").removeClass("hidden");
+                            }
+                            if(user_role==1){
+                            	$("input:radio[name=user_role][value='0']").parents(".radio").css("display","none");
+                            	$("input:radio[name=user_role][value='1']").parents(".radio").css("display","none");
+                            }      
+                            if(store_open_reward>0){
+                            	$("#user_play_reward_status").css('display','block');
+                            	if(res.data.one.user_play_reward>0){
+	                            	$("#user_play_reward").attr('checked',true);
+	                            }else{
+	                            	$("#user_play_reward").attr('checked',false);
+	                            }  
+                            }                                                
+                            $("input:radio[name=user_role][value='"+res.data.one.user_role+"']").attr('checked',true);                             
+                            $("input:radio[name=user_active][value='"+res.data.one.user_active+"']").attr('checked',true);
+                        }else{
+                           alert(res.message);
+                        }
+                    }
+                });
+        }
+	});
+</script>
+<!-- PAGE CONTENT ENDS -->
+{/block}

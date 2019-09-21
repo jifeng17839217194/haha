@@ -1,0 +1,91 @@
+{extend name="common/common"} 
+{block name="navbar"} {/block} {block name="nav-list"} {/block} {block name="breadcrumbswarp"} {/block} {block name="page-content"}
+<!-- #section:settings.box -->
+<style>
+	.page-content{
+		margin: 0!important;
+	}
+</style>
+<div class="row">
+	
+    <div class="col-xs-12">
+        <!-- PAGE CONTENT BEGINS -->
+        <div class="alert alert-info">
+            <button class="close" data-dismiss="alert">
+                <i class="ace-icon fa fa-times"></i>
+            </button>
+            1、点击&nbsp;<a style="font-weight: bolder;color: red;" target="_blank" href="http://www.iaapp.cn/index.php/index/index/news_detail/id/88.html"><img src="/static/common/image/zfb.jpg" width="16" alt="">查看如何哪里找到支付宝月报数据？</a>
+            <br> 2、点击&nbsp;<a style="font-weight: bolder;color: red;" target="_blank" href="http://www.iaapp.cn/index.php/index/index/news_detail/id/89.html"><img src="/static/common/image/wx.jpg" width="16" alt="">查看如何哪里找到微信月报数据？</a>
+            <br> 3、同一份表格，会自动判断是否重复导入，若已经存在，则会排除；
+        </div>
+        <form class="form-horizontal" id="form1" method="post" name="form1">
+            {include file="common/uploadImg" title="月报表" fieldName="uploadfilepath" defaultValue='' imgWidth="64" imgHeight="64" helpInfo='微信、支付宝的Excel月报表' usehelp=""}
+            <div class="form-group clearfix form-actions">
+                <div class="col-sm-offset-2">
+                    <button class="btn btn-info" onclick="thisPageApp.checkDataFile();" type="button">
+                        <i class="ace-icon fa fa-check bigger-110"></i> 有效性检测并导入
+                    </button>
+                </div>
+            </div>
+        </form>
+        <!-- PAGE CONTENT ENDS -->
+    </div>
+    <!-- /.col -->
+</div>
+<!-- /.row -->
+<!-- /.page-content -->
+{/block} {block name="floot"}
+<script type="text/javascript">
+var thisPageApp = {
+    checkDataFile: function()
+    {
+        var uploadfilepath = document.querySelector("#uploadfilepath").value;
+        if (uploadfilepath)
+        {
+            switch (uploadfilepath.split(".")[1])
+            {
+                case "xls":
+                case "csv":
+                    layer.load("上传中");
+                    $.ajax(
+                    {
+                        url: "{:url('savedata')}",
+                        type: "post",
+                        data:{"uploadfilepath":uploadfilepath},
+                        dataType: "json",
+                        success: function(rs)
+                        {
+                            layer.closeAll();
+                            if(rs.code==1)
+                            {
+                                layer.alert(rs.message);
+                                setTimeout(function()
+                                {
+                                    parent.layer.closeAll();
+                                }, 2000);  
+                            }
+                            else
+                            {
+                                layer.alert(rs.message);
+                            }
+                            
+                        },
+                        error: function()
+                        {
+                            layer.closeAll();
+                            layer.alert("出错了");
+                        }
+                    });
+                    break;
+                default:
+                    layer.alert("请上传扩展名为.xls或.csv的表格");
+            }
+        }
+        else
+        {
+            layer.msg("请上传表格");
+        }
+    }
+};
+</script>
+{/block}

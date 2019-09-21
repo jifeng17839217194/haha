@@ -1,0 +1,360 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">交易明细</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block}
+{block name="head"}
+<script src="/static/common/js/tableExport/jquery.base64.js"></script>
+<script src="/static/common/js/tableExport/tableExport.js"></script>
+<script type="text/javascript" src="/static/common/js/bootstrapPaginator.js"></script>
+{/block}
+{block name="page-content"}
+<!-- <ul class="nav nav-tabs">
+    <li class="active">
+        <a href="#">
+                    流水记录
+                </a>
+    </li>
+</ul> -->
+<div>
+    <form class="form-search form-horizontal" id="searchfrom" action="javascript:thisOrderPage.doGetData(thisOrderPage.showlistpage);">
+        <input type="hidden" id="page" name="page" value="1">
+        <input type="hidden" name="pagesize" id="pagesize" value="10">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group col-sm-6">
+                    <label class="col-sm-2 control-label">支付时间</label>
+                    <div class="col-sm-6">
+                        <div class="input-daterange input-group">
+                            <input onFocus="WdatePicker({isShowClear:true,dateFmt:'yyyy-MM-dd',alwaysUseStartDate:true});thisOrderPage.setOn();" placeholder="开始" title="开始" name="order_addtime_s" id="order_addtime_s" value="{:input('get.order_addtime_s')}" class="nav-search-input col-sm-12" type="text" />
+                            <span class="input-group-addon">
+                            <i class="fa glyphicon-minus"></i>
+                            </span>
+                            <input onFocus="WdatePicker({isShowClear:true,dateFmt:'yyyy-MM-dd',alwaysUseStartDate:true});thisOrderPage.setOn();" placeholder="结束" title="结束" name="order_addtime_e" id="order_addtime_e" value="{:input('get.order_addtime_e')}" class="nav-search-input col-sm-12" type="text" />
+                        </div>
+                    </div>
+                    <div id="quickselectdate" class="col-sm-4" style="padding-top:8px;">
+                        <a href="#" onclick="$('#order_addtime_s').val('{:date('Y-m-d',time())}');$('#order_addtime_e').val('{:date('Y-m-d',time())}');thisOrderPage.setOn($(this));">今日</a>
+                        <a href="#" onclick="$('#order_addtime_s').val('{:date('Y-m-d',strtotime('-1 day'))}');$('#order_addtime_e').val('{:date('Y-m-d',strtotime('-1 day'))}');thisOrderPage.setOn($(this));">昨日</a>
+                        <a href="#" onclick="$('#order_addtime_s').val('{:date('Y-m-d',strtotime('-6 day'))}');$('#order_addtime_e').val('{:date('Y-m-d',time())}');thisOrderPage.setOn($(this));">最近7天</a>
+                        <a href="#" onclick="$('#order_addtime_s').val('{:date('Y-m-1',strtotime('-1 month'))}');$('#order_addtime_e').val('{:date('Y-m-d',strtotime(date('Y-m-1',strtotime('-1 month')).' +1 month -1 day'))}');thisOrderPage.setOn($(this));">上个月</a>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label class="col-sm-4 control-label">通道</label>
+                    <div class="col-sm-8" style="padding-top: 4px;">
+                        <select class="chosen-select" name="order_channel_id" id="order_channel_id">
+                            <option value="">不限制</option>
+                            <option value="alipay">支付宝支付</option>
+                            <option value="wxpay">微信支付</option>
+                        </select>
+                        <script type="text/javascript">
+                        $("#order_channel_id").val("{:input('order_channel_id')}");
+                        </script>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label class="col-sm-4 control-label">状态</label>
+                    <div class="col-sm-8" style="padding-top: 4px;">
+                        <select class="chosen-select" name="order_status" id="order_status">
+                            <option value="">不限制</option>
+                            <option value="success">成功交易(全额支付/部分退款)</option>
+                            <option value="close">关闭/全部退款</option>
+                        </select>
+                        <script type="text/javascript">
+                        $("#order_status").val("{:input('order_status','success')}");
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group col-sm-6">
+                    <label class="col-sm-2 control-label">签约商户</label>
+                    <div class="col-sm-10">
+                        <select class="chosen-select" data="{:input('get.order_shop_id')}" name="order_shop_id" id="order_shop_id" onchange="thisOrderPage.shopchange(this.value,0)">
+                            <option value="0">全部商户</option>
+                            {volist name="shoplist" id="vo"}
+                            <option value="{$vo.shop_id}">{$vo.shop_name}</option>
+                            {/volist}
+                        </select>
+                        <br /><br />
+                        店铺
+                        <select data="{:input('get.order_store_id')}" name="order_store_id" id="order_store_id" onchange="thisOrderPage.storechange(this.value,0)">
+                            <option value="0">全部店铺</option>
+                        </select>
+                        &nbsp; 收银
+                        <select data="{:input('get.order_user_id')}" name="order_user_id" id="order_user_id">
+                            <option value="0">全部</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label class="col-sm-4 control-label">关键词</label>
+                    <div class="col-sm-8">
+                        <input name="keyword" type="text" placeholder="订单号" class="nav-search-input col-sm-12" autocomplete="off" value="{:input('get.keyword')}" />
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label class="col-sm-4 control-label"></label>
+                    <div>
+                        <button onclick="javascript:$('#pagesize').val(10);$('#page').val(0);" class="btn btn-inverse btn-sm"><i class="ace-icon fa fa-search nav-search-icon"></i>搜索</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="hr hr-12"></div>
+    <div class="alert no-margin clearfix" id="box_tj">
+        <div class="grid4">
+            <span class="bigger-175 blue">¥0</span>
+            <br>
+            实收金额
+        </div>
+        <div class="grid4">
+            <span class="bigger-175 blue">¥0</span>
+            <br>
+            支付宝实收,占比0%
+        </div>
+        <div class="grid4">
+            <span class="bigger-175 blue">¥0</span>
+            <br>
+            微信实收,占比0%
+        </div>
+        <div class="grid4">
+            <span class="bigger-175 blue">¥0</span>
+            <br>
+            退款总额
+        </div>
+    </div>
+    <div class="hr hr-12"></div>
+    <table class="table table-striped table-bordered table-hover" id="reporttable">
+        <thead>
+            <tr>
+                <th width="150">订单号</th>
+                <th>标题</th>
+                <th width="80">订单金额</th>
+                <th width="100">已支付金额</th>
+                <th>支付渠道</th>
+                <th width="150"><i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>下单时间</th>
+                <th width="150"><i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>支付时间</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody id="listpagebody">
+        </tbody>
+        <!-- <tr>
+            <td title="自动递增ID:{vo.order_id}">{vo.order_num}<br />{vo.order_trade_no}</td>
+            <td>{vo.order_subject}</td>
+            <td align="right">{vo.order_total_amount}</td>
+            <td>{vo.order_channel_id_info}</td>
+            <td>{vo.order_addtime}</td>
+            <td>{vo.order_pay_time}</td>
+            <td>{vo.order_status_info}</td>
+        </tr> -->
+    </table>
+    <div class="pull-right clearfix">
+        <a href="javascript:;" onclick="javascript:thisOrderPage.downloadtable();">
+            <i class="ace-icon fa fa-download"></i>下载表格
+        </a>
+    </div>
+    </form>
+    <div class="pull-right ">
+        <ul id="pagination" class="pagination"></ul>
+    </div>
+    <div class="clearfix ">
+    </div>
+</div>
+{/block} {block name="floot"}
+<script type="text/javascript">
+var thisOrderPage = {
+    //签约商户 的二级筛选
+    shopchange: function(order_shop_id, order_store_id)
+    {
+        var url = "{:url('getstorelist?shop_id=qwerty')}";
+        $.ajax(
+        {
+            url: url.replace("qwerty", order_shop_id),
+            dateType: "json",
+            success: function(data)
+            {
+                var html = '<option value="0">全部店铺</option>';
+                if (data.length > 0)
+                {
+                    data.forEach(function(obj)
+                    {
+                        html += '<option value="' + obj.store_id + '">' + obj.store_name + '</option>';
+                    });
+                }
+                $("#order_store_id").html(html).val(order_store_id);
+                thisOrderPage.storechange(order_store_id, 0);
+            }
+        });
+    },
+    //签约商户 的三级筛选
+    storechange: function(order_store_id, order_user_id)
+    {
+        var url = "{:url('getstoreuserlist?store_id=qwerty')}";
+        $.ajax(
+        {
+            url: url.replace("qwerty", order_store_id),
+            dateType: "json",
+            success: function(data)
+            {
+                var html = '<option value="0">全部</option>';
+                if (data.length > 0)
+                {
+                    data.forEach(function(obj)
+                    {
+                        html += '<option value="' + obj.user_id + '">' + (obj.user_realname + obj.user_mobile) + '</option>';
+                    });
+                }
+                $("#order_user_id").html(html).val($("#order_user_id").attr("data") || order_user_id);
+                $("#order_user_id").attr("data", null); //一次性的，页面加载时有
+            }
+        });
+    },
+    downloadtable:function(){
+        $('#pagesize').val(5000);
+        window.dodownloadtable=true;
+        $("#searchfrom").submit();
+    },
+    selectinit: function()
+    {
+        if ($("#order_shop_id").attr("data"))
+        {
+            var order_shop_id = $("#order_shop_id").attr("data");
+            $("#order_shop_id").val(order_shop_id);
+            thisOrderPage.shopchange(order_shop_id, $("#order_store_id").attr("data"));
+        }
+    },
+    setOn: function(thisJqObj)
+    {
+        $("#quickselectdate").find(".badge").removeClass("badge");
+        thisJqObj && thisJqObj.addClass("badge");
+    },
+    //获取数据
+    doGetData: function(callBack)
+    {
+        thisOrderPage.showlistpageInit();
+        var index = layer.load(1,
+        {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        $.ajax(
+        {
+            url: "{:url('getsearchdata')}",
+            data: $("#searchfrom").serialize(),
+            dataType: "json",
+            success: function(rs)
+            {
+                layer.close(index);
+                callBack && callBack(rs);
+                if(rs.code==0)
+                {
+                    layer.alert(rs.message);
+                }
+            },
+            error: function()
+            {
+                layer.close(index);
+            }
+        })
+    },
+    //列表页初始化
+    showlistpageInit: function()
+    {
+        $("#listpagebody").html("");
+        $("#box_tj").html('<div class="grid4"><span class="bigger-175 blue">¥0</span><br>实收金额</div><div class="grid4"><span class="bigger-175 blue">¥0</span><br>支付宝实收,占比0%</div><div class="grid4"><span class="bigger-175 blue">¥0</span><br>微信实收,占比0%</div><div class="grid4"><span class="bigger-175 blue">¥0</span><br>退款总额</div>');
+    },
+    //列表页展示
+    showlistpage: function(rs)
+    {
+        if (rs.total > 0)
+        {
+            var innertHTML = "";
+            rs.data.forEach(function(one)
+            {
+                innertHTML += "<tr>";
+                innertHTML += '<td title="自动递增ID:' + one.order_id + '">' + one.order_num + '</td>';
+                innertHTML += '<td>' + one.order_subject + '</td>';
+                innertHTML += '<td align="right">' + one.order_total_amount + '</td>';
+                innertHTML += '<td align="right">' + one.order_pay_realprice;
+                if(one.order_status==101 ||one.order_status==200)
+                {
+                    var refundhtml=new Array();
+                    refundhtml.push('<table class="table table-bordered table-striped">');
+                    refundhtml.push('<tr><th width="250">退款日期</th><th width="130">操作者</th><th width="120">退款金额</th></tr>');
+                    one.refundlist.forEach(function(refundone){
+                        refundhtml.push('<tr><td>'+ refundone.order_pay_log_addtime +"</td><td>"+refundone.user_realname+"</td><td align=\"right\">¥"+refundone.order_pay_log_data1 +'</td></tr>');
+                    });
+                    refundhtml.push('</table>');
+                    innertHTML += '<br><div style="display:none;" id="refundhtml' + one.order_id + '">'+ (refundhtml.join("")) +'</div><a href="javascript:;" onclick="javascript:layer.alert($(\'#refundhtml' + one.order_id + '\').html());">退款记录</a>';
+                }
+                innertHTML += '</td>';
+                innertHTML += '<td>' + one.order_channel_id_info + '</td>';
+                innertHTML += '<td>' + one.order_addtime + '</td>';
+                innertHTML += '<td>' + (one.order_pay_time=="1970-01-01 08:00:00"?"未支付":one.order_pay_time) + '</td>';
+                innertHTML += '<td>' + one.order_status_info + '</td>';
+                innertHTML += "</tr>";
+            });
+            $("#listpagebody").html(innertHTML);
+            $("#box_tj").html('<div class="grid4"><span class="bigger-175 blue">¥'+ rs.tj_total +'</span><br>实收金额</div><div class="grid4"><span class="bigger-175 blue">¥'+ rs.tj_alipay_total +'</span><br>支付宝实收,占比'+ rs.tj_alipay_zb +'%</div><div class="grid4"><span class="bigger-175 blue">¥'+ rs.tj_wxpay_total +'</span><br>微信实收,占比'+ rs.tj_wxpay_zb +'%</div><div class="grid4"><span class="bigger-175 blue">¥'+ rs.tj_refund_total +'</span><br>退款总额</div>');
+            var options = {
+                currentPage: rs.current_page, //设置当前页，默认起始页为第一页
+                totalPages: Math.ceil(rs.total / rs.per_page), //总页数
+                numberOfPages: 5, //设置控件显示的页码数,跟后台计算出来的总页数没多大关系
+                bootstrapMajorVersion: 3, //如果是bootstrap3版本需要加此标识，并且设置包含分页内容的DOM元素为UL,如果是bootstrap2版本，则DOM包含元素是DIV
+                useBootstrapTooltip: 'true', //是否显示tip提示框
+                pageUrl: function(type, page, current)
+                {
+                    return 'javascript:$("#page").val(' + page + ');$("#searchfrom").submit();' //为每个页码设置url访问请求链接，page为页码数
+                },
+                itemTexts: function(type, page, current)
+                { //文字翻译
+                    switch (type)
+                    {
+                        case "first":
+                            return "首页";
+                        case "prev":
+                            return "上一页";
+                        case "next":
+                            return "下一页";
+                        case "last":
+                            return "尾页";
+                        case "page":
+                            return page;
+                    }
+                }
+            }
+            $('#pagination').bootstrapPaginator(options);
+            $('#pagination').prepend("总" + rs.total + "条记录<br />");
+        }
+        else
+        {
+            $("#listpagebody").html("<tr><td colspan='8'>没有数据</td> </tr>");
+            $('#pagination').html("");
+            layer.msg("没有数据");
+        }
+        //下载表格
+        if((window.dodownloadtable||false) ==true)
+        {
+            $("#reporttable").tableExport({type:'excel',fileName:$('#order_addtime_s').val()+"_"+ $('#order_addtime_e').val() +"_交易明细",escape:'false'});
+        }
+        window.dodownloadtable = false;
+        //__下载表格
+    }
+};
+//thisOrderPage.selectinit();
+$(document).ready(function(){
+    $("#quickselectdate a").eq(0).click();
+    $("#searchfrom").submit();
+})
+</script>
+{/block}

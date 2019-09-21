@@ -1,0 +1,230 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+	<li class="active">
+		<i class="ace-icon fa fa-home home-icon"></i>
+		<span _href="#">商品管理</span>
+	</li>
+
+	<li class="active">
+		新增商品
+	</li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block}
+
+{block name="page-content"}
+<div class="add-body">
+
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('addgoods')}" id="upload" enctype="multipart/form-data">
+
+	<input type="hidden" name="goods_id" value="">
+
+
+	{include file="common/input" title="*商品名称" fieldName="goods_name" defaultValue='' placeholder="" required="required"
+	pattern="*" helpInfo=''}
+
+	<!-- {include file="common/input" title="所属分类" fieldName="agent_name" defaultValue='' placeholder="" required="required"
+	pattern="*" helpInfo=''} -->
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right">所属分类</label>
+		<div class="col-sm-10">
+
+			<select class="col-xs-10 col-sm-5" name="goods_sort" id="goods_sort">
+
+
+				{volist name="cate_list" id="vo"}
+					<option value="{$vo.category_id}">{$vo.category_name}</option>
+
+				{/volist}
+			</select>
+			<!-- <span class="help-inline col-xs-12 col-sm-7">
+                <span class="middle">[helpInfo]</span>
+        </span> -->
+		</div>
+	</div>
+
+
+	<!-- <div class="file-box">
+    <img id="preview" />
+    <input type="text" id="imgfield" class="txt" placeholder="预览">
+    <input type="file" name="file" id = "input_file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" "imgPreview(this)" >
+</div> -->
+
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right">*商品图片</label>
+		<div class="col-sm-10">
+			<img id="preview" style="width:38px;height: 38px;float: left;" />
+			<input type="text" id="imgfield" class="txt" placeholder="预览" style="display: none">
+			<input type="file" name="file" id="input_file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg,image/bmp" onchange="imgPreview(this)">
+            <span style="font-size: 12px;color: #ccc;">（仅限制上传png,jpg,gif格式）</span>
+			<!-- <input type="file" accept="image/*" name="file" id="file" value="" name="goods_picurl"/> -->
+		</div>
+	</div>
+
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right">*商品价格：</label>
+		<div class="col-sm-10">
+			<input type="text" placeholder="" pattern="" required="required" name="goods_price" value="" title="*商品价格" id="goods_price" class="col-xs-10 col-sm-5"  onkeyup="javascript:CheckInputIntFloat(this);"/>
+			<span class="help-inline col-xs-12 col-sm-7">
+                <span class="middle"></span>
+        </span>
+		</div>
+	</div>
+	<!--{include file="common/input" title="*商品价格" fieldName="goods_price" defaultValue='' placeholder="" required="required"-->
+	<!--pattern="*" helpInfo=''}-->
+
+	{include file="common/input" title="商品单位" fieldName="goods_unit" defaultValue='个' placeholder=""
+	required="required" pattern="*" helpInfo=''}
+
+	{include file="common/input" title="备注" fieldName="remark" defaultValue='' placeholder=""
+	 helpInfo=''}
+
+	{include file="common/input" title="分类排序" fieldName="goods_sortid" defaultValue='1' placeholder=""
+	required="required" pattern="*" helpInfo=''}
+
+
+
+	<div class="space-4"></div>
+	<div class="clearfix form-actions">
+		<!--<div class="col-md-offset-3 col-md-9">-->
+			<!--<button class="btn btn-info"  id="submit">-->
+				<!--<i class="ace-icon fa fa-check bigger-110"></i> 提交-->
+			<!--</button>-->
+			<!--&nbsp; &nbsp; &nbsp;-->
+			<!--<button class="btn" type="button" onclick="history.back();">-->
+				<!--<i class="ace-icon fa fa-undo bigger-110"></i> 返回-->
+			<!--</button>-->
+		<!--</div>-->
+		<div class="col-md-offset-3 col-md-9">
+			<button class="btn btn-info" type="button" id="submit">
+				<i class="ace-icon fa fa-check bigger-110"></i> 提交
+			</button>
+			&nbsp; &nbsp; &nbsp;
+			<button class="btn" type="button" onclick="history.back();">
+				<i class="ace-icon fa fa-undo bigger-110"></i> 返回
+			</button>
+		</div>
+	</div>
+	<div class="hr hr-24"></div>
+</form>
+</div>
+
+<script>
+    function CheckInputIntFloat(oInput) {
+        if('' != oInput.value.replace(/\d{1,}\.{0,1}\d{0,}/,'')) {
+            oInput.value = oInput.value.match(/\d{1,}\.{0,1}\d{0,}/) == null ? '' :oInput.value.match(/\d{1,}\.{0,1}\d{0,}/);
+        }
+    }
+		function imgPreview(fileDom) {
+
+		//判断是否支持FileReader
+		if (window.FileReader) {
+			var reader = new FileReader();
+		} else {
+			alert("您的设备不支持图片预览功能，如需该功能请升级您的设备！");
+		}
+		//获取文件
+		var file = fileDom.files[0];
+		// alert(file.name);
+		var imageType = /^image\//;
+		var fileFormat = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+		//是否是图片
+		if (!imageType.test(file.type)) {
+			alert("请选择图片！");
+			return;
+		}
+        else if(!fileFormat.match(/.png|.jpg|.jpeg|.gif/)){
+            alert('上传错误,文件格式必须为：png/jpg/jpeg/gif');
+            return;
+        }
+
+		//读取完成
+		reader.onload = function(e) {
+			//获取图片dom
+			var img = document.getElementById("preview");
+			//图片路径设置为读取的图片
+			img.src = e.target.result;
+		};
+		reader.readAsDataURL(file);
+
+		var formData = new FormData();
+		formData.append('img', $('#input_file')[0].files[0]); //添加图片信息的参数
+		$.ajax({
+			url: '/user/goods_manage/uploadimage.html',
+			type: 'POST',
+			cache: false, //上传文件不需要缓存
+			data: formData,
+			processData: false, // 告诉jQuery不要去处理发送的数据
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			success: function(data) {
+				$("#imgfield").val(data.data);
+				// console.log($("#input_file").val());
+				// var rs = eval("(" + data + ")");
+				// if (rs.state == 1) {
+				// 	tipTopShow('上传成功！');
+				// } else {
+				// 	tipTopShow(rs.msg);
+				// }
+			},
+			error: function(data) {
+				// tipTopShow("上传失败");
+				console.log(data);
+				// alert("请输入gif,jpg,png格式的图片")
+			}
+		});
+	}
+
+	//
+        $("#submit").click(function() {
+            var name = $("#goods_name").val();
+            var sort = $("#goods_sort").val();
+            var picurl = $("#imgfield").val();
+            // picurl=picurl.substr(1,picurl.length);
+            // console.log(picurl);
+            var price = $("#goods_price").val();
+            var unit = $("#goods_unit").val();
+            var sortid = $("#goods_sortid").val();
+            var remark = $("#remark").val();
+            var url = '/user/goods_manage/addgoods.html';
+            var data = {
+                "goods_name": name,
+				"cate_id":sort,
+                "price": price,
+                "goods_unit": unit,
+                "sort": sortid,
+                "img": picurl,
+                "remark": remark,
+                "url" : url};
+            if(name==""||name==null){
+                alert("请输入商品名")
+            }
+            else if (picurl==""){
+                alert("请选择商品图片")
+            }
+            else if (price==""){
+                alert("请输入价格")
+            }
+            // else if(sort==""){
+            //     alert("请输入分类类别")
+            // }
+            else {
+                save(data);
+            }
+        })
+        function save(data) {
+            $.post(data.url, data, function (res) {
+                if (res.code == 200) {
+                    // swal(res.msg, "", "success");
+                    alert(res.msg);
+                    window.location.href = res.url;
+                } else {
+                    // swal(res.msg, "", "error");
+                    alert(res.msg);
+                }
+            });
+        }
+</script>
+{/block}

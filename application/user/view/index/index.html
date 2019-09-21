@@ -1,0 +1,274 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+	<li class="active">
+		<i class="ace-icon fa fa-home home-icon"></i>
+		<span _href="#">欢迎首页</span>
+	</li>
+		
+</ul>
+<style>
+	.page-content{
+		margin:0 25px!important ;
+	}
+	h1{
+		color: red;
+	}
+</style>
+{/block} 
+
+
+
+
+{block name="page-content"}
+           
+<script type="text/javascript">
+	check_login();
+	$(function() {		
+		/*alert(store_name);*/
+		$("#store-name").html(store_name);
+		$("#user-name").html(user_realname);
+		$("#log-off").on('click', function() {
+			clear_cookie();
+			$(location).attr('href', common_url + '/user/index/login');
+		});
+	});
+</script>
+<!-- PAGE CONTENT BEGINS -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+				<h4 class="widget-title smaller">统计</h4>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main clearfix">
+                    <div class="col-xs-12">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="row">
+                            <div class="panel panel-blue panel-margin">
+                                <div class="panel-left"><span class="panel-title"><i class="iconfont icon-order"></i>订&nbsp;&nbsp;单&nbsp;&nbsp;数</span> </div>
+                                <div class="panel-right">
+                                    <h3 id="today_order_count">&emsp;</h3>
+                                    <div class="count-item">本周：<span id="week_order_count"></span></div>
+                                    <div class="count-item">本月：<span id="month_order_count"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="row">
+                            <div class="panel panel-green panel-margin">
+                                <div class="panel-left"><span class="panel-title"><i class="iconfont icon-order"></i>订单金额</span> </div>
+                                <div class="panel-right">
+                                    <h3 id="today_order_total_amount">&emsp;</h3>
+                                    <div class="count-item">本周：<span id="week_order_total_amount"></span></div>
+                                    <div class="count-item">本月：<span id="month_order_total_amount"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="col-xs-3">
+                        <div class="row">
+                            <div class="panel panel-yellow panel-margin">
+                                <div class="panel-heading"><span class="panel-title"><i class="iconfont icon-order"></i>退款金额</span> </div>
+                                <div class="panel-body">
+                                    <h3 id="today_order_refund_amount">&emsp;</h3>
+                                    <div class="count-item">本周：<span id="week_order_refund_amount"></span></div>
+                                    <div class="count-item">本月：<span id="month_order_refund_amount"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>-->
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="row">
+                            <div class="panel panel-red panel-margin">
+                                <div class="panel-left"><span class="panel-title"><i class="iconfont icon-order"></i>实收金额</span> </div>
+                                <div class="panel-right">
+                                    <h3 id="today_order_real_amount">&emsp;</h3>
+                                    <div class="count-item">本周：<span id="week_order_real_amount"></span></div>
+                                    <div class="count-item">本月：<span id="month_order_real_amount"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>                  
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="col-sm-12 col-xs-12">
+        <div class="widget-box" >
+            <div class="widget-header widget-header-flat"style="border-top: #e0e0e0 1px solid;padding-top: 10px;>
+                <h4 class="widget-title smaller">交易流水走势</h4>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div id="dealreport1" style="height:298px;">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="widget-box">
+	<div class="widget-header widget-header-flat" style="border-top: #e0e0e0 1px solid;">
+		<h4 class="widget-title smaller">客服支持</h4> </div>
+	<div class="widget-body">
+		<div class="widget-main">
+			<dl id="dt-list-1">
+				<dd>电话:15968116846</dd>
+				<dd>地址:杭州市拱墅区莫干山路972号泰嘉园D座601</dd>
+			</dl>
+		</div>
+	</div>
+</div>
+<div class="space-10"></div>
+<script type="text/javascript" src="/static/common/js/echarts/echarts.common.min.js"></script>
+<script type="text/javascript">
+var thisPageApp = {
+    init: function()
+    {
+    	var microtime=Date.parse(new Date())/1000;
+    	var postParam = {
+                user_id:user_id,
+                version:1,
+                time:microtime
+            };
+            var sign = getsign(postParam);
+
+            postParam.sign = sign;
+        $.ajax(
+        {        	
+            url: "{:url('api/order/statisticsforpc')}",
+            data:postParam,
+            type:"post",
+            dateType: "json",
+            success: function(rs)
+            {
+                if (rs.code==1)
+                {
+					$('#today_order_count').html(rs.data.today_order_count + '笔');
+                    $('#week_order_count').html(rs.data.week_order_count + '笔');
+                    $('#month_order_count').html(rs.data.month_order_count + '笔');
+                    $('#today_order_total_amount').html(rs.data.today_order_total_amount + '元');
+                    $('#week_order_total_amount').html(rs.data.week_order_total_amount + '元');
+                    $('#month_order_total_amount').html(rs.data.month_order_total_amount + '元');
+                    $('#today_order_real_amount').html(rs.data.today_order_real_amount + '元');
+                    $('#week_order_real_amount').html(rs.data.week_order_real_amount + '元');
+                    $('#month_order_real_amount').html(rs.data.month_order_real_amount + '元');
+                    if(rs.data.yiliushuizoushilist)
+                    {
+                        thisPageApp.showdealreport1(rs.data.yiliushuizoushilist);
+                    }
+
+                }else{
+                	alert(rs.message);
+                }
+            }
+        })
+        
+    },
+    //获取交易流水走势
+    showdealreport1: function(datalist)
+    {
+        if(!datalist)return;
+        // 基于准备好的dom，初始化echarts实例
+        if((window.dealreport1Chart||false)== false)
+        {
+            window.dealreport1Chart = echarts.init(document.getElementById('dealreport1'));    
+        }
+        var xAxis_data=[],series_order_count=[],series_pay_realprice=[];
+        datalist.forEach(function(datalistOne){
+            xAxis_data.push(datalistOne.order_addtime_ymh);
+            series_order_count.push(datalistOne.count);
+            series_pay_realprice.push(datalistOne.order_pay_realprice_sum);
+        });
+        
+        var option = {
+            title:
+            {
+                text: ''
+            },
+            tooltip:
+            {
+                trigger: 'axis'
+            },
+            legend:
+            {
+                data: ['订单数', '成交额']
+            },
+            toolbox:
+            {
+                feature:
+                {
+                    saveAsImage:{}
+                }
+            },
+            grid:
+            {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data: xAxis_data
+            }],
+            yAxis: [
+            {
+                type: 'value'
+            }],
+            series: [
+            {
+                name: '订单数',
+                type: 'line',
+                stack: '总量',
+                areaStyle:
+                {
+                    normal:{}
+                },
+                label:
+                {
+                    normal:
+                    {
+                        show: true,
+                        position: 'top'
+                    }
+                },
+                data: series_order_count
+            },
+            {
+                name: '成交额',
+                type: 'line',
+                stack: '总量',
+                areaStyle:
+                {
+                    normal:{}
+                },
+                label:
+                {
+                    normal:
+                    {
+                        show: true,
+                        position: 'top'
+                    }
+                },
+                data: series_pay_realprice
+            }]
+        };
+
+        dealreport1Chart.setOption(option);
+    }
+};
+$(document).ready(function()
+{
+    thisPageApp.init();
+});
+</script>
+<!-- PAGE CONTENT ENDS -->{/block}

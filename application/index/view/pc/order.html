@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <title>订单-{:config("site_title")}</title>
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/bootstrap-3.3.7-dist/css/bootstrap.min.css?" />
+        <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_513044_wlr751abe3o9a4i.css" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/css.css?" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/skin-blue.css?" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/jquery-ui.theme.css?" />
+        <link rel="stylesheet" type="text/css" href="/static/index/assets/css/jquery-ui.structure.min.css?" />
+        <style type="text/css">
+        body {
+            overflow: hidden;
+        }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="space-10"></div>
+            <!--bof count-->
+            <div class="col-xs-12">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <div class="row">
+                            <div class="panel panel-blue panel-margin">
+                                <div class="panel-heading"><span class="panel-title"><i class="iconfont icon-order"></i>订单数</span> </div>
+                                <div class="panel-body">
+                                    <h3 id="today_order_count">&emsp;</h3>
+                                    <div class="count-item">本周：<span id="week_order_count"></span></div>
+                                    <div class="count-item">本月：<span id="month_order_count"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <div class="row">
+                            <div class="panel panel-green panel-margin">
+                                <div class="panel-heading"><span class="panel-title"><i class="iconfont icon-order"></i>订单金额</span> </div>
+                                <div class="panel-body">
+                                    <h3 id="today_order_total_amount">&emsp;</h3>
+                                    <div class="count-item">本周：<span id="week_order_total_amount"></span></div>
+                                    <div class="count-item">本月：<span id="month_order_total_amount"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <div class="row">
+                            <div class="panel panel-yellow panel-margin">
+                                <div class="panel-heading"><span class="panel-title"><i class="iconfont icon-order"></i>退款金额</span> </div>
+                                <div class="panel-body">
+                                    <h3 id="today_order_refund_amount">&emsp;</h3>
+                                    <div class="count-item">本周：<span id="week_order_refund_amount"></span></div>
+                                    <div class="count-item">本月：<span id="month_order_refund_amount"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <div class="row">
+                            <div class="panel panel-red panel-margin">
+                                <div class="panel-heading"><span class="panel-title"><i class="iconfont icon-order"></i>实收金额</span> </div>
+                                <div class="panel-body">
+                                    <h3 id="today_order_real_amount">&emsp;</h3>
+                                    <div class="count-item">本周：<span id="week_order_real_amount"></span></div>
+                                    <div class="count-item">本月：<span id="month_order_real_amount"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--eof count-->
+            <!--bof list search-->
+            <div class="col-xs-12">
+                <div class="row">
+                    <div class="space-15"></div>
+                    <div class="form-inline">
+                        <div class="form-group form-group-xs">
+                            <div class="input-group">
+                                <span class="input-group-addon">时间</span>
+                                <input type="text" class="form-control" size="7" id="boftime" value="" />
+                                <span class="input-group-addon">-</span>
+                                <input type="text" class="form-control" size="7" id="eoftime" value="" />
+                            </div>
+                        </div>
+                        <div class="form-group form-group-xs">
+                            <div class="input-group">
+                                <!-- <span class="input-group-addon">订单号</span> -->
+                                <input type="text" class="form-control" placeholder="订单号" size="14" id="searchordernum" value="" />
+                            </div>
+                        </div>
+                        <div class="form-group form-group-xs">
+                            <button type="button" class="btn btn-success btn-sm" id="btn_search"><i class="glyphicon glyphicon-search"></i> 查询</button>
+                            <span class="label label-info arrowed" style="font-weight: lighter;">店长、老板查看全部数据，收银员看自己的</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--eof list search-->
+            <!--bof list-->
+            <div class="col-xs-12">
+                <div class="row">
+                    <table id="order_table" class="table table-hover table-success">
+                        <thead>
+                            <tr>
+                                <th width="130">单号</th>
+                                <th width="140">时间</th>
+                                <th width="80" class="text-right">金额(&yen;)</th>
+                                <th width="100">状态</th>
+                                <th>通道</th>
+                                <th width="140">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <tfoot class="text-right">
+                            <tr>
+                                <td colspan="6">
+                                    <ul class="pagination">
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <!--eof list-->
+        </div>
+        <script src="/static/index/assets/jquery/3.2.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/jquery/jquery.cookie.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/jquery/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/layer/layer.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/index/assets/js/pc.js" type="text/javascript" defer="defer" charset="utf-8"></script>
+        <script src="/static/index/assets/js/bootstrap-paginator.min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+        var page = 1; //分页的第N页
+        $(document).ready(function()
+        {
+            var today = new Date();
+            var default_eoftime = today.getFullYear() + '-' + Math.ceil(today.getMonth() + 1) + '-' + today.getDate();
+            var default_boftime_time = (Math.ceil(today.getTime() / 1000) - 86400) * 1000;
+            var default_bofday = new Date(default_boftime_time);
+            var default_boftime = default_bofday.getFullYear() + '-' + Math.ceil(default_bofday.getMonth() + 1) + '-' + default_bofday.getDate();
+            $('#boftime').val(default_boftime);
+            $('#eoftime').val(default_eoftime);
+
+            if (!thisFrontApp)
+            {
+                window.location.reload();
+            }
+
+            window.pageconfig = {
+                domain: "{:request()->domain()}",
+                scriptdir: "{:SCRIPT_DIR}",
+                module: "{:request()->module()}",
+                controller: "{:strtolower(request()->controller())}",
+                action: "{:request()->action()}",
+                goEasy:
+                {
+                    subscribe_key: "{:config('goEasy_Subscribe_key')}",
+                }
+            };
+
+            get_order_list(page, $('#boftime').val(), $('#eoftime').val(), $("#searchordernum").val());
+            //bof 获取订单列表数据方法
+            function get_order_list(page, boftime, eoftime, ordernum)
+            {
+                page = isNaN(page) ? 1 : (Number(page) || 1);
+                var uid = $.cookie('user_id');
+                var postParam = {
+                    order_status: '',
+                    page: page,
+                    per_page: 8,
+                    order_num: ordernum,
+                    user_id: uid,
+                    version: 1,
+                    time: thisFrontApp.gettime()
+                };
+                if (boftime.length > 0)
+                {
+                    postParam.order_addtime_from = boftime;
+                }
+                if (eoftime.length > 0)
+                {
+                    postParam.order_addtime_end = eoftime;
+                }
+                if (eoftime.ordernum > 0)
+                {
+                    postParam.order_num = ordernum;
+                }
+                var sign = thisFrontApp.getsign(postParam);
+                postParam.sign = sign; //不这么传值下，有错误
+
+                layer.msg("查询中");
+                $.ajax(
+                {
+                    type: "post",
+                    url: pageconfig.domain + "/api/order/list",
+                    data: postParam,
+                    dataType: 'json',
+                    async: true,
+                    success: function(res)
+                    {
+                        layer.closeAll();
+                        if (res.code == 1)
+                        {
+                            $('#order_table>tbody').html('');
+                            if (res.data)
+                            {
+                                res.data.data.forEach(function(item)
+                                {
+                                    var html = '<tr id="' + item.order_num + '">' +
+                                        '<td><span class="text-gray">' + item.order_num + '</span></td>' +
+                                        '<td>' + item.order_addtime + '</td>' +
+                                        '<td class="text-right">' + item.order_pay_realprice + '</td>' +
+                                        '<td class="order-status">' + item.order_status_info + '</td>' +
+                                        '<td>' + item.order_channel_info + '</td>' +
+                                        '<td><div class="btn-group"><span data-id="' + item.order_num + '" class="btn btn-xs btn-success btn-detail">详情</span><span class="btn btn-xs btn-info btn_print" data-id="' + item.order_num + '">打印</span>';
+                                    if (item.order_status == 100 || item.order_status == 101)
+                                    {
+                                        html += '<span data-id="' + item.order_num + '" data-price="' + item.order_pay_realprice + '" class="btn btn-xs btn-danger btn-money-back">退款</span>';
+                                    }
+                                    else
+                                    {
+                                        //html += '<span class="btn btn-xs btn-default">退款</span>';
+                                    }
+                                    html += '</div></td>' +
+                                        '</tr>';
+                                    $('#order_table>tbody').append(html);
+                                    //var html=thisFrontApp.getordertemplate(item,'order');
+                                    //$('.order-nearly').append(html);
+                                });
+                            }
+                            if (res.data.data.length > 0)
+                            {
+                                $('#order_table>tfoot').find('ul').show();
+                                list_page(res.data.current_page, res.data.per_page, res.data.last_page, boftime, eoftime, ordernum);
+                            }
+                            else
+                            {
+                                $('#order_table>tfoot').find('ul').hide();
+                            }
+                        }
+                        else
+                        {
+                            layer.alert(res.message);
+                        }
+                    }
+                });
+            }
+            //eof 获取订单列表数据方法
+            //bof 分页方法
+            function list_page(page_index, page_size, page_count, boftime, eoftime, ordernum)
+            {
+                options = {
+                    bootstrapMajorVersion: 3, //对应的bootstrap版本
+                    currentPage: page_index, //当前页数，这里是用的EL表达式，获取从后台传过来的值
+                    numberOfPages: 5, //每页页数
+                    totalPages: page_count, //总页数，这里是用的EL表达式，获取从后台传过来的值
+                    shouldShowPage: true, //是否显示该按钮
+                    itemTexts: function(type, page, current)
+                    {
+                        //设置显示的样式，默认是箭头
+                        switch (type)
+                        {
+                            case "first":
+                                return "首页";
+                            case "prev":
+                                return "上一页";
+                            case "next":
+                                return "下一页";
+                            case "last":
+                                return "末页";
+                            case "page":
+                                return page;
+                        }
+                    },
+                    //点击事件
+                    onPageClicked: function(event, originalEvent, type, thispage)
+                    {
+                        //get_order_list(page, boftime, eoftime, ordernum);
+                        page = thispage;
+                        get_order_list(page, $('#boftime').val(), $('#eoftime').val(), $("#searchordernum").val());
+                    }
+                };
+                $('#order_table>tfoot').find('ul').bootstrapPaginator(options);
+            }
+            //eof 分页方法
+
+            //bof 退款
+            $('#order_table').on('click', '.btn-money-back', function()
+            {
+                if ($(this).hasClass('btn-default'))
+                {
+                    layer.alert('该订单已退款成功');
+                    return;
+                }
+                var uid = $.cookie('user_id');
+                var order_num = $(this).attr('data-id');
+                var price = $(this).attr('data-price');
+                var obj = $(this);
+                layer.prompt(
+                {
+                    title: '输入退款金额-默认全额',
+                    formType: 0,
+                    success: function(layero)
+                    {
+                        layero.find("input").attr('placeholder', '默认全额').val(price).on('keypress', function(e)
+                        {
+                            if (e.keyCode == 13)
+                            {
+                                layero.find('.layui-layer-btn0').trigger('click');
+                            }
+                        });
+
+                    }
+                }, function(price, index)
+                {
+                    price = isNaN(price) ? 0 : (Number(price) || 0);
+                    layer.prompt(
+                    {
+                        title: '输入退款密码',
+                        formType: 1,
+                        success: function(layero, index)
+                        {
+                            layero.find("input").on('keypress', function(e)
+                            {
+                                if (e.keyCode == 13)
+                                {
+                                    layero.find('.layui-layer-btn0').trigger('click');
+                                }
+                            });
+                        }
+                    }, function(pwd, index)
+                    {
+                        layer.close(index);
+                        back_money(uid, order_num, pwd, price, obj);
+                    });
+                });
+            });
+            //eof 退款
+
+            //bof 退款方法
+            function back_money(uid, order_num, pwd, price, obj)
+            {
+                var postParam = {
+                    user_id: uid,
+                    order_num: order_num,
+                    refund_fee: price,
+                    password: pwd,
+                    create_where: "pc",
+                    version: 1,
+                    time: thisFrontApp.gettime()
+                };
+                var sign = thisFrontApp.getsign(postParam);
+                postParam.sign = sign; //不这么传值下，有错误
+                layer.closeAll();
+                layer.alert("退款中……");
+                $.ajax(
+                {
+                    type: "post",
+                    url: pageconfig.domain + "/api/pay/dorefundrequest",
+                    data: postParam,
+                    dataType: 'json',
+                    success: function(res)
+                    {
+                        layer.closeAll();
+                        if (res.code == 1)
+                        {
+
+                            layer.alert('成功退款&yen;' + res.data.refund_fee,
+                            {
+                                success: function()
+                                {
+                                    $(document).on('keypress', function(e)
+                                    {
+                                        if (e.keyCode == 13)
+                                        {
+                                            get_order_list(page, $('#boftime').val(), $('#eoftime').val(), $("#searchordernum").val());
+                                        }
+                                    })
+                                }
+                            }, function()
+                            {
+                                get_order_list(page, $('#boftime').val(), $('#eoftime').val(), $("#searchordernum").val());
+                            });
+
+                        }
+                        else
+                        {
+                            layer.alert(res.message,
+                            {
+                                success: function(layero)
+                                {
+                                    $(document).on('keypress', function(e)
+                                    {
+                                        if (e.keyCode == 13)
+                                        {
+                                            $(obj).removeClass('btn-danger').addClass('btn-default');
+                                            layer.closeAll();
+                                        }
+                                    })
+                                }
+                            }, function()
+                            {
+                                layer.closeAll();
+                            });
+                        }
+                    }
+                });
+            }
+            //eof 退款方法
+            //bof 打开详情页
+            $('#order_table').on('click', '.btn-detail', function()
+            {
+                var url = thisFrontApp.url('order_detail');
+                url += '?rand=' + Math.ceil(Math.random() * 1000);
+                var order_num = $(this).attr('data-id');
+                var ww = document.body.clientWidth;
+                var wh = window.screen.height - 50;
+                ww = 600;
+                wh = 400;
+                $.cookie('detail_order_num', order_num,
+                {
+                    path: '/'
+                });
+                var lay = layer.open(
+                {
+                    type: 2,
+                    title: false,
+                    closeBtn: 0,
+                    area: [ww + 'px', wh + 'px'],
+                    content: [url],
+                });
+                //layer.full(lay);
+            });
+            //eof 打开详情页
+
+            //bof 获取统计数据
+            get_statistics();
+
+            function get_statistics()
+            {
+                var uid = $.cookie('user_id');
+                var postParam = {
+                    user_id: uid,
+                    version: 1,
+                    time: thisFrontApp.gettime()
+                };
+                var sign = thisFrontApp.getsign(postParam);
+                postParam.sign = sign;
+
+                $.ajax(
+                {
+                    type: "post",
+                    url: pageconfig.domain + "/api/order/statisticsforpc",
+                    data: postParam,
+                    dataType: 'json',
+                    async: true,
+                    success: function(res)
+                    {
+                        if (res.code == 1)
+                        {
+                            $('#today_order_count').html(res.data.today_order_count + '笔');
+                            $('#week_order_count').html(res.data.week_order_count + '笔');
+                            $('#month_order_count').html(res.data.month_order_count + '笔');
+
+                            $('#today_order_total_amount').html(res.data.today_order_total_amount + '元');
+                            $('#week_order_total_amount').html(res.data.week_order_total_amount + '元');
+                            $('#month_order_total_amount').html(res.data.month_order_total_amount + '元');
+
+                            $('#today_order_real_amount').html(res.data.today_order_real_amount + '元');
+                            $('#week_order_real_amount').html(res.data.week_order_real_amount + '元');
+                            $('#month_order_real_amount').html(res.data.month_order_real_amount + '元');
+
+                            $('#today_order_refund_amount').html(res.data.today_order_refund_amount + '元');
+                            $('#week_order_refund_amount').html(res.data.week_order_refund_amount + '元');
+                            $('#month_order_refund_amount').html(res.data.month_order_refund_amount + '元');
+                        }
+                        else
+                        {
+                            layer.alert(res.message);
+                        }
+                    }
+                });
+            }
+            //eof 获取统计数据
+
+            //bof 查询
+            $('#btn_search').on('click', function()
+            {
+                var boftime = $('#boftime').val();
+                var eoftime = $('#eoftime').val();
+                var searchordernum = $('#searchordernum').val();
+                page = 1;
+                get_order_list(page, boftime, eoftime, searchordernum);
+
+            });
+            //eof 查询
+
+            $("#boftime,#eoftime").datepicker(
+            {
+                numberOfMonths: 1, //显示几个月  
+                showButtonPanel: true, //是否显示按钮面板  
+                dateFormat: 'yy-mm-dd', //日期格式  
+                clearText: "清除", //清除日期的按钮名称  
+                closeText: "关闭", //关闭选择框的按钮名称  
+                yearSuffix: '年', //年的后缀  
+                currentText: '今天',
+                showMonthAfterYear: true, //是否把月放在年的后面  
+                //defaultDate:'2011-03-10',//默认日期  
+                //minDate:'2011-03-05',//最小日期  
+                //maxDate:'2011-03-20',//最大日期  
+                monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                dayNames: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+                dayNamesShort: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
+                dayNamesMin: ['日', '一', '二', '三', '四', '五', '六'],
+                onSelect: function(selectedDate)
+                {
+                    //选择日期后执行的操作
+                    //alert(selectedDate);  
+                }
+            });
+
+            //bof 打印
+            $('#order_table').on('click', '.btn_print', function()
+            {
+                layer.alert('打印中...');
+
+                var order_num = $(this).attr("data-id");
+                var postParam = {
+                    user_id: $.cookie('user_id'),
+                    order_num: order_num,
+                    return_printhtml: 1,
+                    version: 1,
+                    time: thisFrontApp.gettime()
+                };
+                var sign = thisFrontApp.getsign(postParam);
+                postParam.sign = sign; //不这么传值下，有错误
+                $.ajax(
+                {
+                    type: "post",
+                    url: pageconfig.domain + "/api/order/detail",
+                    data: postParam,
+                    dataType: 'json',
+                    success: function(res)
+                    {
+                        setTimeout(function()
+                        {
+                            layer.closeAll();
+                        }, 1000);
+                        if (res.code == 1)
+                        {
+                            try
+                            {
+                                windowForm.jsprint(res.data.printhtml, res.data.order_num);
+                            }
+                            catch (e)
+                            {
+
+                                layer.msg("请在软件中运行打印");
+                                //layer.alert(JSON.stringify(rs));
+                            }
+                            //res.data.printhtml
+                        }
+                        else
+                        {
+                            layer.alert(res.message);
+                        }
+                    }
+                });
+
+            });
+            //eof 打印
+        });
+        </script>
+    </body>
+
+</html>

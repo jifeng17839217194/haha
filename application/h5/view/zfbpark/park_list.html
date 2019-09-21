@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>附近停车场</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+		<style type="text/css">
+			*{margin:0;padding:0;box-sizing:border-box;}
+			html,body{background:#efeff4;}
+			.park-list{margin-bottom:0.5rem;}
+			.park-item{margin:0.7rem;border:1px solid #dedede;border-radius:5px;padding:0 0.6rem;margin-bottom:initial;background:#FFFFFF;overflow:hidden;}
+			.park-item-head{min-height:2.5rem;}
+			.park-item-head.on{border-bottom:1px solid #dedede;}
+			.park-item-head-title{line-height:2.5rem;font-size:0.8rem;}
+			.park-item-head-title .num{color:rgba(42, 130, 228, 1);font-size:0.75rem;}
+			.park-item-content-li{padding:0.7rem 0;}
+			.park-item-content-li .txt{display:block;height:1.4rem;line-height:1.4rem;font-size:0.65rem;color:#888888;}
+			.park-item-content-img{position:relative;margin-bottom:0.5rem;width:100%;overflow:hidden;}
+			.park-item-content-img::before{content:'';display:block;padding-bottom:35%;background:#EEEEEE;}
+			.park-item-content-img img{display:block;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);max-width:100%;backface-visibility:hidden;overflow:hidden;}
+			.park-item-footer{display:flex;justify-content:flex-end;align-content:space-between;align-content:center;height:2.5rem;}
+			.park-item-footer.on{border-top:1px solid #DEDEDE;}
+			.park-item-footer .btns{min-width:80px;text-align:right;height:2.5rem;line-height:2.5rem;font-size:0.7rem;color:#555555;}
+		</style>
+	</head>
+	<body> 
+		<div class="content">
+			<div class="park-list" id="list">
+				<!-- <div class="park-item">
+					<div class="park-item-head on">
+						<div class="park-item-head-title"><span class="num">1、</span>智慧信息产业园停车场</div>
+					</div>
+					<div class="park-item-content">
+						<div class="park-item-content-li">
+							<span class="txt">临时:￥4元/小时</span>
+							<span class="txt">包月:￥150元</span>
+							<span class="txt">距离:485米（驾车距离）</span>
+							<span class="txt">地址:祥园路88号N座</span>
+						</div>
+						<div class="park-item-content-img">
+							<img src="https://img.xiaopiu.com/userImages/img13715ae5879f38.png" />
+						</div>
+					</div>
+					<div class="park-item-footer on">
+						<div class="btns">详情 ></div>
+					</div>
+				</div>
+				<div class="park-item">
+					<div class="park-item-head on">
+						<div class="park-item-head-title"><span class="num">1、</span>智慧信息产业园停车场</div>
+					</div>
+					<div class="park-item-content">
+						<div class="park-item-content-li">
+							<span class="txt">临时:￥4元/小时</span>
+							<span class="txt">包月:￥150元</span>
+							<span class="txt">距离:485米（驾车距离）</span>
+							<span class="txt">地址:祥园路88号N座</span>
+						</div>
+						<div class="park-item-content-img">
+							<img src="" />
+						</div>
+					</div>
+					<div class="park-item-footer on">
+						<div class="btns">详情 ></div>
+					</div>
+				</div> -->
+			</div>
+		</div>
+		<script src="https://gw.alipayobjects.com/as/g/h5-lib/alipayjsapi/3.1.1/alipayjsapi.inc.min.js"></script>
+		<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+		<script src="/static/h5/js/jquery-weui.min.js"></script>
+		<script src="/static/h5/js/mui.min.js"></script>
+		<script type="text/javascript" src="/static/h5/js/app.js" ></script>
+		<script type="text/javascript" charset="utf-8">
+			var pageSpace = {
+				init:function(){
+				},
+				toPage:function(name,ags){
+					DOM.openWin(name,ags);
+				}
+			};
+		    var latitude = ''; // 纬度，浮点数，范围为90 ~ -90
+			var longitude = ''; // 经度，浮点数，范围为180 ~ -180。
+			var speed = ''; // 速度，以米/每秒计
+			var accuracy = ''; // 位置精度
+			var car_number="{:input('car_number')}";
+			console.log('车牌号：'+car_number);
+			var pageIndex = 1;
+		    function getData(){
+		    	$.ajax({
+					url:"{:url('get_park_list')}",
+					data:{'single_lng':longitude,'single_lat':latitude,'pageIndex':pageIndex},
+					type:"post",
+					dataType:"json",
+					success:function(data) {
+						console.log(data);
+						html='';
+						$.each(data.data,function(k,v){
+							html+='<div class="park-item">';
+							html+='<div class="park-item-head on">';
+							html+='<div class="park-item-head-title"><span class="num">'+v.num+'、</span>'+v.store_name+'</div>';
+							html+='</div>';
+							html+='<div class="park-item-content">';
+							html+='<div class="park-item-content-li">';
+							html+='<span class="txt">临时:￥'+v.store_temporary_parking_fee+'元/小时</span>';
+							html+='<span class="txt">包月:￥'+v.store_monthly_fee+'元</span>';
+							html+='<span class="txt">距离:'+v.juli+'</span>';
+							html+='<span class="txt">地址:'+v.store_address+'</span>';
+							html+='</div>';
+							html+='<div class="park-item-content-img">';
+							html+='<a onClick="shownav(\''+v.store_parking_lng+'\',\''+v.store_parking_lat+'\',\''+v.store_name+'\',\''+v.store_address+'\')"><img src="https://restapi.amap.com/v3/staticmap?markers=mid,0xFF0000,A:'+v.store_parking_lng+','+v.store_parking_lat+'&key=d3a613bb02ec5e7237e6e20dcc390d72"></a>';
+							html+='</div>';
+							html+='</div>';
+							html+='<div class="park-item-footer on">';
+							if(car_number!=''){
+								html+='<div class="btns" onclick="pageSpace.toPage(\'pay\',\'park_id='+v.store_id+'&car_number='+car_number+'\')">详情 ></div>';
+							}else{
+								html+='<div class="btns" onclick="pageSpace.toPage(\'querynum\',\'park_id='+v.store_id+'\')">详情 ></div>';
+							}						
+							html+='</div>';
+							html+='</div>';
+						});
+						$(".park-list").append(html);
+					}
+				});
+		    };
+		    function shownav(lng,lat,name,addr){
+		    	ap.openLocation({
+			      longitude: lng,
+			      latitude: lat,
+			      name: name,
+			      address: addr
+			    });
+		    }
+		    function ready() {
+			  // 如果jsbridge已经注入则直接调用
+			  if (window.AlipayJSBridge) {
+			    AlipayJSBridge.call('getCurrentLocation', {bizType: 'didi' }, function(result) {
+			      if (result.error) {
+			        alert(result.errorMessage);
+			        return;
+			      }
+			      latitude=result.latitude;
+			      longitude=result.longitude;
+			      speed = result.speed; // 速度，以米/每秒计
+				  accuracy = result.accuracy; // 位置精度
+				  getData();
+			      //alert(JSON.stringify(result));
+			    });
+			  } else {
+			    // 如果没有注入则监听注入的事件
+			    // document.addEventListener('AlipayJSBridgeReady', callback, false);
+			  }
+			}
+			ready();
+		    $(function () {
+				var loading = false;  //状态标记
+		        $(document.body).infinite().on("infinite", function() {
+		            if(loading) return;
+		            loading = true;
+		            setTimeout(function() {
+		            	pageIndex ++;
+		               	getData();
+		                loading = false;
+		            }, 1000);   //模拟延迟
+		        })    
+			});
+		</script>
+	</body>
+</html>  

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8" />
+	<title>管理员登录</title>
+	<meta name="description" content="User login page" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+	<!-- bootstrap & fontawesome -->
+	<link rel="stylesheet" href="../assets/css/bootstrap.css" />
+	<link rel="stylesheet" href="../assets/css/font-awesome.css" />
+	<!-- text fonts -->
+	<link rel="stylesheet" href="../assets/css/ace-fonts.css" />
+	<!-- ace styles -->
+	<link rel="stylesheet" href="../assets/css/ace.css" />
+	<link href="/static/dl/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- animation CSS -->
+	<link href="/static/dl/css/animate.css" rel="stylesheet">
+	<!-- Custom CSS -->
+	<link href="/static/dl/css/style.css" rel="stylesheet">
+	<!--[if lte IE 9]>
+	<link rel="stylesheet" href="../assets/css/ace-part2.css" />
+	<![endif]-->
+	<link rel="stylesheet" href="../assets/css/ace-rtl.css" />
+	<!--<link rel="stylesheet" href="../assets/css/login.css" />-->
+	<!--[if lte IE 9]>
+	<link rel="stylesheet" href="../assets/css/ace-ie.css" />
+	<![endif]-->
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+	<script src="../assets/js/html5shiv.js"></script>
+	<script src="../assets/js/respond.js"></script>
+	<![endif]-->
+	<script type="text/javascript">
+        var common_url = "{:request()->domain()}";
+	</script>
+	<link rel="stylesheet" href="../assets/css/font-awesome.css" />
+	<style type="text/css">
+		html,
+		body,
+		.login-layout {
+			height: 100%;
+			overflow: hidden;
+		}
+
+		.login-layout {
+			padding-top: 100px;
+		}
+
+		canvas {
+			position: absolute;
+		}
+		.input-group{
+			margin-bottom: 20px;
+		}
+	</style>
+</head>
+
+<body>
+<section id="wrapper" class="login-register">
+	<!--<section id="wrapper" class="login-register">-->
+	<div class="login-box">
+		<div class="white-box">
+			<!--<form class="form-horizontal form-material" id="loginform" action="" method="post">-->
+			<form class="ajaxForm form-horizontal form-material" action="" method="post" name="form1" id="form1">
+				<input type="hidden" name="formaction" value="dologin">
+				<fieldset>
+					<a href="javascript:void(0)" class="text-center db"><img src="/static/dl/image/logo.png" alt="Home" style="width: 150px"/><br/>
+						<!--<img src="/static/dl/images/LogoTextBig.png" alt="Home" style="width: 200px"/>-->
+						<p class="logo-title">支付收银管理系统（商户）</p>
+					</a>
+					<div class="input-group">
+						<span class="input-group-addon">
+							  <!--<span class="glyphicon glyphicon-user"></span>-->
+							<img src="/static/dl/image/username.png">
+						</span>
+						<!--<input type="text" autocomplete="off" name="username" class="form-control" placeholder="请输入网站管理员">-->
+						<input autocomplete="off" name="username" required title="用户名" type="text" class="form-control" placeholder="用户名" />
+					</div>
+					<div class="input-group">
+						<span class="input-group-addon">
+							  <!--<span class="glyphicon glyphicon-user"></span>-->
+							<img src="/static/dl/image/password.png">
+						</span>
+						<!--<input type="password" autocomplete="off" name="password"  class="form-control" placeholder="请输入网站密码">-->
+						<input autocomplete="off" name="password" required title="密码" required type="password" class="form-control"
+							   placeholder="密码" />
+					</div>
+
+					<label class="block clearfix">
+									<span class="block input-icon input-icon-right">
+										<input onErrorAutoClear="true" autocomplete="off" maxlength="4" name="checkcode" type="text" title="验证码"
+											   required class="form-control" placeholder="验证码" />
+										<img autoRefresh="true" name="checkcodeimg" id="checkcodeimg" src="" onClick="this.src=this.src+'#'" style="cursor:pointer; position: absolute; right: 1px; top: 1px;width:104px;"
+											 title="点击更换验证码">
+									</span>
+					</label>
+					<div class="form-group">
+						<div class="col-md-12">
+							<div class="checkbox checkbox-primary pull-left p-t-0">
+								<!--<input  type="checkbox">-->
+								<input  type="checkbox" name="savePassword" id="savePassword" onclick="SavePassword()">
+								<label for="savePassword">记住密码</label>
+							</div>
+							<a href="javascript:void(0)" id="to-recover" class="text-dark pull-right"><i class="fa fa-lock m-r-5"></i>忘记密码</a> </div>
+					</div>
+
+					<!-- <div class="space"></div> -->
+					<div class="clearfix">
+
+
+						<div class="form-group text-center m-t-20">
+							<div class="col-xs-12">
+								<button type="button" class=" btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light btn-primary btn-submit">
+									<!-- <i class="ace-icon fa fa-key"></i> -->
+									<span class="bigger-110">登录</span>
+								</button>
+							</div>
+						</div>
+						<!--<div class="form-group text-center m-t-20">-->
+						<!--<div class="col-xs-12">-->
+						<!--<button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light btn-submit" type="submit">登陆</button>-->
+						<!--</div>-->
+						<!--</div>-->
+					</div>
+					<div class="space-4"></div>
+				</fieldset>
+			</form>
+
+		</div>
+	</div>
+
+</section>
+
+
+
+
+
+
+
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='/static/dl/assets/js/jquery.js'>" + "<" + "/script>");
+</script>
+<script type="text/javascript" src="/static/user/js/jquery.cookie.min.js"></script>
+<script src='/static/user/js/user.js'></script>
+
+<script type="text/javascript">
+    var timestamp = new Date().getTime();
+    var rand_num = Math.floor(Math.random() * 100000);
+
+    var captcha_identifier = timestamp.toString() + rand_num.toString();
+    document.getElementById("checkcodeimg").src = common_url + "/api/index/getcaptcha?identifier=" + captcha_identifier;
+    jQuery(function($) {
+        $(".btn-submit").on('click', function(e) {
+            var username = $("input[name='username']").val();
+            var password = $("input[name='password']").val();
+            var checkcode = $("input[name='checkcode']").val();
+            $.ajax({
+                'type': 'post',
+                'dataType': 'json',
+                'url': common_url + '/api/user/login',
+                'data': {
+                    "user_name": username,
+                    "user_password": password,
+                    "captcha_type": "image",
+                    "captcha_value": checkcode,
+                    "captcha_identifier": captcha_identifier
+                },
+                'success': function(res) {
+                    //alert(JSON.stringify(res.data));
+                    if (res.code) {
+                        $.cookie('user_id', res.data.user_id, {
+                            path: '/user/'
+                        });
+                        $.cookie('user_token', res.data.user_token, {
+                            path: '/user/'
+                        });
+                        $.cookie('store_name', res.data.store_name, {
+                            path: '/user/'
+                        });
+                        $.cookie('user_role', res.data.user_role, {
+                            path: '/user/'
+                        });
+                        $.cookie('user_role_cn', res.data.user_role_cn, {
+                            path: '/user/'
+                        });
+                        $.cookie('user_realname', res.data.user_realname, {
+                            path: '/user/'
+                        });
+                        $.cookie('user_store_id', res.data.user_store_id, {
+                            path: '/user/'
+                        });
+                        $.cookie('user_refund_auth', res.data.user_refund_auth, {
+                            path: '/user/'
+                        });
+                        $.cookie('store_open_reward', res.data.store_open_reward, {
+                            path: '/user/'
+                        });
+                        $.cookie('h5_url', res.data.h5_url, {
+                            path: '/user/'
+                        });
+                        $(location).attr('href', common_url + '/user/index/order_total');
+                    } else {
+                        alert(res.message);
+                        document.getElementById("checkcodeimg").src = common_url + "/api/index/getcaptcha?identifier=" +
+                            captcha_identifier;
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+
+</html>

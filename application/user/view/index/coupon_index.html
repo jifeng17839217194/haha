@@ -1,0 +1,228 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">优惠券</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+{/block}
+{block name="head"}
+<script type="text/javascript">
+	$(function(){
+		check_login();
+		/*alert(store_name);*/
+		$("#store-name").html(store_name);
+		$("#user-name").html(user_realname);		
+		$("#log-off").on('click',function(){
+			clear_cookie();
+			$(location).attr('href', common_url+'/user/index/login');
+		});
+	});
+</script>
+<style>
+		
+	.grid3:first-child{
+		background-image:url('../../../static/dl/assets/images/tjbj5.png') ;
+		background-repeat: repeat;
+		background-size: cover;
+		border-radius: 20px;
+		width: 28%;
+		margin: 2%;
+	}
+	.grid3:nth-child(2){
+		background-image:url('../../../static/dl/assets/images/tjbj6.png') ;
+		background-repeat: repeat;
+		background-size: cover;
+		border-radius: 20px;
+		width: 28%;
+		margin:2%;
+	}
+	.grid3:nth-child(3){
+		background-image:url('../../../static/dl/assets/images/tjbj7.png') ;
+		background-repeat: repeat;
+		background-size: cover;
+		border-radius: 20px;
+		width: 28%;
+		margin: 2%;
+	}
+	.grid3{
+		padding: 20px!important;
+		font-size: 20px;
+		color: white;
+	}
+	.grid3 span{
+		color:white!important;
+		font-size: 26px!important;
+	}
+	
+</style>
+{/block}
+{block name="page-content"}
+<div class="coupon-body">
+	<div class="form-horizontal">
+		 <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4 class="widget-title smaller">优惠券查询</h4>
+            </div>
+            <div class="widget-body" style="margin-top: 10px;">
+            	<div class="form-group">
+						<label class="col-sm-2 control-label no-padding-right">起止时间：</label>
+                    	<div class="col-sm-4">
+	                        <div class="input-daterange input-group">
+	                            <input onfocus="WdatePicker({isShowClear:true,dateFmt:'yyyy-MM-dd',alwaysUseStartDate:true});" placeholder="开始" title="开始" name="order_addtime_s" id="coupon_addtime_s" value="" class="nav-search-input col-sm-12" type="text">
+	                            <span class="input-group-addon">
+	                            <i class="fa glyphicon-minus"></i>
+	                            </span>
+	                            <input onfocus="WdatePicker({isShowClear:true,dateFmt:'yyyy-MM-dd',alwaysUseStartDate:true});" placeholder="结束" title="结束" name="order_addtime_e" id="coupon_addtime_e" value="" class="nav-search-input col-sm-12" type="text">
+	                        </div>
+                        </div>
+                        <div class="col-sm-6">
+                        	<button onclick="search_data()" class="btn btn-inverse btn-sm"><i class="ace-icon fa fa-search nav-search-icon"></i>搜索</button>
+                        </div>
+                </div>            
+                <div class="widget-main clearfix">
+                    <div class="grid3">
+                        <span class="bigger-175 blue" id="coupon_count">0</span>
+                        <br> 总发放数量
+                    </div>
+                    <div class="grid3">
+                        <span class="bigger-175 blue" id="coupon_valid_total">0</span>
+                        <br> 生效数量
+                    </div>
+                    <div class="grid3">
+                        <span class="bigger-175 blue" id="coupon_invalid_count">0</span>
+                        <br> 未生效数量
+                    </div>
+                </div>
+            </div>
+            <table id="coupon_table" class="table table-striped table-bordered table-hover">
+			<thead>
+	            <tr>
+	                <th><i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>生成日期</th>
+	                <th width="151">数量</th>
+	                <th width="120">操作</th>
+	            </tr>
+	        </thead>
+			<tbody>
+			</tbody>			
+		</table>
+        </div>
+	</div>
+	</div>
+<script type="text/javascript">	
+	function downloadtable(thisaddtime) {
+			layer.load("请在生成二维码");
+	        $.ajax({
+	            url:common_url+ "/api/coupon/downloadqrcode",
+	            data:{"thisaddtime":thisaddtime},
+	            success:function(rs){
+	                layer.closeAll();
+	                if(rs.code==0)
+	                {
+	                    layer.alert(rs.message);
+	                }
+	                else
+	                {
+	                    window.location.href=common_url+"/api/coupon/downloadzip";
+	                }
+	                //window.open(rs.data.url);
+	            },
+	            error:function(){
+	                layer.closeAll();
+	                alert("错误");
+	            }
+	        })
+		}
+		function search_data() {
+			$start_time=$('#coupon_addtime_s').val();
+			$end_time=$('#coupon_addtime_e').val();
+	        $.ajax({
+	            url:common_url+ "/api/coupon/search_data",
+	            type:'POST',
+	            data:{"coupon_addtime_e":$end_time,"coupon_addtime_s":$start_time},
+	            dataType: 'json',
+	            success:function(res){
+	                if(res.code == 1)
+						{
+							$('#coupon_invalid_count').html(res.data.data_count);
+							$('#coupon_table>tbody').html('');
+							if(res.data.data_count)
+							{
+								res.data.data.forEach(function(item)
+									{
+										var html = '<tr>';
+										html+='<td>'+item.short_url_adddate+'</td>';
+										html+='<td>'+item.counts+'</td>';
+										html+='<td><a href="javascript:;" onclick="downloadtable('+item.short_url_addtime+');"><i class="ace-icon fa fa-download"></i>下载优惠券</a>';
+										html += '</tr>';
+										$('#coupon_table>tbody').append(html);
+										//var html=thisFrontApp.getordertemplate(item,'order');
+										//$('.order-nearly').append(html);
+									});
+							}else{
+								$('#coupon_table>tbody').html('<td colspan="3">未搜索到相关数据！</td>');
+							}
+						} else
+						{
+							alert(res.message);
+						}
+	            }
+	        })
+	}
+	$(function(){
+
+		var microtime=Date.parse(new Date())/1000;   
+		get_coupon_list();
+
+		function get_coupon_list() {
+			var postParam = {
+				user_id: user_id,
+				version: 1,
+				time: microtime
+			};
+			var sign= getsign(postParam);
+			postParam.sign = sign; //不这么传值下，有错误
+			$.ajax({
+					type: "post",
+					url: common_url+ "/api/coupon/getcouponlist",
+					data: postParam,
+					dataType: 'json',
+					success: function(res)
+					{
+						if(res.code == 1)
+						{
+							$('#coupon_invalid_count').html(res.data.data_count);
+							$('#coupon_table>tbody').html('');
+							if(res.data.data_count)
+							{
+								res.data.data.forEach(function(item)
+									{
+										var html = '<tr>';
+										html+='<td>'+item.short_url_adddate+'</td>';
+										html+='<td>'+item.counts+'</td>';
+										html+='<td><a href="javascript:;" onclick="downloadtable('+item.short_url_addtime+');"><i class="ace-icon fa fa-download"></i>下载优惠券</a>';
+										html += '</tr>';
+										$('#coupon_table>tbody').append(html);
+										//var html=thisFrontApp.getordertemplate(item,'order');
+										//$('.order-nearly').append(html);
+									});
+							}else{
+								('#coupon_table>tbody').html('<td colspan="3">暂无相关信息</td>');
+							}
+						} else
+						{
+							alert(res.message);
+						}
+					}
+
+				});
+		}
+
+
+	})
+</script>	
+{/block}

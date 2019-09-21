@@ -1,0 +1,548 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta content="telephone=no" name="format-detection" />
+        <meta content="email=no" name="format-detection" />
+        <title>{$shopone.shop_name|default='未设置名称'} - 资料审核</title>
+        <link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
+        <style type="text/css">
+        .error{font-size: 14px; padding: 0.7em; line-height: 1.2em; color: #fff;}
+        .weui-uploader__file,.weui-uploader__input-box{margin-right: 5px; margin-bottom: 5px;}
+        .status-1{background: red; }
+        .status1{background: blue;}
+        </style>
+    </head>
+    <body>
+    <!-- 要再设计个进度条,每个阶段显示不的同的资料项 程剑虎 2018-2-11 15:55:41，年后再做了 -->
+        <form id="baseform">
+            <input type="hidden" name="shop_id_token" value="{:input('shop_id_token')}">
+            <div class="container" id="container">
+                {eq name="shopone.status.shop_data_status" value="-1"}
+                <div class="error status-1">
+                    {$shopone.status.shop_data_status_info}
+                </div>
+                {/eq}
+                {eq name="shopone.status.shop_data_status" value="1"}
+                <div class="error status1">
+                    {$shopone.status.shop_data_status_info}
+                </div>
+                {/eq}
+                <div class="weui-cells__tips" align="center">提示：当前页面可以分享给商户自行填写</div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">经营场地名称</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" value="{$shopone.store_name}" name="store_name" type="text" pattern="*" placeholder="填经营场地招牌上的店名">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">经营场地地址</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" value="{$shopone.store_address}" name="store_address" type="text" pattern="*" placeholder="填经营场地实际地址">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">商家电话</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" value="{$shopone.store_mobile}" type="text" pattern="*" name="store_mobile" placeholder="">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">注册名称</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" value="{$shopone.shop_name}" name="shop_name" type="text" pattern="*" placeholder="填《营业执照》上的名称">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">法人姓名</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" value="{$shopone.shop_master_name}" name="shop_master_name" type="text" pattern="*" placeholder="填《营业执照》上的法人名称">
+                    </div>
+                </div>
+
+
+                
+                {neq name="$shopone.shop_data_status" value="2"}
+                <div class=weui-cell>
+                    <div class=weui-cell__bd>
+                        <div class=weui-uploader>
+                            <div class=weui-uploader__hd>
+                                <p class=weui-uploader__title>法人身份证正、反面照片</p>
+                                <div class=weui-uploader__info><span class="uploadCount">{:count($shopone->shop_data_master_id_images)}</span>/2</div>
+                            </div>
+                            <div class=weui-uploader__bd><ul class=weui-uploader__files>
+                                    {volist name="$shopone->shop_data_master_id_images" id="vofield"}
+                                    <li class="weui-uploader__file" style="background-image: url({$vofield});">
+                                    <input type="hidden" value="{$vofield}" name="shop_data_master_id_images[]" type="text">
+                                    </li>
+                                    {/volist}
+                                    </ul>
+                                {neq name="$shopone.shop_data_status" value="2"}
+                                <div class=weui-uploader__input-box>
+                                    <input class=weui-uploader__input filename="shop_data_master_id_images" type=file accept=image/* multiple="" />
+                                </div>
+                                {/neq}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cells__tips">↑注意：凡是拍摄，被拍摄物4个角都要拍到</div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">营业执照号</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" value="{$shopone.shop_business_license}" name="shop_business_license" type="text" pattern="*" placeholder="填注册号或统一社会信用代码">
+                    </div>
+                </div>
+                <div class=weui-cell>
+                    <div class=weui-cell__bd>
+                        <div class=weui-uploader>
+                            <div class=weui-uploader__hd>
+                                <p class=weui-uploader__title>营业执照</p>
+                                <div class=weui-uploader__info><span class="uploadCount"><?php echo(empty($shopone->shop_business_license_picture)?0:1);?></span>/1</div>
+                            </div>
+                            <div class=weui-uploader__bd>
+                                <ul class="weui-uploader__files">
+                                        {neq name="$shopone->shop_business_license_picture" value=""}
+                                        <li class="weui-uploader__file" style="background-image: url({$shopone->shop_business_license_picture});">
+                                        <input type="hidden" value="{$shopone->shop_business_license_picture}" name="shop_business_license_picture" type="text">
+                                        </li>
+                                        {/neq}
+                                    </ul>
+                                    {neq name="$shopone.shop_data_status" value="2"}
+                                    <div class=weui-uploader__input-box>
+                                        <input class="weui-uploader__input" filename="shop_business_license_picture" type=file accept=image/*  />
+                                    </div>
+                                    {/neq}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class=weui-cell>
+                    <div class=weui-cell__bd>
+                        <div class=weui-uploader>
+                                <div class=weui-uploader__hd>
+                                    <p class=weui-uploader__title>1张店铺招牌</p>
+                                    <div class=weui-uploader__info><span class="uploadCount"><?php echo(empty($shopone->shop_data_store_head_image)?0:1);?></span>/1</div>
+                                </div>
+                                <div class=weui-uploader__bd>
+                                    <ul class=weui-uploader__files>
+                                    {neq name="$shopone->shop_data_store_head_image" value=""}
+                                        <li class="weui-uploader__file" style="background-image: url({$shopone->shop_data_store_head_image});">
+                                        <input type="hidden" value="{$shopone->shop_data_store_head_image}" name="shop_data_store_head_image" type="text">
+                                        </li>
+                                    {/neq}
+                                    </ul>
+                                {neq name="$shopone.shop_data_status" value="2"}
+                                    <div class=weui-uploader__input-box>
+                                        <input class=weui-uploader__input filename="shop_data_store_head_image" type=file accept=image/*  />
+                                    </div>
+                                    {/neq}
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                <div class="weui-cells__tips">↑需清晰展示完整的招牌</div>
+                <div class="weui-cells weui-cells_form">
+                    <div class=weui-cell>
+                        <div class=weui-cell__bd>
+                            <div class=weui-uploader>
+                                <div class=weui-uploader__hd>
+                                    <p class=weui-uploader__title>3张店铺内景照片</p>
+                                    <div class=weui-uploader__info><span class="uploadCount">{:count($shopone->shop_data_store_images)}</span>/3</div>
+                                </div>
+                                <div class=weui-uploader__bd>
+                                    <ul class=weui-uploader__files>
+                                    {volist name="$shopone->shop_data_store_images" id="vofield"}
+                                    <li class="weui-uploader__file" style="background-image: url({$vofield});">
+                                    <input type="hidden" value="{$vofield}" name="shop_data_store_images[]" type="text">
+                                    </li>
+                                    {/volist}
+                                    </ul>
+                                {neq name="$shopone.shop_data_status" value="2"}
+                                    <div class=weui-uploader__input-box>
+                                        <input class=weui-uploader__input filename="shop_data_store_images" type=file accept=image/*  multiple="" />
+                                    </div>
+                                    {/neq}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="weui-cells__tips">↑需体现真实的经营内容</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">收钱支付宝</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" value="{$shopone.shop_alipay_account}" name="shop_alipay_account" type="text" pattern="*" placeholder="填法人或实际收款人的支付宝">
+                    </div>
+                </div>
+                <div class="weui-cells__tips">↑支付宝不是法人请提供《<a href="http://zzkjcrm.iaapp.cn/static/common/doc/danmianfushouquanhan.docx" target="_blank">当面付授权函</a>》</div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">收钱银行卡</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" value="{$shopone.shop_data_bank_number}" name="shop_data_bank_number" type="text" pattern="*" placeholder="银行卡号">
+                    </div>
+                </div>
+                <div class="weui-cells__tips" style="color: red;">↑公司必须填公司账户，个体工商户必需填法人的</div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">银行开户行</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" value="{$shopone.shop_data_bank_name}" name="shop_data_bank_name" type="text" pattern="*" placeholder="省+市+区+支行名称">
+                    </div>
+                </div>
+                <div class="weui-cells__tips">↑不清楚完整的开户行的<strong>务必</strong>致电银行查询</div>
+                <div class="weui-cells weui-cells_form">
+                    <div class=weui-cell>
+                        <div class=weui-cell__bd>
+                            <div class=weui-uploader>
+                                <div class=weui-uploader__hd>
+                                    <p class=weui-uploader__title>其它图片(非必填)</p>
+                                    <div class=weui-uploader__info><span class="uploadCount">{:count($shopone->shop_data_other_images)}</span>/10</div>
+                                </div>
+                                <div class=weui-uploader__bd>
+                                    <ul class=weui-uploader__files>
+                                    {volist name="$shopone->shop_data_other_images" id="vofield"}
+                                    <li class="weui-uploader__file" style="background-image: url({$vofield});">
+                                    <input type="hidden" value="{$vofield}" name="shop_data_other_images[]" type="text">
+                                    </li>
+                                    {/volist}
+                                    </ul>
+                                    {neq name="$shopone.shop_data_status" value="2"}
+                                    <div class=weui-uploader__input-box>
+                                        <input class=weui-uploader__input filename="shop_data_other_images" type=file accept=image/*  multiple="" />
+                                    </div>
+                                    {/neq}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">备注</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" name="shop_data_other_info" value="{$shopone.shop_data_other_info}" type="text" pattern="*" placeholder="填写备注">
+                    </div>
+                </div>
+                {else/}
+                {eq name="shopone.shop_alipay_seller_id" value=""}
+                <!-- <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">支付宝<br />授权码：</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <img src="/agent/shopmobile/qrcode?value={:request()->domain().'/cmd/oauth/alipayset/uid/'.$shopone['shop_id_token']}">
+                        <br />
+                        <span style="font-size:12px; color:red;">(使用"{$shopone.shop_alipay_account}"的支付宝APP扫码)</span>
+                    </div>
+                </div> -->
+                {/eq}
+
+
+                {eq name="shopone.shop_wxpay_sub_mch_id" value=""}
+                <!-- <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">微信商户<br />银行验证：</label>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <img src="/agent/shopmobile/qrcode?value={:request()->domain().'/cmd/oauth/alipayset/uid/'.$shopone['shop_id_token']}">
+                        <br />
+                        <span style="font-size:12px; color:red;">(使用"{$shopone.shop_master_name}"的微信APP扫码)</span>
+                    </div>
+                </div> -->
+                {/eq}
+
+                {/neq}
+            </div>
+        </form>
+
+        {neq name="$shopone.shop_data_status" value="2"}
+        <div class="weui-btn-area"> <a id="formSubmitBtn" href="javascript:" onclick="javascript:thispage.dosubmit();" class="weui-btn weui-btn_primary">保存</a> </div>
+        {/neq}
+
+        
+        <?php
+        if(cookie('agent_id') && ($shopone["status"]["shop_data_status"]=="-1"))
+        {
+
+        ?>
+        <div class="weui-btn-area"> <a id="formSubmitBtn" href="javascript:" onclick="javascript:thispage.dosubmitAndPost();" class="weui-btn weui-btn_warn">资料齐全,提交审核</a> </div>
+        <?php
+        }
+        ?>
+
+        <br />
+        <div class="weui-footer">
+            <p class="weui-footer__text">
+                服务商：{:config('site_title')}
+                <br />电话：<a href="tel:{$sysconfig->telphone}">{$sysconfig->telphone}</a> © {:date("Y")}
+            </p>
+        </div>
+    </body>
+    <script type="text/javascript" src="//res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>
+    <script type="text/javascript">
+    window.jQuery || document.write("<script src='/static/dl/assets/js/jquery.js'>" + "<" + "/script>");
+    var thispage = {
+        init: function()
+        {
+            //图片上传预览模块
+            document.querySelectorAll(".weui-uploader__input").forEach(function(thisInput)
+            {
+                thisInput.addEventListener("change", function(e)
+                {
+                    var thisuploader__files = thisInput.parentNode.parentNode.querySelector(".weui-uploader__files");
+                    var src, url = window.URL || window.webkitURL || window.mozURL,
+                        files = e.target.files;
+                    for (var i = 0, len = files.length; i < len; ++i)
+                    {
+                        var file = files[i];
+                        // 判断是否图片
+                        if (!file)
+                        {
+                            return;
+                        }
+                        // 判断图片格式
+                        if (!(file.type.indexOf('image') == 0 && file.type && /\.(?:jpg|png|gif)$/.test(file.name)))
+                        {
+                            return;
+                        }
+                        if (url)
+                        {
+                            src = url.createObjectURL(file);
+                        }
+                        else
+                        {
+                            src = e.target.result;
+                        }
+                        var li = document.createElement("li");
+                        li.classList.add("weui-uploader__file");
+                        li.style.backgroundImage = 'url(' + src + ')';
+                        var ismultiple = thisInput.getAttribute("multiple") == null ? false : true;
+                        if (ismultiple == true)
+                        {
+                            thisuploader__files.appendChild(li);
+                        }
+                        else
+                        {
+                            thisuploader__files.innerHTML = "";
+                            thisuploader__files.appendChild(li);
+                        }
+                        var uploadCountDom = thisuploader__files.parentNode.parentNode.querySelector("span.uploadCount");
+                        uploadCountDom.innerHTML = (thisuploader__files.querySelectorAll("li").length || 1);
+                        window.uploadimgcount = (window.uploadimgcount || 0) + 1;
+                        thispage.weui.loading("上传图片中");
+                        thispage.uploadimg(file, thisInput, li);
+                    }
+                })
+            });
+            //__图片上传模块
+            // 缩略图预览
+            document.querySelectorAll('.weui-uploader__files').forEach(function(thisuploader)
+            {
+                thisuploader.addEventListener('click', function(e)
+                {
+                    var target = e.target;
+                    while (!target.classList.contains('weui-uploader__file') && target)
+                    {
+                        target = target.parentNode;
+                    }
+                    if (!target) return;
+                    var url = target.getAttribute('style') || '';
+                    var id = target.getAttribute('data-id');
+                    if (url)
+                    {
+                        url = url.match(/url\((.*?)\)/)[1].replace(/"/g, '');
+                    }
+                    var gallery = weui.gallery(url,
+                    {
+                        className: 'custom-name',
+                        onDelete: function onDelete()
+                        {
+                            weui.confirm('确定删除该图片？', function()
+                            {
+                                //--uploadCount;
+                                //uploadCountDom.innerHTML = uploadCount;
+                                // for (var i = 0, len = uploadList.length; i < len; ++i)
+                                // {
+                                //     var file = uploadList[i];
+                                //     if (file.id == id)
+                                //     {
+                                //         file.stop();
+                                //         break;
+                                //     }
+                                // }
+                                var uploadCountDom = target.parentNode.parentNode.parentNode.querySelector("span.uploadCount");
+                                uploadCountDom.innerHTML = (target.parentNode.querySelectorAll("li").length || 1) - 1;
+                                target.remove();
+                                gallery.hide();
+                            });
+                        }
+                    });
+                });
+            });
+        },
+        //上传图片
+        uploadimg: function(img, thisInput, li)
+        {
+            var reader = new FileReader();
+            reader.readAsDataURL(img);
+            reader.onload = function(e)
+            { // reader onload start
+                // ajax 上传图片
+                $.post("{:url('uploadfile')}",
+                {
+                    shop_id_token: "{:input('shop_id_token')}",
+                    imgBase64: e.target.result
+                }, function(ret)
+                {
+                    if (ret.code == 1)
+                    {
+                        //ret.url
+                        var filedname = thisInput.getAttribute("filename");
+                        var ismultiple = thisInput.getAttribute("multiple") == null ? false : true;
+                        var span = document.createElement("span");
+                        span.style = "display:none;"
+                        span.innerHTML = '<textarea name="' + filedname + (ismultiple ? '[]' : '') + '">' + ret.data.url + '</textarea>';
+                        li.appendChild(span);
+                    }
+                    else
+                    {
+                        alert(ret.message);
+                    }
+                    window.uploadimgcount--;
+                    if (window.uploadimgcount == 0)
+                    {
+                        thispage.weui.closeloading();
+                    }
+                }, 'json');
+            }
+        },
+        dosubmit: function()
+        {
+            thispage.weui.loading("正在保存");
+            $.ajax(
+            {
+                type: "POST",
+                url: "{:url('shopsave')}",
+                dataType: "json",
+                data: $("#baseform").serialize(),
+                success: function(ret)
+                {
+                    thispage.weui.closeloading();
+                    if (ret.code == 1)
+                    {
+                        thispage.weui.toast("已保存");
+                    }
+                    else
+                    {
+                        thispage.weui.toast(ret.message);
+                    }
+                },
+                error:function(){
+                    thispage.weui.closeloading();
+                    thispage.weui.toast("XX出错了XX");
+                }
+            });
+        },
+        dosubmitAndPost: function()
+        {
+            thispage.weui.loading("正在提交");
+            var postdata = $("#baseform").serialize(); 
+            postdata += "&postshenghe="+1;
+            $.ajax(
+            {
+                type: "POST",
+                url: "{:url('shopsave')}",
+                dataType: "json",
+                data: postdata,
+                success: function(ret)
+                {
+                    thispage.weui.closeloading();
+                    if (ret.code == 1)
+                    {
+                        thispage.weui.toast("已经提交");
+                    }
+                    else
+                    {
+                        thispage.weui.toast(ret.message);
+                    }
+                },
+                error:function(){
+                    thispage.weui.closeloading();
+                    thispage.weui.toast("XX出错了XX");
+                }
+            });
+        },
+        weui:
+        {
+            //微信weui的提示
+            loading: function(msg)
+            {
+                if ((document.querySelectorAll(".weui-loading_toast").length || 0) == 0)
+                {
+                    var div = document.createElement("div");
+                    div.classList.add("weui-loading_toast");
+                    div.innerHTML = '<div class="weui-mask"></div> <div class="weui-toast weui-animate-fade-in"> <i class="weui-loading weui-icon_toast"></i> <p class="weui-toast__content">' + (msg || '加载中') + '</p> </div>';
+                    document.body.appendChild(div);
+                }
+                else
+                {
+                    document.querySelector(".weui-toast__content").innerHTML = msg || '加载中';
+                }
+            },
+            //关闭_微信weui的提示
+            closeloading: function()
+            {
+                if (document.querySelectorAll(".weui-loading_toast").length > 0)
+                {
+                    document.body.removeChild(document.querySelector(".weui-loading_toast"));
+                }
+            },
+            //微信weui的提示
+            toast: function(msg)
+            {
+                if (!((document.querySelectorAll(".bears").length || 0) == 0))
+                {
+                    document.body.removeChild(document.querySelector(".bears"));
+                }
+                clearTimeout(window.publictoastclose);
+                var div = document.createElement("div");
+                div.classList.add("bears");
+                div.innerHTML = '<div class="weui-mask"></div> <div class="weui-toast weui-animate-fade-in"> <i class="weui-icon_toast weui-icon-success-no-circle"></i> <p class="weui-toast__content">' + (msg || '操作成功') + '</p> </div>';
+                document.body.appendChild(div);
+                window.publictoastclose = setTimeout(function()
+                {
+                    try
+                    {
+                        document.body.removeChild(document.querySelector(".bears"));
+                    }
+                    catch (e)
+                    {
+                    }
+                }, 1500);
+            },
+        }
+    };
+    thispage.init();
+    </script>
+</html>

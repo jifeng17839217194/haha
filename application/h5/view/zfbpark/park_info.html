@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+
+		<title>包月</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
+
+        <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+
+		<style type="text/css">
+
+			*{margin:0;padding:0;box-sizing:border-box;}
+
+			html,body{background:#efeff4;}
+
+			.park-null-type{display:flex;margin:0.5rem 0.7rem;border:1px solid #DEDEDE;background:#FFFFFF;flex-direction:column;justify-content:center;align-items:center;height:9rem;}
+
+			.park-null-type .msg{font-size:0.85rem;color:#333333;}
+
+			.park-log-btn{margin-top:1rem;border-radius:4px;background:rgba(42, 130, 228, 1);width:5rem;height:1.6rem;line-height:1.6rem;color:#FFFFFF;font-size:0.7rem;text-align:center;}
+
+			.park-log-item{margin:0.7rem 0.75rem;border-radius:5px;background:#FFFFFF;}
+
+			.park-log-item-top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #DEDEDE;padding:0 0.5rem;height:1.5rem;font-size:0.65rem;color:#888888;}
+
+			.park-log-item-top .txt{color:rgba(42, 130, 228, 1);}
+
+			.park-log-item-info{display:flex;justify-content:space-between;align-items:center;padding:0.5rem;}
+
+			.park-log-item-info .map-img{position:relative;flex-shrink:0;width:40%;overflow:hidden;}
+
+			.park-log-item-info .map-img::before{content:'';display:block;padding-bottom:70%;}
+
+			.park-log-item-info .map-img .img{position:absolute;top:50%;left:50%;display:block;max-width:100%;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);backface-visibility:hidden;}
+
+			.park-log-item-info .txt-info{padding-left:0.5rem;}
+
+			.park-log-item-info .log-item-name{font-size:0.7rem;}
+
+			.park-log-item-info .log-item-cartnum{font-size:0.65rem;color:#555555;}
+
+			.park-log-item-info .log-item-time{font-size:0.65rem;color:#888888;}
+
+			.park-log-item-info .log-item-price{font-size:0.7rem;color:#333333;}
+
+			.hide{display:none;}
+
+		</style>
+
+	</head>
+
+	<body> 
+
+		<div class="content">
+
+			<div class="park-log hide">
+
+				<div class="park-null-type">
+
+					<div class="msg">暂无包月</div>
+
+					<div class="park-log-btn" id="btn_open">立即开通</div>
+
+				</div>
+
+			</div>
+
+			<div class="park-log-list">
+
+				<!-- <div class="park-log-item">
+
+					<div class="park-log-item-top"><span class="name">包月</span><span class="txt">还有17天失效</span></div>
+
+					<div class="park-log-item-info">
+
+						<div class="map-img"><img class="img" src="https://img.xiaopiu.com/userImages/img13715ae5879f38.png"/></div>
+
+						<div class="txt-info">
+
+							<div class="log-item-name">智慧信息产业园二期停车场</div>
+
+							<div class="log-item-cartnum">沪C·60BA2</div>
+
+							<div class="log-item-time">2018-02-01~2018-03-01</div>
+
+							<div class="log-item-price">￥300.00</div>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<div class="park-log-item">
+
+					<div class="park-log-item-top"><span class="name">包月</span><span class="txt">还有17天失效</span></div>
+
+					<div class="park-log-item-info">
+
+						<div class="map-img"><img class="img" src="https://img.xiaopiu.com/userImages/img13715ae5879f38.png"/></div>
+
+						<div class="txt-info">
+
+							<div class="log-item-name">智慧信息产业园二期停车场</div>
+
+							<div class="log-item-cartnum">沪C·60BA2</div>
+
+							<div class="log-item-time">2018-02-01~2018-03-01</div>
+
+							<div class="log-item-price">￥300.00</div>
+
+						</div>
+
+					</div>
+
+				</div> -->
+
+			</div>
+
+		</div>
+
+		<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+
+		<script type="text/javascript" src="/static/h5/js/mui.min.js" ></script>
+
+		<script src="/static/h5/js/jquery-weui.min.js"></script>
+
+		<script type="text/javascript" src="/static/h5/js/app.js" ></script>
+
+		<script type="text/javascript">
+
+			var pageSpace = {
+
+				init:function(){
+
+					pageSpace.onEvt();
+					pageSpace.dataRequest();
+
+				},
+
+				dataRequest:function(){
+
+					var json_obj = {},
+
+						json__data = JSON.stringify(json_obj);
+
+					DOM.ajax('get_park_month_list',json__data,function(res){
+
+						pageSpace.fillPage(res.data);
+
+					});
+
+				},
+
+				fillPage:function(data){
+
+					var isHide = DOM.g('.park-log').classList.contains('hide'),
+
+						maxLen = data.length,el = '',html = '';
+
+					if(data.length > 0 && data != ""){
+
+						for(var i = 0;i < maxLen;i ++){
+
+							el = document.createElement('div');
+
+							el.className = 'park-log-item';
+
+							html = '<div class="park-log-item-top"><span class="name">包月</span><span class="txt">还有'+data[i]['remaining_days']+'天失效</span></div>'+
+
+							'<div class="park-log-item-info">'+
+
+								'<div class="map-img"><img class="img" src="https://restapi.amap.com/v3/staticmap?markers=mid,0xFF0000,A:'+data[i]['record_parking_lng']+','+data[i]['record_parking_lat']+'&key=d3a613bb02ec5e7237e6e20dcc390d72"/></div>'+
+
+								'<div class="txt-info">'+
+
+									'<div class="log-item-name">'+data[i]['record_parking_name']+'</div>'+
+
+									'<div class="log-item-cartnum">'+data[i]['record_car_number_plate']+'</div>'+
+
+									'<div class="log-item-time">'+data[i]['record_start_time']+'~'+data[i]['record_end_time']+'</div>'+
+
+									'<div class="log-item-price">￥'+data[i]['record_parking_monthly_price']+'</div>'+
+
+								'</div>'+
+
+							'</div>';
+
+							DOM.appHtml('.park-log-list',el,html);
+
+						};
+
+						if(!isHide){
+
+							DOM.g('.park-log').classList.add('hide');
+
+						};
+
+					}else{
+
+						if(isHide){
+
+							DOM.g('.park-log').classList.remove('hide');
+
+						};
+
+					};
+
+				},
+				onEvt:function(){
+
+					DOM.addListen('#btn_open','tap',function(){
+
+						DOM.openWin('park_list');
+
+					});
+
+				},
+				toPage:function(){
+
+				}
+
+			};
+
+			pageSpace.init();
+
+		</script>
+
+	</body>
+
+</html>  
+

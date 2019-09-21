@@ -1,0 +1,147 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+	<li class="active">
+		<i class="ace-icon fa fa-home home-icon"></i>
+		<span _href="#">订单详情</span>
+	</li>
+</ul>
+{/block} {block name="page-content"}
+<script type="text/javascript">
+	$(function(){
+		check_login();
+		/*alert(store_name);*/
+		$("#store-name").html(store_name);
+		$("#user-name").html(user_realname);
+		$("#log-off").on('click',function(){
+			clear_cookie();
+			$(location).attr('href', common_url+'/user/index/login');
+		});
+	});
+</script>
+<style>
+	.order-detail-row{font-size: 16px;line-break: 30px;margin: 5px 0;}
+	.order-detail-label{text-align: right;}
+</style>
+<!-- PAGE CONTENT BEGINS -->
+<div class="container">
+    <div class="col-xs-12">   
+    	<table class="table table-striped table-bordered table-hover" id="order-detail">
+    		<tr>
+    			<td width="20%" align="right">订单金额:</td>
+    			<td id="order_total_amount" align="left"></td>
+    		</tr>
+    		<tr>
+    			<td width="20%" align="right">实付金额:</td>
+    			<td id="order_pay_realprice" align="left"></td>
+    		</tr>
+    		<tr>
+    			<td width="20%" align="right">订单编号:</td>
+    			<td id="order_num" align="left"></td>
+    		</tr>
+    		<tr>
+    			<td width="20%" align="right">订单状态:</td>
+    			<td id="order_status_info" align="left"></td>
+    		</tr>
+    		<tr>
+    			<td width="20%" align="right">创建时间:</td>
+    			<td id="order_addtime" align="left"></td>
+    		</tr>
+    		<tr>
+    			<td width="20%" align="right">支付时间:</td>
+    			<td id="order_pay_time" align="left"></td>
+    		</tr>
+    		<tr>
+    			<td width="20%" align="right">支付通道:</td>
+    			<td id="order_channel" align="left"></td>
+    		</tr>
+    		<tr>
+    			<td width="20%" align="right">店铺名称:</td>
+    			<td id="store_name" align="left"></td>
+    		</tr>
+    		<tr>
+    			<td width="20%" align="right">收银员:</td>
+    			<td id="user_name" align="left"></td>
+    		</tr>
+    	</table>
+    </div>
+</div>          
+<div class="space-10"></div>
+
+<script type="text/javascript">
+	var microtime=Date.parse(new Date())/1000;
+	$(function() {		
+		var order_num = "{:input('order_num')}";
+
+        uid = isNaN(user_id) ? 0 : (Number(user_id) || 0);
+
+        if (uid <= 0)
+
+        {
+
+            return;
+
+        }
+
+        back_money(uid, order_num);
+	});
+	 function back_money(uid, order_num)
+        {
+            var postParam = {
+                user_id: uid,
+                order_num: order_num,
+                create_where: "pc",
+                version: 1,
+                time:microtime
+
+            };
+
+            var sign = getsign(postParam);
+
+            postParam.sign = sign; //不这么传值下，有错误
+
+            $.ajax(
+
+                {
+                    type: "post",
+
+                    url: common_url+ "/api/order/detail",
+
+                    data: postParam,
+
+                    dataType: 'json',
+
+                    success: function(res)
+
+                    {
+                        if (res.code == 1)
+                        {
+                            console.log(JSON.stringify(res));
+                            $('#order_total_amount').html(res.data.order_total_amount);
+                            $('#order_pay_realprice').html(res.data.order_pay_realprice);
+                            $('#order_num').html(res.data.order_num);
+                            $('#order_channel').html(res.data.order_channel_info);
+                            $('#order_addtime').html(res.data.order_addtime);
+                            $('#order_pay_time').html(res.data.order_pay_time);
+                            $('#store_name').html(res.data.store_name);
+                            $('#user_name').html(res.data.user_name);
+                            $('#order_status_info').html(res.data.order_status_info);
+                            if (res.data.refund_list)
+                            {
+                                var refundhtml = '<tr><td align="right">退款记录</td><td>';
+                                res.data.refund_list.forEach(function(obj)
+                                    {
+                                        refundhtml +=' 退款： ¥' + obj.refund_amount + "<br />时间："+ obj.refund_time ;
+                                    });
+                                refundhtml += '</td></tr>';
+                                $("#order-detail").append(refundhtml);
+                            }
+                        }else{
+
+                           alert(res.message);
+                        }
+                    }
+                });
+        }
+</script>
+<!-- PAGE CONTENT ENDS -->
+{/block}

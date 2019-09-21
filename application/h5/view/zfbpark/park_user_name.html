@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+
+		<title>修改姓名</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
+
+        <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+
+       <link rel="stylesheet" href="https://at.alicdn.com/t/font_793169_m9hkjfxgy7g.css" />
+
+		<style type="text/css">
+
+			*{margin:0;padding:0;box-sizing:border-box;}
+
+			html,body{background:#efeff4;}
+
+			.user-input{display:flex;margin:1rem 0;border-top:1px solid #DEDEDE;border-bottom:1px solid #DEDEDE;height:2.4rem;align-items:center;background:#FFFFFF;}
+
+			.user-input-name{width:5rem;text-align:center;color:#333333;font-size:0.75rem;}
+
+			.user-input input{margin:0;border:initial;padding-left:0;height:46px;color:#0.7rem;color:#555555;}
+
+			.user-input input::-webkit-input-placeholder{font-size:0.75rem;}
+
+			.park-pay-btn{display:block;margin:1.5rem 1rem;border-radius:5px;background:rgba(42, 130, 228, 1);height:2.2rem;line-height:2.2rem;text-align:center;color:#FFFFFF;font-size:0.75rem;}
+
+		</style>
+
+	</head>
+
+	<body> 
+
+		<div class="content">
+
+			<div class="user-input"><span class="user-input-name">真实姓名</span><div class="input"><input placeholder="请输入真实姓名" id="member_realname" type="text" value="{$member_realname??''}"/></div></div>
+
+			<div class="park-pay-btn" id="btn_submit">保存</div>
+
+		</div>
+
+		<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+
+		<script src="/static/h5/js/jquery-weui.min.js"></script>
+
+		<script src="/static/h5/js/mui.min.js"></script>
+
+		<script type="text/javascript" src="/static/h5/js/app.js" ></script>
+
+		<script type="text/javascript">
+
+			var pageSpace = {
+
+				init:function(){
+
+					pageSpace.onEvt();
+
+				},
+
+				dataSubmit:function(){					
+
+				},
+
+				toPage:function(name,ags){
+
+					DOM.openWin(name,ags);
+
+				},
+
+				btnOff:function (res) {
+
+					$.ajax({
+
+						url:"{:url('user_realname_save')}",
+
+						data:{'member_realname':$('#member_realname').val()},
+
+						type:'post',
+
+						dataType:'json',
+
+						success:function(res){
+
+							if(res.code){
+
+								pageSpace.toPage('user_info');
+
+							}else{
+
+								alert(res.msg);
+
+							}
+
+						}
+
+					});
+
+				},
+
+				onEvt:function(){
+
+					DOM.addListen('#btn_submit','tap',function(){
+
+						pageSpace.btnOff(this);						
+
+					});
+
+				},
+
+			};
+
+			pageSpace.init();
+
+		</script>
+
+	</body>
+
+</html>  
+

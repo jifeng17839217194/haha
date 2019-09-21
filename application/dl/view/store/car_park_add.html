@@ -1,0 +1,63 @@
+{extend name="common/common"}
+{block name="navbar"}
+{/block}
+{block name="nav-list"}
+{/block}
+{block name="breadcrumbs"}
+<!-- #section:basics/content.searchbox -->
+<style>
+	.page-content{
+		margin: 0;
+	}
+</style>
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">商户中心</span>
+    </li>
+    <li class="active">
+        停车场
+    </li>
+</ul>
+{/block}
+{block name="page-content"}
+<div class="order-body">
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('car_park_save')}">
+    <input type="hidden" name="store_is_park" value="1">
+    <input type="hidden" name="store_id" value="{:$one?$one->store_id:''}">
+    <input type="hidden" name="store_shop_id" value="{:$one?$one->store_shop_id:input('store_shop_id',0)}">
+   {include file="common/input" title="*经营停车场名称" fieldName="store_name" defaultValue='<?php echo(isset($one->store_name)?$one->store_name:"");?>' placeholder="" required="required" pattern="*" helpInfo='在收银设备端显示'}
+   {include file="common/input" title="*经营停车场地址" fieldName="store_address" defaultValue='<?php echo(isset($one->store_address)?$one->store_address:"");?>' placeholder="" required="required" pattern="*" helpInfo='在收银设备端显示'}
+   {include file="common/input" title="经营停车场电话" fieldName="store_mobile" defaultValue='<?php echo(isset($one->store_mobile)?$one->store_mobile:"");?>' placeholder="" required="" pattern="*" helpInfo='在打印的小票上显示'}
+    <div {eq name=" config('saleversion')" value="1"> } style="display:none;" {/eq}>
+        {include file="common/input" title="绑定停车场parking_uuid" fieldName="parking_uuid" defaultValue='<?php echo(isset($one->parking_uuid)?$one->parking_uuid:"");?>' placeholder="" required="" pattern="*" helpInfo='停车场才需要填写（由易泊提供，绑定后不可修改）'}
+        {include file="common/input" title="高德poiid（没有无感则不填）" fieldName="store_parking_poiid" defaultValue='<?php echo(isset($one->store_parking_poiid)?$one->store_parking_poiid:"");?>' placeholder="" required="" pattern="*" helpInfo="（<a href='https://ditu.amap.com/' target='_blank'>查看高德地图</a>）"}
+        <!--bof zhjhqk -->
+        {include file="common/input" title="*停车场经度" fieldName="store_parking_lng" defaultValue='<?php echo(isset($one->store_parking_lng)?$one->store_parking_lng:"");?>' placeholder="" required=required"required" pattern="[1-9]\d*\.\d*|0\.\d*[1-9]\d*" helpInfo='<strong style="color:red;">例：120.155166</strong>'}
+        {include file="common/input" title="*停车场纬度" fieldName="store_parking_lat" defaultValue='<?php echo(isset($one->store_parking_lat)?$one->store_parking_lat:"");?>' placeholder="" required="required" pattern="[1-9]\d*\.\d*|0\.\d*[1-9]\d*" helpInfo='<strong style="color:red;">例：30.274171</strong>'}
+        {include file="common/input" title="临时停车费" fieldName="store_temporary_parking_fee" defaultValue='<?php echo(isset($one->store_temporary_parking_fee)?$one->store_temporary_parking_fee:"");?>' placeholder="" required="" pattern="[1-9]\d*|[1-9]\d*\.\d*|0\.\d*[1-9]\d*" helpInfo='/小时'}
+        {include file="common/input" title="包月费用" fieldName="store_monthly_fee" defaultValue='<?php echo(isset($one->store_monthly_fee)?$one->store_monthly_fee:"");?>' placeholder="" required="" pattern="*" helpInfo=''}
+        <div class="form-group">
+            <label class="col-sm-2 control-label no-padding-right">包月说明：</label>
+            <div class="col-sm-10">
+                <textarea name="store_parking_content" rows="5" cols="84"><?php echo(isset($one->store_parking_content)?$one->store_parking_content:"");?></textarea>
+            </div>
+        </div>
+        <!--eof zhjhqk-->
+    </div>
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit">
+                <i class="ace-icon fa fa-check bigger-110"></i> 提交
+            </button>
+            &nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+</div>
+{/block}

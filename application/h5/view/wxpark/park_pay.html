@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+
+		<title>开通包月</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
+
+        <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_793169_amj361ma4wm.css" />
+
+		<style type="text/css">
+
+			html,body{background:#FFFFFF;}
+
+			.park-info{padding:0.5rem 0.7rem;}
+
+			.park-info-title{border-bottom:1px solid #DEDEDE;height:2rem;line-height:2rem;font-size:0.75rem;color:#333333;}
+
+			.park-info-li{display:flex;padding:0.75rem 0;flex-direction:column;}
+
+			.park-info-li-item{position:relative;display:flex;height:2rem;line-height:2rem;justify-content:flex-start;}
+
+			.park-info-li-item #btn_select{position:absolute;top:0;right:0;bottom:0;left:0;z-index:100;background:none;}
+
+			.park-info-li-item .iconfont{flex-shrink:0;font-size:0.85rem;margin-right:1rem;color:#888888;}
+
+			.park-info-li-item .btn{color:rgba(42, 130, 228, 1);font-size:0.75rem;}
+
+			.park-info-li-item .txt{font-size:0.65rem;color:#888888;}
+
+			.park-pay-btn{display:block;margin:1.5rem 1rem;border-radius:5px;background:rgba(42, 130, 228, 1);height:2.2rem;line-height:2.2rem;text-align:center;color:#FFFFFF;font-size:0.75rem;}
+
+		</style>
+
+	</head> 
+
+	<body>  
+
+		<div class="content"> 
+
+			<div class="park-info">
+
+				<div class="park-info-title">开通包月</div>
+
+				<div class="park-info-li">
+
+					<div class="park-info-li-item"><div id="btn_select"></div><span class="iconfont icon-rili"></span><span class="btn" id="btn_res">当前月</span><input type="hidden" name="month_current" id="month_current" value=""></div>
+
+					<div class="park-info-li-item"><span class="iconfont icon-qianbao"></span><span class="txt">￥{$park_info['store_monthly_fee']}</span></div>
+
+					<div class="park-info-li-item"><span class="iconfont icon-shizhong"></span><span class="txt" id="txt_date"></span></div>
+
+					<div class="park-info-li-item"><span class="iconfont icon-shiduan"></span><span class="txt">0:00~23:59</span></div>
+
+					<div class="park-info-li-item"><span class="iconfont icon-icon-sl"></span><span class="txt" id="text_day"></span></div>
+
+					<div class="park-info-li-item"><span class="iconfont icon-shuoming"></span><span class="txt">{$park_info['store_parking_content']}</span></div>
+
+					<div id="btn_show"></div>
+
+				</div>
+
+			</div>
+
+			<div class="park-pay-btn" id="pay-btn" onclick="pageSpace.createOrder_befter()">开通包月</div>
+
+		</div>
+
+		<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+
+		<script type="text/javascript" src="/static/h5/js/mui.min.js" ></script>
+
+		<script src="/static/h5/js/jquery-weui.min.js"></script>
+
+		<script type="text/javascript" src="/static/h5/js/app.js" ></script>
+
+		<script type="text/javascript">
+
+			var pageSpace = {	
+
+				year:0,
+
+				month:0,
+
+				record_id:0,			
+
+				init:function(){
+
+					pageSpace.onEvt();
+
+					pageSpace.picker();
+
+					pageSpace.setTime(0);
+
+				},
+
+				picker:function(el){
+
+					$("#btn_select").picker({
+
+				        title: "请选择",
+
+				        cols: [
+
+				          	{
+
+						      textAlign: 'center',
+
+						      values: ['当前月','下个月']
+
+						    }
+
+				        ],
+
+				        onChange: function(p, v, dv) {
+
+				        	var val = p.displayValue[0];
+
+				        	DOM.setHtml('#btn_res',val);
+
+				        	if(val == "下个月"){
+
+				        		pageSpace.setTime(1);
+
+				        	}else{
+
+				        		pageSpace.setTime(0);
+
+				        	};
+
+				        },
+
+				        onClose: function(p, v, d) {
+
+				        	
+
+				        }
+
+			        });
+
+				},
+
+				setTime:function(num){
+
+					var time = new Date(),
+
+						year = time.getFullYear(),
+
+						month = time.getMonth()+1+num,
+
+						theDay = time.getDate(),
+
+						countDay = 0,
+
+						day = new Date(year,month, 0).getDate(); 
+
+						if(num > 0){
+
+							countDay = day;
+
+						}else{
+
+							countDay = day - theDay;
+
+						};
+
+						var current_month_data=num+1;
+
+						$("#month_current").val(current_month_data);
+					pageSpace.year = year;
+					pageSpace.month = month;
+					DOM.setHtml('#txt_date',year+"-"+month+"-01~"+year+"-"+month+"-"+day).setHtml('#text_day',"剩余"+countDay+"天");	
+
+				},
+
+				showPicker:function(){
+
+					$("#btn_select").picker("open");
+
+				},
+
+				onEvt:function(){
+
+					DOM.addListen('#btn_select','tap',function(){
+
+						pageSpace.showPicker();
+
+					}).addListen('#btn_res','tap',function(){
+
+						pageSpace.showPicker();
+
+					});			
+
+				},
+
+		        createOrder_befter:function(){
+
+		        	var car_number=decodeURI("{:input('car_number')}");
+
+		        	if(window.localStorage.carNum !=car_number){
+
+		        		alert('车牌号和输入的不符合！');return;
+
+		        	}
+
+		        	$.ajax({
+
+		        		url:"{:url('create_car_month')}",
+
+		        		data:{'current_month':$("#month_current").val(),'park_id':"{:input('park_id')}",'car_number':car_number},
+
+		        		dataType:'json',
+
+		        		type:'post',
+
+		        		success:function(res){
+
+		        			console.log(res);
+
+		        			if(res.code){
+
+		        				pageSpace.record_id=res.data.record_id;
+
+		        				pageSpace.createOrder();
+
+		        			}else{
+
+		        				alert(res.msg);
+
+		        			}
+
+		        		}
+
+		        	});			        
+
+		        },
+
+		        createOrder: function()
+
+		        {
+
+		            ispaying =true;
+
+		            var car_number=decodeURI("{:input('car_number')}");
+
+		        	if(window.localStorage.carNum !=car_number){
+
+		        		alert('车牌号和输入的不符合！');return;
+
+		        	}
+
+		            switch (thisuserAgent())
+
+		            {
+
+		                case "jsapi_alipay": //
+
+		                    $.showLoading("发起支付宝支付");
+
+		                    $.ajax(
+
+		                    {
+
+		                        "url": "/index.php?s=api/pay/jsapipayrequest",
+
+		                        "data":
+
+		                        {
+
+		                            buyer_id: "{$buy_open_id}",
+
+		                            user_id: "{$user_id}",
+
+		                            guest_brief:pageSpace.year+" - "+pageSpace.month+"包月",
+
+		                            subject:"{$park_info.store_name}",//支付宝不给显示出牌号
+
+		                            car_number:car_number,
+
+		                            sale_order_num:pageSpace.record_id,
+
+		                            create_where:"parking_month"
+
+		                        },
+
+		                        "type": "post",
+
+		                        "dataType": "json",
+
+		                        "success": function(rs)
+
+		                        {
+
+		                            $.hideLoading();
+
+
+
+		                            //根据支付返回的状态，不同处理
+
+		                            if (rs.code)
+
+		                            {
+
+		                                pageSpace.jsapi_alipay_pay(rs.data.trade_no); //唤起收银台JSAPI
+
+		                            }
+
+		                            else
+
+		                            {
+
+		                                $.closeModal();
+
+		                                $.alert(
+
+		                                {
+
+		                                    title: '错误',
+
+		                                    text: rs.message
+
+		                                }, function() {
+
+		                                });
+
+		                            }
+
+		                        },
+
+		                        error: function(rs)
+
+		                        {
+
+		                            ispaying = false;
+
+		                            $.hideLoading();
+
+		                            alert(JSON.stringify(rs));
+
+		                        }
+
+		                    });
+
+		                    break;
+
+		                case "jsapi_wxpay":
+
+		                    $.showLoading("发起微信支付");
+
+		                    $.ajax(
+
+		                    {
+
+		                        "url": "/index.php?s=api/pay/jsapipayrequest",
+
+		                        "data":
+
+		                        {
+
+		                            buyer_id: "{$buy_open_id}",
+
+		                            user_id: "{$user_id}",
+
+		                            guest_brief:pageSpace.year+" - "+pageSpace.month+"包月",
+
+		                            subject:"{$park_info.store_name}("+car_number+")",
+
+		                            car_number:car_number,
+
+		                            sale_order_num:pageSpace.record_id,
+
+		                            create_where:"parking_month"
+
+		                        },
+
+		                        "type": "post",
+
+		                        "dataType": "json",
+
+		                        "success": function(rs)
+
+		                        {
+
+		                            $.hideLoading();
+
+		                            //根据支付返回的状态，不同处理
+
+		                            if (rs.code)
+
+		                            {
+
+		                                pageSpace.jsapi_wxpay_pay(rs.data); //唤起收银台JSAPI
+
+		                            }
+
+		                            else
+
+		                            {
+
+		                                alert(rs.message);
+
+		                            }
+
+		                        },
+
+		                        error: function(rs)
+
+		                        {
+
+		                            $.hideLoading();
+
+		                            ispaying = false;
+
+		                            alert(JSON.stringify(rs));
+
+		                        }
+
+		                    });
+
+		                    break;
+
+		                default:
+
+		                    ispaying = false;
+
+		                    alert("未处理的提交订单");
+
+		            }
+
+		        },
+
+		        jsapi_alipay_pay: function(tradeNO)
+
+		        {
+
+		            //alert(datajson);
+
+		            // 通过传入交易号唤起快捷调用方式(注意tradeNO大小写严格)
+
+		            AlipayJSBridge.call("tradePay",
+
+		            {
+
+		                tradeNO: tradeNO
+
+		            }, function(data)
+
+		            {
+
+		                $.hideLoading();
+
+		                switch (data.resultCode)
+
+		                {
+
+		                    case "9000":
+
+		                        //if(store_pay_after_ad_active==0)
+
+		                        {
+
+		                            $.closeModal();
+
+		                            /*$.alert(
+
+		                            {
+
+		                                title: '完成',
+
+		                                text: "支付成功"
+
+		                            }, function() {
+
+		                            });*/
+
+		                            //支付宝说不能出现自己的支付成功页面
+
+		                            //window.location.href='/h5/carpark/paysuccessali?total_amount='+total_amount;
+
+		                            AlipayJSBridge.call('popWindow');
+
+		                        }
+
+		                        //else
+
+		                        {
+
+		                            //window.location.href='/h5/index/payresult?storeid='+store_id+'&cash='+total_amount;
+
+		                        }
+
+		                        //location.href=data.callbackUrl;
+
+		                        break;
+
+		                    case "8000":
+
+		                        ispaying = false;
+
+		                        $.closeModal();
+
+		                        $.alert(
+
+		                        {
+
+		                            title: '提醒',
+
+		                            text: "订单正在处理中"
+
+
+
+		                        }, function() {
+
+		                        });
+
+		                        //location.href=data.callbackUrl;
+
+		                        break;
+
+		                    default:
+
+		                        ispaying = false;
+
+		                        $.closeModal();
+
+		                        $.alert(
+
+		                        {
+
+		                            title: '提醒',
+
+		                            text: "支付已取消"
+
+
+
+		                        }, function() {
+
+		                        });
+
+		                }
+
+		            });
+
+		        },
+
+		        jsapi_wxpay_pay: function(getBrandWCPayRequestParam)
+
+		        {
+
+		            getBrandWCPayRequestParam = (typeof getBrandWCPayRequestParam == "string") ? JSON.parse(getBrandWCPayRequestParam) : getBrandWCPayRequestParam;
+
+		            WeixinJSBridge.invoke('getBrandWCPayRequest', getBrandWCPayRequestParam, function(res)
+
+		            {
+
+		                if (res.err_msg == "get_brand_wcpay_request:ok")
+
+		                {
+
+		               			alert("包月成功！");
+
+		                        window.location.href='/h5/wxpark/park_info';
+
+		                    // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+
+		                }
+
+		                else
+
+		                {
+
+		                    alert("支付已取消");
+
+		                }
+
+		            });
+
+		        }
+
+			};
+
+			 function thisuserAgent()
+
+		    {
+
+		        var userAgent = navigator.userAgent.toLowerCase();
+
+		        if (userAgent.match(/micromessenger/i) == "micromessenger")
+
+		        {
+
+		            return "jsapi_wxpay";
+
+		        }
+
+		        else if (userAgent.match(/alipayclient/i) == "alipayclient")
+
+		        {
+
+		            return "jsapi_alipay";
+
+		        }
+
+		        else
+
+		        {
+
+		            return false;
+
+		        }
+
+		    }
+
+			pageSpace.init();
+
+		</script>
+
+	</body>
+
+</html>  
+

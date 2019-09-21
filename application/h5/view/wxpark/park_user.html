@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>我的账户</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
+        <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+        <link rel="stylesheet" href="https://at.alicdn.com/t/font_793169_m9hkjfxgy7g.css" />
+		<style type="text/css">
+			*{margin:0;padding:0;box-sizing:border-box;}
+			html,body{background:#efeff4;}
+			.user-info{position:relative;display:flex;flex-direction:column;padding:1rem 0.7rem;height:5rem;background:rgba(42, 130, 228, 1);}
+			.user-info-username{height:1.5rem;line-height:1.5rem;color:#FFFFFF;font-size:0.75rem;}
+			.user-info-cratnum{height:1.5rem;line-height:1.5rem;font-size:0.75rem;color:#CCCCCC;}
+			.user-info .icon{position:absolute;top:0;bottom:0;right:14px;display:flex;align-items:center;}
+			.user-info .icon-youjiantou{color:#FFFFFF;}
+			.user-item{display:flex;justify-content:space-between;border-bottom:1px solid #DEDEDE;padding:0 0.7rem;background:#FFFFFF;height:2.4rem;line-height:2.4rem;}
+			.user-item-left{justify-content:center;align-items:center;}
+			.user-item-left .iconfont{display:inline-block;font-size:0.85rem;width:1.5rem;color:rgba(42, 130, 228, 1);vertical-align:-2px;}
+			.user-item-name{font-size:0.7rem;color:#333333;} 
+			.user-item .icon-youjiantou{font-size:0.75rem;color:#888888;}
+
+			@keyframes toast{from{top:60%;background:rgba(0,0,0,0.2);}to{top:50%;background:rgba(0,0,0,0.6);}};@-webkit-keyframes toast{from{top:60%;background:rgba(0,0,0,0.2)}to{top:50%;background:rgba(0,0,0,0.6);}}
+		</style>
+	</head>
+	<body> 
+		<div class="content">
+			<div class="user-info" id="link_top_user">
+				<div class="user-info-username" id="user_name">{$member_info.member_name}</div>
+				<div class="user-info-cratnum" id="user_card">{$member_info.member_car_number?:'未绑定车牌'}</div>
+				<div class="icon"><span class="iconfont icon-youjiantou"></span></div>
+			</div>
+			<div class="user-item" id="link_user"><div class="user-item-left"><span class="iconfont icon-wode"></span><span class="user-item-name">我的账号</span></div><span class="iconfont icon-youjiantou"></span></div>
+			<div class="user-item" id="link_cart"><div class="user-item-left"><span class="iconfont icon-chepai"></span><span class="user-item-name">我的车牌</span></div><span class="iconfont icon-youjiantou"></span></div>
+			<div class="user-item" id="link_company"><div class="user-item-left"><span class="iconfont icon-gongsi"></span><span class="user-item-name">公司信息 </span></div><span class="iconfont icon-youjiantou"></span></div>
+			<div class="user-item" id="link_info"><div class="user-item-left"><span class="iconfont icon-baoyue"></span><span class="user-item-name">我的包月</span></div><span class="iconfont icon-youjiantou"></span></div>
+			<div class="user-item"><div class="user-item-left"><span class="iconfont icon-fapiao"></span><span class="user-item-name">发票管理</span></div><span class="iconfont icon-youjiantou"></span></div>
+		</div>
+		<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+		<script src="/static/h5/js/jquery-weui.min.js"></script>
+		<script src="/static/h5/js/mui.min.js"></script>
+		<script type="text/javascript" src="/static/h5/js/app.js" ></script>
+		<script type="text/javascript">
+			var pageSpace = {
+				init:function(){
+					/*DOM.toast("ahaahahahahahah");*/
+					window.onload = function(){
+						pageSpace.onEvt();						
+					};
+				},				
+				toPage:function(name,ags){
+					DOM.openWin(name,ags);
+				},
+				onEvt:function(){
+					DOM.addListen('#link_top_user','tap',function(){
+						pageSpace.toPage('user_info');
+					}).addListen('#link_cart','tap',function(){
+						pageSpace.toPage('user_cartnum');
+					}).addListen('#link_user','tap',function(){
+						pageSpace.toPage('user_info');
+					}).addListen('#link_company','tap',function(){
+						pageSpace.toPage('user_company');
+					}).addListen('#link_info','tap',function(){
+						pageSpace.toPage('park_info');
+					});
+				}
+			};
+			pageSpace.init();
+		</script>
+	</body>
+</html>  

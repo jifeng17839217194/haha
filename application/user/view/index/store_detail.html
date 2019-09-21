@@ -1,0 +1,215 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+	<li class="active">
+		<i class="ace-icon fa fa-home home-icon"></i>
+		<span _href="#">经营场地信息</span>
+	</li>
+	<li class="active">
+		所有经营场地
+	</li>
+	<li class="active">
+
+		<span _href="#">店铺详情</span>
+	</li>
+</ul>
+{/block} {block name="page-content"}
+<script type="text/javascript">
+	$(function(){
+		check_login();
+		/*alert(store_name);*/
+		$("#store-name").html(store_name);
+		$("#user-name").html(user_realname);
+		$("#log-off").on('click',function(){
+			clear_cookie();
+			$(location).attr('href', common_url+'/user/index/login');
+		});
+	});
+</script>
+<!-- PAGE CONTENT BEGINS -->
+<div class="">
+    <div class="col-xs-12">
+        <div class="space-10"></div>
+        <div class="form-horizontal">
+        	<div class="form-group clearfix">
+				    <label class="col-sm-2 control-label no-padding-right">*经营场地：</label>
+				    <div class="col-sm-10">
+				        <input type="text" placeholder="" pattern="*" [disabled]="" name="store_name" value="" title="店铺名称" id="store_name" class="col-xs-10 col-sm-5">				       
+				    </div>
+				</div>  
+                 <div class="form-group clearfix">
+				    <label class="col-sm-2 control-label no-padding-right">经营场地地址：</label>
+				    <div class="col-sm-10">
+				        <input type="text" placeholder="" pattern="*" [disabled]="" name="store_address" value="" title="店铺地址" id="store_address" class="col-xs-10 col-sm-5">				       
+				    </div>
+				</div>  
+               
+                <div class="form-group clearfix">
+				    <label class="col-sm-2 control-label no-padding-right">经营场地电话：</label>
+				    <div class="col-sm-10">
+				        <input type="text" placeholder="" pattern="*" [disabled]="" name="store_mobile" value="" title="经营场地电话" id="store_mobile" class="col-xs-10 col-sm-5">
+				        <span class="help-inline col-xs-12 col-sm-7">
+				                <span class="middle">在打印的小票上显示</span>
+				        </span>
+				    </div>
+				</div>         
+				<div class="form-group clearfix">
+                	<label class="col-sm-2 control-label no-padding-right">打赏是否可用：</label>
+                	<div class="col-sm-10">
+		                <input name="store_open_reward" value="1" id="store_open_reward" class="ace ace-switch" type="checkbox" />	
+		                <span class="lbl"></span>
+		            </div>    
+	            </div>
+	            <div class="form-group clearfix">
+                	<label class="col-sm-2 control-label no-padding-right">开启预授权(押金)功能：</label>
+                	<div class="col-sm-10">
+		                <input name="store_open_funds_authorized" {eq name=" config('saleversion')" value="1"> }disabled {/eq} value="1" id="store_open_funds_authorized" class="ace ace-switch" type="checkbox" />	
+		                <span class="lbl">{eq name=" config('saleversion')" value="1"> } &nbsp;&nbsp;&nbsp;&nbsp;预授权不可用 {/eq}</span>
+		            </div>    
+	            </div>
+	            {include file="common/fullTextarea" title="广告位" fieldName="store_pay_after_ad" defaultValue='' helpInfo='消费者扫收款码，支付成功后展示'}
+				<div class="form-group">
+	                <label class="col-sm-2 control-label no-padding-right">广告位状态：</label>
+	                <div class="col-sm-10">
+	                    <div class="radio pull-left">
+	                        <label>
+	                            <input name="store_pay_after_ad_active" value="1" type="radio" class="ace" />
+	                            <span class="lbl">&nbsp;&nbsp;开放</span>
+	                        </label>
+	                    </div>
+	                    <div class="radio pull-left">
+	                        <label>
+	                            <input name="store_pay_after_ad_active" value="0" type="radio" class="ace" />
+	                            <span class="lbl">&nbsp;&nbsp;关闭</span>
+	                        </label>
+	                    </div>
+	                </div>
+	            </div>
+	            <div class="space"></div>
+	            <div class="clearfix form-actions">
+       				<div class="col-md-offset-3 col-md-9">
+	                    <button type="button" class="btn btn-sm btn-primary btn-submit">
+	                        <i class="ace-icon fa fa-key"></i>
+	                        <span class="bigger-110">提交</span>
+	                    </button>
+	                </div>   
+	            </div>
+        </div>
+    </div>
+</div>          
+<div class="space-10"></div>
+
+<script type="text/javascript">
+	var microtime=Date.parse(new Date())/1000;
+	$(function() {		
+		var store_id = {:input('store_id')};
+        uid = isNaN(user_id) ? 0 : (Number(user_id) || 0);
+        if (uid <= 0)
+        {
+            return;
+        }
+        back_money(uid, store_id);
+        $(".btn-submit").on("click",function(){
+        	var store_name=$("input[name='store_name']").val();
+        	var store_address=$("input[name='store_address']").val();
+        	var store_mobile=$("input[name='store_mobile']").val();        	
+        	if($('#store_open_reward').is(':checked')) {
+			    var store_open_reward=$("input[name='store_open_reward']:checked").val();
+			}else{
+				var store_open_reward=0;
+			}
+			if($('#store_open_funds_authorized').is(':checked')) {
+			    var store_open_funds_authorized=$("input[name='store_open_funds_authorized']:checked").val();
+			}else{
+				var store_open_funds_authorized=0;
+			}
+			var store_pay_after_ad_active=$("input[name='store_pay_after_ad_active']:checked").val();
+			var store_pay_after_ad=UE.getEditor('store_pay_after_ad').getContent();
+			//var store_pay_after_ad=$("#store_pay_after_ad").val();
+            var postParam = {
+                user_id: uid,
+                store_id:store_id,
+                store_name: store_name,
+                store_address: store_address,
+                store_mobile:store_mobile,
+                store_open_funds_authorized:store_open_funds_authorized,
+                store_pay_after_ad_active:store_pay_after_ad_active,
+                store_open_reward:store_open_reward,
+                time:microtime
+            };
+			if(store_pay_after_ad!=''){
+				postParam.store_pay_after_ad = store_pay_after_ad; 
+			}
+            var sign = getsign(postParam);
+            postParam.sign = sign; //不这么传值下，有错误
+            $.ajax({
+            	type:"post",
+            	url:common_url+"/api/store/savestoreone",
+            	async:true,
+            	data:postParam,
+            	dataType:"json",
+            	success:function(res){
+            		if(res.code){
+            			console.log(JSON.stringify(res));
+            			alert(res.message);
+            			$(location).attr("href",common_url+'/user/index/store_list');
+            		}else{
+            			alert(res.message);
+            		}
+            	}
+            });
+        });
+	});
+	 function back_money(uid, store_id)
+        {
+            var postParam = {
+                user_id: uid,
+                store_id: store_id,
+                version: 1,
+                time:microtime
+
+            };
+
+            var sign = getsign(postParam);
+
+            postParam.sign = sign; //不这么传值下，有错误
+
+            $.ajax(
+
+                {
+                    type: "post",
+
+                    url: common_url+ "/api/store/getstoreone",
+
+                    data: postParam,
+
+                    dataType: 'json',
+
+                    success: function(res)
+
+                    {
+                        if (res.code == 1)
+                        {
+                            console.log(JSON.stringify(res));
+                            $('#store_name').val(res.data.store_name);
+                            $('#store_address').val(res.data.store_address);
+                            $('#store_mobile').val(res.data.store_mobile);
+                            if(res.data.store_open_reward>0){                            								$("input:checkbox[name='store_open_reward']").attr('checked','true');
+                            }
+                            if(res.data.store_open_funds_authorized>0){                            								$("input:checkbox[name='store_open_funds_authorized']").attr('checked','true');
+                            }
+                            $("input[name='store_pay_after_ad_active'][value='"+res.data.store_pay_after_ad_active+"']").attr("checked", "checked");
+                            var ue = UE.getEditor('store_pay_after_ad');  
+						          
+					        ue.ready(function() {
+					            ue.setContent(res.data.store_pay_after_ad); 
+					        });  
+                        }else{
+
+                           alert(res.message);
+                        }
+                    }
+                });
+        }
+</script>
+<!-- PAGE CONTENT ENDS -->
+{/block}

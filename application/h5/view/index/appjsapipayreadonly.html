@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{$store.store_name}</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta content="telephone=no" name="format-detection" />
+        <meta content="email=no" name="format-detection" />
+        <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body,
+        .content {
+            background: #f3f3f3;
+            font-size: 13px;
+        }
+        strong {
+            font-weight: initial;
+        }
+        .top-left {
+            position: relative;
+            display: block;
+            float: left;
+            min-width: 3.83rem;
+            height: 3.83rem;
+            font-size: 0.915rem;
+            text-align: center;
+            line-height: 3.83rem;
+            padding-top: 0.4rem;
+        }
+        .top-left svg {
+            height: 1.5rem;
+            width: 1.5rem;
+        }
+        .top-left::after {
+            content: '';
+            position: absolute;
+            top: 9px;
+            right: 0;
+            bottom: 9px;
+            width: 1px;
+            background: #d6d6d6;
+        }
+        .top-bar {
+            position: fixed;
+            z-index: 10;
+            right: 0;
+            left: 0;
+            height: 3.84rem;
+            background-color: #ffffff;
+            border-bottom: 1px solid #cacaca;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        .top-bar .title {
+            display: inline-block;
+            margin: 0;
+            padding-left: 15px;
+            overflow: hidden;
+            width: auto;
+            text-overflow: ellipsis;
+            color: #0f0f0f;
+            font-size: 1.25rem;
+            line-height: 3.83rem;
+            font-weight: initial;
+        }
+        /*.content{padding-top:3.84rem;}*/
+        .content input {
+            outline: none
+        }
+        .pay-name {
+            height: 2.89rem;
+            text-align: center;
+            line-height: 2.89rem;
+            font-size: 0.95rem;
+            color: #8a8a8a;
+        }
+        .pay-name .iconfont {
+            vertical-align: -0.42rem;
+        }
+        .pay-name svg {
+            height: 1.4rem;
+            width: 1.4rem;
+        }
+        .pay-input {
+            margin: 0 1.31rem;
+            border: 1px solid #dedede;
+            border-radius: 8px;
+            background: #FFFFFF;
+            overflow: hidden;
+        }
+        .pay-input .top {
+            position: relative;
+            height: 4.89rem;
+        }
+        /*.pay-input .top::after{content:'';position:absolute;right:0;bottom:0;left:11px;height:1px;background:#e2e2e2;}*/
+        .pay-input .bottom {
+            position: relative;
+            height: 4.05rem;
+        }
+        .pay-input strong {
+            position: absolute;
+            padding-left: 0.57rem;
+            font-size: 1.2rem;
+        }
+        .pay-input input {
+            padding: 0 0.57rem;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            text-align: right;
+            background: none;
+        }
+        .pay-input .top strong {
+            line-height: 4.89rem;
+        }
+        .pay-input .bottom strong {
+            line-height: 4.05rem;
+        }
+        .pay-input .top input {
+            height: 4.89rem;
+            font-size: 1.8rem;
+        }
+        .pay-input .bottom input {
+            height: 4.05rem;
+            font-size: 1.15rem;
+        }
+        .pay-input .bottom input::-webkit-input-placeholder {
+            font-size: 1.02rem;
+        }
+        .pay-remark {
+            position: relative;
+            margin: 0 1.31rem;
+            border-bottom: 1px solid #eaeaea;
+            height: 4.4rem;
+            line-height: 4.4rem;
+        }
+        .pay-remark i {
+            position: absolute;
+            top: 0.4rem;
+            left: 2px;
+        }
+        .pay-remark svg {
+            height: 1.5rem;
+            width: 1.5rem;
+        }
+        .pay-remark input {
+            padding-left: 1.8rem;
+            height: 4rem;
+            width: 100%;
+            border: none;
+            background: inherit;
+            font-size: 1.04rem;
+        }
+        .pay-money {
+            margin: 0 1.31rem;
+            height: 4.52rem;
+            line-height: 4.52rem;
+            overflow: hidden;
+        }
+        .pay-money .text {
+            font-size: 1.415rem;
+            color: #000000;
+        }
+        .pay-money .money {
+            float: right;
+            font-size: 1.915rem;
+            color: #fc6264;
+        }
+        .pay-submit {
+            margin: 18px 1.31rem;
+            height: 3.812rem;
+        }
+        .pay-submit button {
+            border: 0;
+            border-radius: 6px;
+            outline: none;
+            background: #2C95FF;
+            height: 100%;
+            width: 100%;
+            font-size: 1.18rem;
+            color: #FFFFFF;
+        }
+        </style>
+        <script type="text/javascript">
+        window.jQuery || document.write("<script src='/static/dl/assets/js/jquery.js'>" + "<" + "/script>");
+        function thisuserAgent()
+        {
+            var userAgent = navigator.userAgent.toLowerCase();
+            if (userAgent.match(/micromessenger/i) == "micromessenger")
+            {
+                return "jsapi_wxpay";
+            }
+            else if (userAgent.match(/alipayclient/i) == "alipayclient")
+            {
+                return "jsapi_alipay";
+            }
+            else
+            {
+                return false;
+            }
+        }
+        switch (thisuserAgent())
+        {
+            case "jsapi_alipay":
+                document.write('<script type="text/javascript" src="https://a.alipayobjects.com/g/h5-lib/alipayjsapi/3.0.5/alipayjsapi.inc.min.js"><\/script>');
+                break;
+            case "jsapi_wxpay":
+                document.write('<link rel="stylesheet" type="text/css" href="//res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">');
+                break;
+        }
+        var store_name ="{$store.store_name}";
+        var store_pay_after_ad_active ="{$store.store_pay_after_ad_active}";
+        var store_id ="{$store.store_id}";
+        </script>
+    </head>
+    <body>
+        <form method="get" action="javascript:thisApp.createOrder();">
+            <div class="content">
+                <div class="pay-name">
+                    <i class="iconfont">
+                        <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1513041932047" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2558" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"></style></defs><path d="M518.656 891.712a2084.224 2084.224 0 0 0 135.04-157.696c31.04-40.32 58.432-79.488 81.216-116.8 45.504-74.88 70.912-139.648 70.912-193.536 0-180.864-144.448-327.68-322.944-327.68C304.448 96 160 242.816 160 423.68c0 53.888 25.408 118.656 70.912 193.536 22.784 37.312 50.112 76.48 81.216 116.8a2084.224 2084.224 0 0 0 147.968 171.136l22.784 23.232 22.848-23.232c2.432-2.432 6.784-7.04 12.928-13.44z m-12.928-31.424a2021.248 2021.248 0 0 1-142.912-165.376 1242.752 1242.752 0 0 1-77.184-110.976C245.632 518.272 224 462.976 224 423.68c0-145.728 116.032-263.68 258.88-263.68 142.912 0 258.944 117.952 258.944 263.68 0 39.36-21.632 94.592-61.632 160.256-21.376 35.2-47.488 72.448-77.184 110.976a2021.248 2021.248 0 0 1-142.912 165.376h45.632z" p-id="2559" fill="#8a8a8a"></path><path d="M624 418.88a141.12 141.12 0 1 0-282.24 0 141.12 141.12 0 0 0 282.24 0z m-218.24 0a77.12 77.12 0 1 1 154.24 0 77.12 77.12 0 0 1-154.24 0z" p-id="2560" fill="#8a8a8a"></path></svg>
+                    </i>
+                    <strong>{$store.store_address}</strong>
+                </div>
+                <div class="pay-input">
+                    <div class="top"><strong>消费金额(元)</strong>
+                        <input min="0.01" max="9999999" oninput="thisApp.amountchange(this.value)" id="total_amount" name="total_amount" type="number" placeholder="0元" step="0.01" readonly="readonly" />
+                    </div>
+                    <!--<div class="bottom"><strong>不参与优惠金额(元)</strong><input id="input_02" type="number" placeholder="请询问服务员后输入" /></div>-->
+                </div>
+                <div class="pay-remark">
+                    <i class="iconfont">
+                        <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1513042270994" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4356" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"></style></defs><path d="M942.461952 267.959296 539.318272 677.054464l0.050176 0-219.896832 37.174272 36.673536-223.147008L759.23968 81.98656c40.523776-41.049088 106.14784-41.049088 146.597888 0l36.624384 37.174272C982.912 160.26112 982.912 226.860032 942.461952 267.959296zM910.688256 151.460864l-36.624384-37.174272c-20.224-20.549632-53.023744-20.549632-73.299968 0L392.77056 528.256l-19.099648 131.723264 129.022976-20.200448 407.994368-414.01856C930.96448 205.2608 930.96448 172.010496 910.688256 151.460864zM307.371008 128.036864 153.673728 128.036864c-28.299264 0-51.223552 22.899712-51.223552 51.198976l0 691.190784c0 28.250112 22.924288 51.198976 51.223552 51.198976l691.616768 0c28.29824 0 51.248128-22.948864 51.248128-51.198976L896.538624 435.232768l51.223552 0 0 435.193856c0 56.549376-45.874176 102.3744-102.47168 102.3744L153.673728 972.801024C97.099776 972.8 51.2 926.974976 51.2 870.4256L51.2 179.23584c0-56.549376 45.899776-102.423552 102.473728-102.423552l179.32288 0 0 0.024576 281.772032 0 0 51.2L307.371008 128.036864 307.371008 128.036864z" p-id="4357" fill="#4592d6"></path></svg>
+                    </i>
+                    <input type="text" name="guest_brief" id="guest_brief" placeholder="添加备注" />
+                </div>
+                <div class="pay-money"><strong class="text">实际付款(元)</strong><strong class="money" id="money_config">0.00</strong></div>
+                <div class="pay-submit">
+                    <button type="submit">立即支付</button>
+                </div>
+            </div>
+        </form>
+    </body>
+    <script type="text/javascript">
+    document.querySelector('html').style.fontSize = document.body.clientWidth / 28.42 + "px";
+    document.getElementById('total_amount').focus();
+    var thisApp = {
+        createOrder: function()
+        {
+            switch (thisuserAgent())
+            {
+                case "jsapi_alipay": //
+                    ap.showLoading(
+                    {
+                        content: '发起支付宝支付',
+                    });
+                    $.ajax(
+                    {
+                        "url": "/index.php?s=api/pay/appjsapipayrequest",
+                        "data":
+                        {
+                            buyer_id: "{$buyer_open_id}",
+                            user_id: "{:input('user_id')}",
+                            total_amount: $("#total_amount").val(),
+                            guest_brief:$("#guest_brief").val(),
+                        },
+                        "type": "post",
+                        "dataType": "json",
+                        "success": function(rs)
+                        {
+                            ap.hideLoading();
+                            //根据支付返回的状态，不同处理
+                            if (rs.code)
+                            {
+                                thisApp.jsapi_alipay_pay(rs.data.trade_no); //唤起收银台JSAPI
+                            }
+                            else
+                            {
+                                ap.alert(
+                                {
+                                    title: '错误',
+                                    content: rs.message,
+                                    buttonText: '我知道了'
+                                }, function() {
+                                });
+                            }
+                        },
+                        error: function(rs)
+                        {
+                            ap.hideLoading();
+                            alert(JSON.stringify(rs));
+                        }
+                    });
+                    break;
+                case "jsapi_wxpay":
+                    var loadingToast = function(message)
+                    {
+                        $("#loadingToast").remove();
+                        message && $("body").append($('<div id="loadingToast"><div class="weui-mask_transparent"></div><div class="weui-toast"><i class="weui-loading weui-icon_toast"></i><p class="weui-toast__content">' + message + '</p></div></div>'));
+                    }
+                    loadingToast("发起微信支付");
+                    $.ajax(
+                    {
+                        "url": "/index.php?s=api/pay/appjsapipayrequest",
+                        "data":
+                        {
+                            buyer_id: "{$buyer_open_id}",
+                            user_id: "{:input('user_id')}",
+                            total_amount: $("#total_amount").val(),
+                            guest_brief:$("#guest_brief").val(),
+                        },
+                        "type": "post",
+                        "dataType": "json",
+                        "success": function(rs)
+                        {
+                            loadingToast();
+                            //根据支付返回的状态，不同处理
+                            if (rs.code)
+                            {
+                                thisApp.jsapi_wxpay_pay(rs.data); //唤起收银台JSAPI
+                            }
+                            else
+                            {
+                                alert(rs.message);
+                            }
+                        },
+                        error: function(rs)
+                        {
+                            loadingToast();
+                            alert(JSON.stringify(rs));
+                        }
+                    });
+                    break;
+                default:
+                    alert("未处理的提交订单");
+            }
+        },
+        jsapi_alipay_pay: function(tradeNO)
+        {
+            //alert(datajson);
+            // 通过传入交易号唤起快捷调用方式(注意tradeNO大小写严格)
+            AlipayJSBridge.call("tradePay",
+            {
+                tradeNO: tradeNO
+            }, function(data)
+            {
+                ap.hideLoading();
+                switch (data.resultCode)
+                {
+                    case "9000":
+                        if(store_pay_after_ad_active==0)
+                        {
+                            ap.alert(
+                            {
+                                title: '完成',
+                                content: "支付成功",
+                                buttonText: '我知道了'
+                            }, function() {
+                            });
+                        }
+                        else
+                        {
+                            window.location.href='/h5/index/payresult?storeid='+store_id+'&cash='+$("#total_amount").val();
+                        }
+                        //location.href=data.callbackUrl;
+                        break;
+                    case "8000":
+                        ap.alert(
+                        {
+                            title: '提醒',
+                            content: "订单正在处理中",
+                            buttonText: '我知道了'
+                        }, function() {
+                        });
+                        //location.href=data.callbackUrl;
+                        break;
+                    default:
+                        ap.alert(
+                        {
+                            title: '提醒',
+                            content: "支付已取消",
+                            buttonText: '我知道了'
+                        }, function() {
+                        });
+                }
+            });
+        },
+        jsapi_wxpay_pay: function(getBrandWCPayRequestParam)
+        {
+            getBrandWCPayRequestParam = (typeof getBrandWCPayRequestParam == "string") ? JSON.parse(getBrandWCPayRequestParam) : getBrandWCPayRequestParam;
+            WeixinJSBridge.invoke('getBrandWCPayRequest', getBrandWCPayRequestParam, function(res)
+            {
+                if (res.err_msg == "get_brand_wcpay_request:ok")
+                {
+                    if(store_pay_after_ad_active==0)
+                    {
+                        alert("支付成功");    
+                    }
+                    else
+                    {
+                        window.location.href='/h5/index/payresult?storeid='+store_id+'&cash='+$("#total_amount").val();
+                    }
+                    // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。   
+                }
+                else
+                {
+                    alert("支付已取消");
+                }
+            });
+        },
+        amountchange:function(newvalue){
+            $("#money_config").html(newvalue);
+        }
+    }
+    </script>
+</html>

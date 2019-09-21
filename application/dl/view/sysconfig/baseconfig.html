@@ -1,0 +1,53 @@
+{extend name="common/common"} {block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">设置</span>
+    </li>
+    <li class="active">
+        基本信息
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+<div class="nav-search nav-positions" id="nav-search">
+    <!-- <form class="form-search form-inline">
+        <span class="input-icon">
+            <input type="text" placeholder="关键词" name="keyword" value="{:input('get.keyword')}" class="nav-search-input" autocomplete="off" />
+            <i class="ace-icon fa fa-search nav-search-icon"></i>
+        </span>
+        <input type="submit" class="btn btn-info btn-xs " value="搜索">
+        <a href="{:url('add')}" class="btn btn-info btn-xs "><i class="glyphicon glyphicon-plus"></i>新增</a>
+    </form> -->
+</div>
+{/block}
+{block name="page-content"}
+<div class="admin-body">
+<form class="form-horizontal ajaxForm form-body" role="form" method="post" action="{:url('save')}">
+    
+
+    
+    {include file="common/input" title="客服电话" fieldName="telphone" defaultValue='<?php echo(isset($one->telphone)?$one->telphone:"");?>' placeholder="" required="" pattern="*" helpInfo=''}
+
+    
+    {include file="common/input" title="联系地址" fieldName="contact_address" defaultValue='<?php echo(isset($one->contact_address)?$one->contact_address:"");?>' placeholder="" required="" pattern="*" helpInfo=''}
+
+
+    
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <button class="btn btn-info" type="submit">
+               <!-- <i class="ace-icon fa fa-check bigger-110"></i> -->
+				提交
+            </button>
+            &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;
+            <button class="btn" type="button" onclick="history.back();">
+               <!-- <i class="ace-icon fa fa-undo bigger-110"></i> -->
+				返回
+            </button>
+        </div>
+    </div>
+    <!-- <div class="hr hr-24"></div> -->
+</form>
+</div>
+{/block}

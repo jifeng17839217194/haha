@@ -1,0 +1,32 @@
+.sign-body{ background: #2C95FF; }
+.sign-logo,.sign-logo small{ color: #fff; display: block;}
+/*.btn-sign{ background-color:#fff;border-color:#fff;color: #E00200;}*/
+
+.top-banner{ background-color:#2C95FF;}
+.top-banner .compnay-logo{color:#fff;}
+.top-banner .btn-close-window{ color: #fff; background-color:#1F52B2;}
+
+.nav-side{ background-color:#2C95FF; color:#fff;}
+.nav-side-top-space{ }
+
+.panel-green{ border-color: #59a84b;}
+.panel-green>.panel-heading {color:#fff; background-color:#59a84b;border-color:#59a84b}
+.panel-green h3{ color:#59a84b;}
+.panel-green .count-item{ border-color: rgba(89, 168, 75,.4);}
+.panel-blue{border-color: #2a91d8;}
+.panel-blue>.panel-heading{color:#fff; background-color:#2a91d8 ;border-color:#2a91d8;}
+.panel-blue h3{color:#2a91d8;}
+.panel-blue .count-item{ border-color: rgba(42, 145, 216,.4);}
+.panel-yellow{border-color: #f2bb46;}
+.panel-yellow>.panel-heading{color:#fff; background-color:#f2bb46 ;border-color:#f2bb46;}
+.panel-yellow h3{color: #f2bb46;}
+.panel-yellow .count-item{ border-color: rgba(242, 187, 70,.4);}
+.panel-red{border-color: #ca5952;}
+.panel-red>.panel-heading{color:#fff; background-color:#ca5952 ;border-color:#ca5952;}
+.panel-red h3{color: #ca5952;}
+.panel-red .count-item{ border-color: rgba(202, 89, 82,.4);}
+
+.panel-title .icon-alipay,.panel-title .icon-wechatpay{ color: #fff;}
+.icon-alipay,.panel-default .icon-alipay{ color: #00a0e8;}
+.icon-wechatpay,.panel-default .icon-wechatpay{ color: #24c400;}
+

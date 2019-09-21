@@ -1,0 +1,388 @@
+{extend name="common/common"}
+{block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">进件审批</span>
+    </li>
+    <li class="active">
+        管理
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+
+{/block}
+{block name="page-content"}
+<form class="form-horizontal ajaxForm" role="form" method="post" action="{:url('save')}">
+    <input type="hidden" name="jinjian_id" value="{:$one?$one->jinjian_id:''}">
+    
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right"> 状态：</label>
+        <div class="col-sm-10" style="padding-top: 8px;">
+            {:$one?$one->jinjian_status_info:'新用户'}
+        </div>
+    </div>
+     <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">商户类型：</label>
+        <div class="col-sm-10" style="padding-top: 6px;">
+            <label>
+                <input name="jinjian_type" onclick="show_hide_control()" value="1" type="radio" class="ace" />
+                <span class="lbl">企业</span>
+            </label>
+            &nbsp;
+            <label>
+                <input name="jinjian_type" onclick="show_hide_control()" value="2" type="radio" class="ace" />
+                <span class="lbl">个体工商 </span>
+            </label>
+            &nbsp;
+            <label>
+                <input name="jinjian_type" onclick="show_hide_control()" value="3" type="radio" class="ace" />
+                <span class="lbl">个人</span>
+            </label>
+        </div>
+        <script type="text/javascript">
+            var jinjian_type = '{:$one?$one->jinjian_type:1}';
+            if(jinjian_type)
+            {
+                $("input[name='jinjian_type'][value='"+ jinjian_type +"']").attr('checked','checked');
+            }
+        </script>
+    </div>
+
+
+    
+     <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">进件类型：</label>
+        <div class="col-sm-10" style="padding-top: 6px;">
+            <label>
+                <input name="jinjian_class" onchange="show_hide_control()" value="1" type="radio" class="ace" />
+                <span class="lbl">标准进件(当天>2W、当笔>5000)</span>
+            </label>
+            &nbsp;
+            <label>
+                <input name="jinjian_class" onchange="show_hide_control()" value="2" type="radio" class="ace" />
+                <span class="lbl">快速进件(当天<=2W、当笔<=500)</span>
+            </label>
+        </div>
+        <script type="text/javascript">
+            var jinjian_class = '{:$one?$one->jinjian_class:1}';
+            if(jinjian_class)
+            {
+                $("input[name='jinjian_class'][value='"+ jinjian_class +"']").attr('checked','checked');
+            }
+        </script>
+    </div>
+    
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">商户全称：</label>
+        <div class="col-sm-10">
+            <input type="text" name="jinjian_fullname" value="{:$one?$one->jinjian_fullname:""}" id="jinjian_fullname" class="input-xlarge" />
+            <span class="help-inline">
+                    <span class="middle">商户全称或营业执照名称</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">商户简称：</label>
+        <div class="col-sm-10">
+            <input type="text" name="jinjian_alias" value="{:$one?$one->jinjian_alias:""}" id="jinjian_alias" class="input-xlarge" />
+            <span class="help-inline">
+                    <span class="middle"></span>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">商户联系人：</label>
+        <div class="col-sm-10">
+            <input type="text" name="jinjian_stoe_cnt_nm" value="{:$one?$one->jinjian_stoe_cnt_nm:""}" id="jinjian_stoe_cnt_nm" class="input-meddile" />
+            <span class="help-inline">
+                    <span class="middle">商户联系人</span>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">电话：</label>
+        <div class="col-sm-10">
+            <input type="text" name="jinjian_stoe_cnt_tel" value="{:$one?$one->jinjian_stoe_cnt_tel:""}" id="jinjian_stoe_cnt_tel" class="input-meddile" />
+            <span class="help-inline">
+                    <span class="middle">商户联系电话</span>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">地区信息码：</label>
+        <div class="col-sm-10">
+            <div class="col-xs-5 col-sm-5 no-padding-left" style="padding-top: 8px;">
+                <select data-placeholder="地区信息码" name="jinjian_stoe_area_cod" id="jinjian_stoe_area_cod" class="chosen-select">
+                    {volist name="jinjian_area" id="vo"}
+                    <option value="{$vo.merc_area}">{$vo.prov_nm} - {$vo.city_nm} - {$vo.area_nm}</option>
+                    {/volist}
+                </select>
+                <script type="text/javascript">
+                    var jinjian_stoe_area_cod_string = '{:$one?$one->jinjian_stoe_area_cod:""}';
+                    if(jinjian_stoe_area_cod_string)
+                    {
+                        $("#jinjian_stoe_area_cod").val(jinjian_stoe_area_cod_string);
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">详细地址：</label>
+        <div class="col-sm-10">
+            <input type="text" name="jinjian_stoe_adds" value="{:$one?$one->jinjian_stoe_adds:""}" id="jinjian_stoe_adds" class="input-xlarge" />
+            <span class="help-inline">
+                    <span class="middle"></span>
+            </span>
+        </div>
+    </div>
+
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">费率：</label>
+        <div class="col-sm-10">
+            <input type="text" name="jinjian_rate" value="{:$one?$one->jinjian_rate:'0.38'}" id="jinjian_rate" class="input-meddile" />
+            <span class="help-inline">
+                <span class="middle">默认 0.38(最小 0.25 最大 不超过 0.6)</span>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">开户行：</label>
+        <div class="col-sm-10">
+            <div class="col-xs-5 col-sm-5 no-padding-left" style="padding-top: 8px;">
+                <div id="jinjian_wc_lbnk_no_warp">
+                  <div style="padding-bottom: 3px;">所在省：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select class="prov_nm" name="prov_cd" data-url="{:url('getbankdata?by=prov_nm')}" data-value="{:$one?$one->jinjian_wc_lbnk_prov_cd:''}"></select></div>
+                  <div style="padding-top: 3px; padding-bottom: 3px;">
+                    所在市：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select class="city_nm" name="city_cd" data-url="{:url('getbankdata?by=city_nm')}" data-value="{:$one?$one->jinjian_wc_lbnk_city_cd:''}"></select>
+                  </div>
+                  <div style="padding-top: 3px; padding-bottom: 3px;">
+                    所在区/县：<select class="lbnk_add_nm" name="lbnk_add_cd" data-url="{:url('getbankdata?by=lbnk_add_nm')}" data-value="{:$one?$one->jinjian_wc_lbnk_add_cd:''}"></select>
+                  </div>
+                  <div style="padding-top: 3px; padding-bottom: 3px;">
+                    银行：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select class="lbnk_cd_nm" name="lbnk_cd_nm" data-url="{:url('getbankdata?by=lbnk_cd_nm')}" data-value="{:$one?$one->jinjian_wc_lbnk_cd_nm:''}"></select>
+                  </div>
+                  <div style="padding-top: 3px; padding-bottom: 3px;">
+                    分行：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select class="jinjian_wc_lbnk" name="jinjian_wc_lbnk" data-url="{:url('getbankdata?by=jinjian_wc_lbnk')}" data-value="{:$one?$one->jinjian_wc_lbnk_no:''}"></select>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">银行卡号：</label>
+        <div class="col-sm-10">
+            <input type="text" maxlength="23" name="jinjian_stl_oac" value="{:$one?$one->jinjian_stl_oac:""}" id="jinjian_stl_oac" class="input-xlarge" />
+            <span class="help-inline">
+                    <span class="middle">12位</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">银行卡姓名：</label>
+        <div class="col-sm-10">
+            <input type="text" maxlength="20" name="jinjian_crp_nm" value="{:$one?$one->jinjian_crp_nm:""}" id="jinjian_crp_nm" class="input-xlarge" />
+            <span class="help-inline">
+                    <span class="middle">法人姓名或开户名称(与身份证一致)</span>
+            </span>
+        </div>
+    </div>
+    
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">身份证号：</label>
+        <div class="col-sm-10">
+            <input type="text" maxlength="18" name="jinjian_crp_id_no" value="{:$one?$one->jinjian_crp_id_no:""}" id="jinjian_crp_id_no" class="input-xlarge" />
+            <span class="help-inline">
+                    <span class="middle">18位</span>
+            </span>
+        </div>
+    </div>
+
+
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">身份证到期日：</label>
+        <div class="col-sm-9">
+            <div class="input-group input-xlarge">
+                <input name="jinjian_crp_exp_dt" class="form-control date-picker" onclick="WdatePicker({startDate:'',dateFmt:'yyyy-MM-dd',doubleCalendar:true})" value="<?php echo(isset($one->jinjian_crp_exp_dt)?$one->jinjian_crp_exp_dt:"");?>" type="text" />
+                <span class="input-group-addon">
+                        <i class="fa fa-calendar bigger-110"></i>
+                </span>
+            </div>
+            <span class="help-inline col-xs-12 col-sm-7"><span class="middle">最大9999-12-31</span>
+            </span>
+        </div>
+    </div>
+
+
+    
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">经营类目码：</label>
+        <div class="col-sm-10">
+            <div class="col-xs-12 col-sm-12 no-padding-left" style="padding-top: 8px;">
+                <div id="jinjian_mcc_warp">
+                  <select class="jinjian_mmc_sup_mmc_nm" name="jinjian_mmc_sup_mmc_nm" data-url="{:url('getmccdata?by=jinjian_mmc_sup_mmc_nm')}" data-value="{:$one?$one->jinjian_mmc_sup_mmc_nm:''}"></select>
+
+                  <select class="jinjian_mmc_mmc_typ_nm" name="jinjian_mmc_mmc_typ_nm" data-url="{:url('getmccdata?by=jinjian_mmc_mmc_typ_nm')}" data-value="{:$one?$one->jinjian_mmc_mmc_typ_nm:''}"></select>
+
+                  <select class="jinjian_mmc_mmc_cd" name="jinjian_mcc" data-url="{:url('getmccdata?by=jinjian_mmc_mmc_cd')}" data-value="{:$one?$one->jinjian_mcc:''}"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {include file="common/uploadImg" defaultValue="123" title="身份证正面" fieldName="jinjian_id_card_front" defaultValue='<?php echo(isset($one->jinjian_id_card_front)?$one->jinjian_id_card_front:"");?>' imgWidth="150" imgHeight="100" helpInfo='500KB内' usehelp=""}
+
+    {include file="common/uploadImg" title="身份证反面" fieldName="jinjian_id_card_contrary" defaultValue='<?php echo(isset($one->jinjian_id_card_contrary)?$one->jinjian_id_card_contrary:"");?>' imgWidth="150" imgHeight="100" helpInfo='500KB内' usehelp=""}
+
+    {include file="common/uploadImg" title="银行卡照" fieldName="jinjian_bank_card" defaultValue='<?php echo(isset($one->jinjian_bank_card)?$one->jinjian_bank_card:"");?>' imgWidth="150" imgHeight="100" helpInfo='500KB内' usehelp=""}
+
+    {include file="common/uploadImg" title="收银台照片" fieldName="jinjian_checkstand" defaultValue='<?php echo(isset($one->jinjian_checkstand)?$one->jinjian_checkstand:"");?>' imgWidth="150" imgHeight="100" helpInfo='500KB内' usehelp=""}
+
+    {include file="common/uploadImg" title="门头照" fieldName="jinjian_headphoto" defaultValue='<?php echo(isset($one->jinjian_headphoto)?$one->jinjian_headphoto:"");?>' imgWidth="150" imgHeight="100" helpInfo='500KB内' usehelp=""}
+
+    {include file="common/uploadImg" title="内景照" fieldName="jinjian_indoor" defaultValue='<?php echo(isset($one->jinjian_indoor)?$one->jinjian_indoor:"");?>' imgWidth="150" imgHeight="100" helpInfo='500KB内' usehelp=""}
+
+    {include file="common/uploadImg" title="营业执照" fieldName="jinjian_businesspictureurl" defaultValue='<?php echo(isset($one->jinjian_businesspictureurl)?$one->jinjian_businesspictureurl:"");?>' imgWidth="150" imgHeight="100" helpInfo='500KB内' usehelp="商户类型 企业或个体工商 时必传参数"}
+    
+
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">营业执照号：</label>
+        <div class="col-sm-10">
+            <input type="text" name="jinjian_busLic_no" value="{:$one?$one->jinjian_busLic_no:''}" id="jinjian_busLic_no" class="input-xlarge" />
+            <span class="help-inline">
+                    <span class="middle">商户类型 企业或个体工商 时必传参数</span>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label no-padding-right">营业执照有效期：</label>
+        <div class="col-sm-9">
+            <div class="input-group input-xlarge">
+                <input name="jinjian_bus_exp_dt" class="form-control date-picker" onclick="WdatePicker({startDate:'',dateFmt:'yyyy-MM-dd',doubleCalendar:true})" value="<?php echo(isset($one->jinjian_bus_exp_dt)?$one->jinjian_bus_exp_dt:"");?>" type="text" />
+                <span class="input-group-addon">
+                        <i class="fa fa-calendar bigger-110"></i>
+                </span>
+            </div>
+            <span class="help-inline col-xs-12 col-sm-7"><span class="middle">最大9999-12-31,商户类型 企业或个体工商 时必传参数</span>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="space-4"></div>
+    <div class="clearfix form-actions">
+        <div class="col-md-offset-3 col-md-9">
+            <?php
+            if(($isCanUpdate))
+            {
+            ?>
+                <button class="btn btn-info" type="submit">
+                    <i class="ace-icon fa fa-check bigger-110"></i> 提交
+                </button>
+                &nbsp; &nbsp; &nbsp;
+            <?php
+            }
+            ?>
+
+            <button class="btn" type="button" onclick="history.back();">
+                <i class="ace-icon fa fa-undo bigger-110"></i> 返回
+            </button>
+        </div>
+    </div>
+    <div class="hr hr-24"></div>
+</form>
+{/block}
+{block name="head"}
+<script src="/static/common/js/jQuery.cxSelect-1.4.2/js/jquery.cxselect.min.js"></script>
+{/block}
+{block name="floot"}
+<script type="text/javascript">
+$('#jinjian_wc_lbnk_no_warp').cxSelect({
+  selects: ['prov_nm', 'city_nm','lbnk_add_nm','lbnk_cd_nm','jinjian_wc_lbnk'],  // 数组，请注意顺序
+  jsonName: 'name',
+  jsonValue: 'value'
+});
+
+$('#jinjian_mcc_warp').cxSelect({
+  selects: ['jinjian_mmc_sup_mmc_nm', 'jinjian_mmc_mmc_typ_nm','jinjian_mmc_mmc_cd'],  // 数组，请注意顺序
+  jsonName: 'name',
+  jsonValue: 'value'
+});
+
+//进件类型
+var jinjian_class_no_allow=[],jinjian_type_no_allow=[];
+function show_hide_control() {
+
+    //进件类型
+    switch($('input[name=jinjian_class]:checked').val())
+    {
+        case 1:case "1"://标准进件
+            jinjian_class_no_allow=[];//没有不允许显示的
+        break;
+
+        case 2:case "2"://快速进件
+            jinjian_class_no_allow={$jinjian_class_no_allow};//不允许显示的
+        break;
+    }
+
+    //商户类型
+    switch($('input[name=jinjian_type]:checked').val())
+    {
+        case 1:case 2:case "1":case "2":
+            jinjian_type_no_allow=[];//没有不允许显示的
+        break;
+
+        case 3:case "3"://快速进件
+            jinjian_type_no_allow={$jinjian_type_no_allow};//不允许显示的
+        break;
+    }
+
+    var arr3 = jinjian_class_no_allow.concat(jinjian_type_no_allow);
+
+    //console.log(arr3);
+    $(".ajaxForm").find("div.form-group").each(function(){
+        var thisdiv = $(this);
+        var thisisfound = false;
+        $.each(arr3,function(index2,obj2){
+            console.log(obj2+":"+thisdiv.find("[name='"+obj2+"']").size());
+            if(thisdiv.find("[name='"+obj2+"']").size()>0)
+            {
+                thisisfound=true;
+            }
+        })
+        if(thisisfound)
+        {
+            thisdiv.hide();
+        }
+        else
+        {
+            thisdiv.show();
+        }
+    });
+}
+
+show_hide_control();//界面变化
+</script>
+{/block}

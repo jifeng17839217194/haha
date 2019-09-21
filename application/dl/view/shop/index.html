@@ -1,0 +1,114 @@
+{extend name="common/common"} 
+{block name="head"}
+<style type="text/css">
+.changelist img{ width:20px; margin-right: 5px;}
+.changelist .unactive{
+    -webkit-filter: grayscale(100%);
+    -moz-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+    filter: grayscale(100%);
+    filter: gray;
+}
+</style>
+{/block}
+{block name="breadcrumbs"}
+<ul class="breadcrumb">
+    <li class="active">
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <span _href="#">商户</span>
+    </li>
+    <li class="active">
+        商户管理
+    </li>
+</ul>
+<!-- #section:basics/content.searchbox -->
+
+{/block}
+
+{block name="page-content"}
+<div class="nav-search nav-positions" id="nav-search">
+    <form class="form-search form-inline">
+         <span class="search-name">筛选：</span>
+		 <select title="代理商"  name="agent_id" id="agent_id" class="chosen-select " style="width:200px">
+            <option value="">--全部代理商--</option>
+            {volist name="agentlist" id="vo"}
+            <option value="{$vo.agent_id}">{$vo.agent_company_name} {$vo.agent_name}</option>
+            {/volist}
+        </select> 
+      <!--  <script type="text/javascript">
+        $("#agent_id").val("{:input('agent_id')}");
+        </script> -->
+		 <span class="search-name">搜索：</span>
+        <span class="input-icon">
+            <input type="text" placeholder="店名/手机号" name="keyword" value="{:input('get.keyword')}" class="nav-search-input" autocomplete="off" />
+            <i class="ace-icon fa fa-search nav-search-icon"></i>
+        </span>
+        <input type="submit" class="btn btn-info btn-xs " value="搜索">
+        
+    </form>
+	<div class="hr hr-10"></div>
+</div>
+<div class="admin-body">
+<form action="" id="form2" method="POST" class="form-body">
+	
+	<a href="{:url('shop/save')}" ajax='{"prompt":"true"}' name="shop_name" title="输入签约商户全称" class="btn btn-info btn-xs btn-bottom"><i class="glyphicon glyphicon-plus"></i>新增</a>
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>签约商户名称</th>
+                <th>支付通道</th>
+                <th>所属代理商</th>
+                <th>店主姓名</th>
+                <th>店主手机</th>
+                <th>经营场地</th>
+                <th width="151"><i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>新增时间</th>
+                <th width="50">排序</th>
+                <th width="120">操作</th>
+            </tr>
+        </thead>
+        {volist name="lists" id="vo"}
+        <tr>
+            
+            <td>{$vo.shop_name}</td>
+            <td>
+                <div class="changelist">
+                <a title="支付宝通道" href="{:url('add?shop_id='.$vo['shop_id'])}#comment-alipay" class="{eq name='vo.shop_alipay_app_auth_token' value=''}unactive{/eq}"><img src="/static/common/image/zfb.jpg"></a>
+                <a title="微信通道" href="{:url('add?shop_id='.$vo['shop_id'])}#comment-wechat" class="{eq name='vo.shop_wxpay_sub_mch_id' value=''}unactive{/eq}"><img src="/static/common/image/wx.jpg"></a>
+                </div>
+            </td>
+            <td>{$vo.agent_company_name|default='无'} {$vo.agent_name}</td>
+            <td>{$vo.shop_master_name}</td>
+            <td>{$vo.shop_master_mobile}</td>
+            <td>
+                <a href="{:url('store/index?store_shop_id='.$vo['shop_id'])}" ajax='{"window":"iframe"}' class="btn btn-xs btn-info" title="《{$vo.shop_name}》的场地">经营场地</a>
+            </td>
+            <td>{$vo.shop_addtime}</td>
+            <td>
+                <input type="text" title="排序" readonly class="input-mini" ajax='{"data":"shop_id={:$vo['shop_id']}","url":"{:url('sortnum')}","prompt":"text"}' value="{:$vo['shop_sortnum']}">
+            </td>
+            <td>
+                <a href="{:url('add?shop_id='.$vo['shop_id'])}" class="tooltip-success" data-rel="tooltip" title="编辑"><span class="green"><i class="ace-icon fa fa-pencil-square-o bigger-120"></i></span>编辑</a> &nbsp;
+                <a ajax='{"confirm":"删除吗？","url":"{:url("delete?shop_id=" .$vo[ "shop_id"])} "}' href="javascript:; " class="tooltip-error "><span class="red "><i class="ace-icon fa fa-trash-o bigger-120 "></i></span>删除</a>
+            </td>
+        </tr>
+        {/volist}
+    </table>
+	<div class="pull-left ">
+	    {if checkActionAuth()}
+	        
+	    {/if}
+	    <!-- <a onclick="doloadtable() " class="btn btn-white btn-inverse btn-sm " href="javascript:; ">
+	                                        导出表格
+	                                    </a> -->
+	</div>
+	<div class="pull-right ">
+	    共{$lists->total()}条记录
+	    <br /> {$lists->render()}
+	</div>
+</form>
+
+<div class="clearfix ">
+</div>
+</div>
+{/block}
