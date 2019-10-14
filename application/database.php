@@ -12,7 +12,7 @@ return [
     // 数据库类型
     'type'           => 'mysql',
     // 服务器地址
-    'hostname'       => '127.0.0.1',
+    'hostname'       => '47.98.159.104',
     // 数据库名
     'database'       => 'skingpay_hzsxkj1',
     // 用户名
