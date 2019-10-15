@@ -226,9 +226,9 @@ class Order extends Apibase
              $lists = json_decode(json_encode($lists), 1);
 
              $data['list'] = $lists['data'];
-             return ["code" => 200, "msg" => "请求成功", "data" => $data];
+             return json(["code" => 200, "msg" => "请求成功", "data" => $data]);
          }catch (\Exception $e){
-             return ["code" => 400, "msg" => "请求失败", "data" =>$e->getMessage()];
+             return json(["code" => 400, "msg" => "请求失败", "data" =>$e->getMessage()]);
          }
     }
 

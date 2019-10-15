@@ -18,7 +18,7 @@ return [
     'app_debug'           => false,
     // 应用Trace
     'app_trace'           => false,
-    'default_return_type' => 'json',
+//    'default_return_type' => 'json',
     // // 应用模式状态
     // 'app_status'          => '',
     // 'log'                 => [
