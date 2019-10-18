@@ -25,7 +25,7 @@ return [
 
 
     //服务器域名
-    'site_url'                       =>'https://skingpay.hzsxkj19.com',
+    'site_url'                       =>'https://spms.hzsxkj19.com',
     //'sx_site'                    =>1,
     'carpark_token'              => "", //与停车场云端通信的token，每家服务商必需不一致
     //'swoole_port'                => 39050, //需要打开防火墙 1.7.4开始，不再使用这个，全部转http接口
