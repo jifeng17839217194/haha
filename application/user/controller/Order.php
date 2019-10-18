@@ -246,13 +246,11 @@ class Order extends Apibase
     }
 
     /**
-     *
+     *home统计数据
      */
     public function total()
     {
         try{
-
-
         $user_id = input("user_id");
         $store_id = input("store_id","");
         $order_addtime_from = input("order_addtime_from","");
@@ -268,7 +266,6 @@ class Order extends Apibase
             return json(["code" => 400, "msg" => "权限不足", "data" =>'']);
         }
 
-        $order   = model("order");
 
         if (!$order_addtime_from) {
             $order_addtime_from = date("Y-m-d", time());
@@ -300,53 +297,181 @@ class Order extends Apibase
           }else{
              $whereOrderSearch["order_store_id"] = $userOne->user_store_id; //暂时不支持跨经营场地查询（前端UI没准备好，2017-12-22 16:40:52）
          }
-         //实收金额
-        //支付宝，统计
-            $realprice =array();
-            $realprice["ali_realprice"] = $order
-                ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => ["in", $this->ali_arr]]))
-                ->field('sum(order_pay_realprice) as ali_realprice_total,count(*) as ali_realprice_count')
-                ->find();
-            if (!$realprice['ali_realprice']['ali_realprice_total']){
-                $realprice['ali_realprice']['ali_realprice_total']=0.00;
-            }
-            //微信，统计
-            $realprice["wx_realprice"] = $order
-                ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => ["in", $this->wx_arr]]))
-                ->field('sum(order_pay_realprice) as wx_realprice_total,count(*) as wx_realprice_count')
-                ->find();
-            if (!$realprice['wx_realprice']['wx_realprice_total']){
-                $realprice['wx_realprice']['wx_realprice_total']=0.00;
-            }
-            $realprice["cash_realprice"] = $order
-                ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => 1008]))
-                ->field('sum(order_pay_realprice) as cash_realprice_total,count(*) as cash_realprice_count')
-                ->find();
-            if (!$realprice['cash_realprice']['cash_realprice_total']){
-                $realprice['cash_realprice']['cash_realprice_total']=0.00;
-            }
-            $data['realprice']=$realprice;
-            
-//            $rsdata["ali_realprice"] = $order
-//                ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => ["in", $this->ali_arr]]))
-//                ->field('sum(order_pay_realprice) as ali_realprice_total,count(*) as ali_realprice_count')
-//                ->find();
-//            //微信，统计
-//            $rsdata["wx_realprice"] = $order
-//                ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => ["in", $this->wx_arr]]))
-//                ->field('sum(order_pay_realprice) as wx_realprice_total,count(*) as wx_realprice_count')
-//                ->find();
-//            $rsdata["cash_realprice"] = $order
-//                ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => 1008]))
-//                ->field('sum(order_pay_realprice) as cash_realprice_total,count(*) as cash_realprice_count')
-//                ->find();
 
-        return json(["code" => 200, "message" => "请求成功", "data" => $data]);
+            //统计
+            $data = $this->statistics($whereOrderSearch);
+            //最近订单列表
+            $lists = $this->order_list($whereOrderSearch);
+            //活跃商户
+            $active_shop = $this->active_shop($shop_id);
+            $data['active_shop'] = $active_shop;
+            $data['list'] = $lists;
+
+            return json(["code" => 200, "message" => "请求成功", "data" => $data]);
 
         }catch (\Exception $e){
             return json(["code" => 400, "message" => "请求失败", "data" => $e->getMessage()]);
 
         }
+    }
+
+    /**
+     * @param $shop_id
+     * @return mixed
+     */
+    public function active_shop($shop_id){
+        $order   = model("order");
+        $whereOrderSearch["order_addtime"] = [["egt", strtotime('-10 day')], ["lt", time()], "and"];
+        $whereOrderSearch["order_shop_id"] = $shop_id;
+        $active_shop = $order
+            ->alias('o')
+            ->where($whereOrderSearch)
+            ->join('qs_store s','s.store_id = o.order_store_id')
+            ->field('order_store_id,sum(order_total_amount) as total_amount,store_name')
+            ->group('order_store_id')
+            ->order('total_amount desc')
+            ->select();
+
+        return $active_shop;
+    }
+    /**
+     * 订单
+     * @param $whereOrderSearch
+     */
+    public function order_list($whereOrderSearch){
+        $order   = model("order");
+        unset($whereOrderSearch['order_addtime']);
+
+        $field = ["order_id","store_name",'order_user_id','order_store_id',"user_realname","order_num", "order_addtime", "order_status", "order_channel_id", "order_total_amount"];
+
+        $lists = $order
+            ->alias('o')
+            ->join('qs_store s','s.store_id = o.order_store_id')
+            ->join('qs_user u','u.user_id = o.order_user_id')
+            ->where($whereOrderSearch)
+            ->field($field)
+            ->order("order_id desc")
+            ->limit(5)
+            ->select();
+        if ($lists) {
+            foreach ($lists as $listsOne) {
+                $listsOne->order_status_info  = $order->status2nicename($listsOne->order_status);
+                if(in_array($listsOne['order_channel_id'],$this->wx_arr)){
+                    $listsOne['order_channel_id'] = '微信';
+                }elseif(in_array($listsOne['order_channel_id'],$this->ali_arr)){
+                    $listsOne['order_channel_id'] = '支付宝';
+                }elseif($listsOne['order_channel_id']=1008){
+                    $listsOne['order_channel_id'] = '现金';
+                }
+            }
+        }
+        return  $lists;
+
+    }
+    /**
+     * 统计
+     */
+    public function statistics($whereOrderSearch){
+        $order   = model("order");
+
+        //实收金额
+        //支付宝，统计
+        $realprice =array();
+        $realprice["ali"] = $order
+            ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => ["in", $this->ali_arr]]))
+            ->field('sum(order_total_amount) as ali_realprice_total,count(*) as ali_realprice_count')
+            ->find();
+        if (!$realprice['ali']['ali_realprice_total']){
+            $realprice['ali']['ali_realprice_total']=0.00;
+        }
+//微信，统计
+        $realprice["wx"] = $order
+            ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => ["in", $this->wx_arr]]))
+            ->field('sum(order_total_amount) as wx_realprice_total,count(*) as wx_realprice_count')
+            ->find();
+        if (!$realprice['wx']['wx_realprice_total']){
+            $realprice['wx']['wx_realprice_total']=0.00;
+        }
+        $realprice["cash"] = $order
+            ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => 1008]))
+            ->field('sum(order_total_amount) as cash_realprice_total,count(*) as cash_realprice_count')
+            ->find();
+        if (!$realprice['cash']['cash_realprice_total']){
+            $realprice['cash']['cash_realprice_total']=0.00;
+        }
+        $realprice['member'] = [];
+
+        $realprice['member']['member_realprice_total']=0.00;
+        $realprice['member']['member_realprice_count']=0;
+
+        $realprice['realprice']=($realprice['cash']['cash_realprice_total']*100 + $realprice['wx']['wx_realprice_total'] *100 + $realprice['ali']['ali_realprice_total'] *100)/100;
+        $data['realprice']=$realprice;
+
+//退款金额（目前只包含全额退款的订单）
+//支付宝，统计
+        $refund =array();
+        $refund["ali"] = $order
+            ->where(array_merge($whereOrderSearch,["order_status" =>200 ], ["order_channel_id" => ["in", $this->ali_arr]]))
+            ->field('sum(order_total_amount) as ali_refund_total,count(*) as ali_refund_count')
+            ->find();
+        if (!$refund['ali']['ali_refund_total']){
+            $refund['ali']['ali_refund_total']=0.00;
+        }
+//微信，统计
+        $refund["wx"] = $order
+            ->where(array_merge($whereOrderSearch,["order_status" =>200 ], ["order_channel_id" => ["in", $this->wx_arr]]))
+            ->field('sum(order_total_amount) as wx_refund_total,count(*) as wx_refund_count')
+            ->find();
+        if (!$refund['wx']['wx_refund_total']){
+            $refund['wx']['wx_refund_total']=0.00;
+        }
+        $refund["cash"] = $order
+            ->where(array_merge($whereOrderSearch,["order_status" =>200 ], ["order_channel_id" => 1008]))
+            ->field('sum(order_total_amount) as cash_refund_total,count(*) as cash_refund_count')
+            ->find();
+        if (!$refund['cash']['cash_refund_total']){
+            $refund['cash']['cash_refund_total']=0.00;
+        }
+        $refund['member'] = [];
+
+        $refund['member']['member_refund_total']=0.00;
+        $refund['member']['member_refund_count']=0;
+        $refund['refund']=($refund['cash']['cash_refund_total']*100 + $refund['wx']['wx_refund_total'] *100 + $refund['ali']['ali_refund_total'] *100)/100;
+
+        $data['refund']=$refund;
+//            订单金额
+//支付宝，统计
+        $orders =array();
+        $orders["ali"] = $order
+            ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => ["in", $this->ali_arr]]))
+            ->field('sum(order_total_amount) as ali_orders_total,count(*) as ali_orders_count')
+            ->find();
+        if (!$orders['ali']['ali_orders_total']){
+            $orders['ali']['ali_orders_total']=0.00;
+        }
+//微信，统计
+        $orders["wx"] = $order
+            ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => ["in", $this->wx_arr]]))
+            ->field('sum(order_total_amount) as wx_orders_total,count(*) as wx_orders_count')
+            ->find();
+        if (!$orders['wx']['wx_orders_total']){
+            $orders['wx']['wx_orders_total']=0.00;
+        }
+        $orders["cash"] = $order
+            ->where(array_merge($whereOrderSearch,["order_status" =>100 ], ["order_channel_id" => 1008]))
+            ->field('sum(order_total_amount) as cash_orders_total,count(*) as cash_orders_count')
+            ->find();
+        if (!$orders['cash']['cash_orders_total']){
+            $orders['cash']['cash_orders_total']=0.00;
+        }
+        $orders['member']['member_orders_total']=0.00;
+        $orders['member']['member_orders_count']=0;
+
+        $orders['orders']=($orders['cash']['cash_orders_total']*100 + $orders['wx']['wx_orders_total'] *100 + $orders['ali']['ali_orders_total'] *100)/100;
+
+        $data['orders']=$orders;
+        return  $data;
+
     }
 
 
