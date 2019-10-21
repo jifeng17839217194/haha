@@ -30,7 +30,7 @@ class Order extends Apibase
              $order_status = input("order_status","");
              $store_id = input("store_id","");
              $page = input("page",0);
-             $per_page = input("per_page",20);
+             $per_page = input("per_page",15);
              $order_addtime_from = input("order_addtime_from","");
              $order_addtime_end = input("order_addtime_end","");
              $channel=input("channel","");
@@ -237,7 +237,7 @@ class Order extends Apibase
              }
              $lists = json_decode(json_encode($lists), 1);
 
-             $data['list'] = $lists['data'];
+             $data['list'] = $lists;
              return json(["code" => 200, "msg" => "请求成功", "data" => $data]);
          }catch (\Exception $e){
              return json(["code" => 400, "msg" => "请求失败", "data" =>$e->getMessage()]);
